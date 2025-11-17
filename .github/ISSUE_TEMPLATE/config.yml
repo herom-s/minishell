@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🤔 Question or Discussion
+    url: https://github.com/herom-s/minishell/discussions
+    about: Ask questions or discuss ideas about the minishell project
+  - name: 📖 Documentation
+    url: https://github.com/herom-s/minishell/wiki
+    about: Check the project wiki for documentation and guides
+  - name: 💬 42 Slack Channel
+    url: https://42born2code.slack.com
+    about: Join the 42 community discussions
