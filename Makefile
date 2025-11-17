@@ -105,4 +105,6 @@ fclean: clean
 	@make -C $(LIBFT_DIR) fclean
 	@echo "[OK] $(NAME) removed"
 
+re: fclean all
+
 .PHONY: all clean fclean re bonus test
