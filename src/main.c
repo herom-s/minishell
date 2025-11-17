@@ -1,11 +1,21 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
+/*   Updated: 2025/11/17 15:13:13 by hermarti         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdio.h>
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-    (void)argc;
-    (void)argv;
-    printf("Hello, 42!\n");
-    return (0);
+	(void)argc;
+	(void)argv;
+	printf("Hello, 42!\n");
+	return (0);
 }
