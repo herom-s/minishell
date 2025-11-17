@@ -23,19 +23,24 @@ jobs:
     - name: Lint with norminette
       run: |
         echo "Running norminette..."
-        
+    
         # Run norminette and save output to file
         norminette src inc > norminette_results.txt 2>&1
         cat norminette_results.txt
-        
-        # Count errors and warnings
-        error_count=$(grep -c "Error:" norminette_results.txt || echo "0")
-        warning_count=$(grep -c "Warning:" norminette_results.txt || echo "0")
-
+    
+        # Count errors and warnings (fixed)
+        error_count=$(grep -c "Error:" norminette_results.txt 2>/dev/null || echo "0")
+        warning_count=$(grep -c "Warning:" norminette_results.txt 2>/dev/null || echo "0")
+    
+        # Remove any whitespace/newlines
+        error_count=$(echo $error_count | tr -d '\n\r ')
+        warning_count=$(echo $warning_count | tr -d '\n\r ')
+    
+        echo "Errors: $error_count, Warnings: $warning_count"
+    
         # Fail if any errors or warnings found
         if [ "$error_count" -gt 0 ] || [ "$warning_count" -gt 0 ]; then
           echo "❌ Norminette found $error_count errors and $warning_count warnings!"
           exit 1
         fi
-        
         echo "✅ Norminette check passed!"
