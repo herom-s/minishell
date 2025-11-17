@@ -71,6 +71,8 @@ This project bridges the gap between basic C programming and understanding how s
 - Make
 - Unix-like system (Linux, macOS)
 - CMocka (for testing - automatically installed by Makefile)
+- Git (for version control)
+- Python 3 and pip (for development tools)
 
 ### Build Instructions
 
@@ -80,17 +82,27 @@ git clone --recursive https://github.com/herom-s/minishell.git
 cd minishell
 ```
 
-2. **Build the project:**
+2. **Install development tools (optional but recommended):**
+```bash
+pip3 install --user 42-formatter norminette
+```
+
+3. **Set up Git hooks (recommended):**
+```bash
+make setup
+```
+
+4. **Build the project:**
 ```bash
 make
 ```
 
-3. **Build with bonus features (if available):**
+5. **Build with bonus features (if available):**
 ```bash
 make bonus
 ```
 
-4. **Clean build artifacts:**
+6. **Clean build artifacts:**
 ```bash
 make clean    # Remove object files
 make fclean   # Remove object files and executable
@@ -165,6 +177,41 @@ The test suite covers:
 - ✅ Return values
 - ✅ String manipulation
 - ✅ Memory management
+
+### Git Hooks
+
+The project includes Git hooks to enforce code quality:
+
+```bash
+# Install development tools
+pip3 install --user 42-formatter norminette
+
+# Install Git hooks
+make setup
+```
+
+**commit-msg hook**: Enforces conventional commit format
+- Format: `<type>(<scope>): <description>`
+- Valid types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
+- Examples:
+  - `feat(parser): add pipe support`
+  - `fix(builtins): correct cd behavior`
+  - `docs: update README`
+
+**pre-commit hook**: Automatic code formatting and validation
+- Formats C files using `c_formatter_42` (adds 42 headers)
+- Runs `norminette` to check coding standards
+- Automatically stages formatted files
+- Blocks commits with norm errors
+
+**Installation Requirements:**
+```bash
+# Install 42 formatter
+pip3 install --user 42-formatter
+
+# Install norminette
+pip3 install --user norminette
+```
 
 ## 📁 Project Structure
 
