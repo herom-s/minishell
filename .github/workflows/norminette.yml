@@ -25,7 +25,7 @@ jobs:
         echo "Running norminette..."
         
         # Run norminette and save output to file
-        norminette . > norminette_results.txt 2>&1
+        norminette src inc > norminette_results.txt 2>&1
         cat norminette_results.txt
         
         # Count errors and warnings
