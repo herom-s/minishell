@@ -14,8 +14,26 @@
 
 t_token_type	get_next_token(t_lexer *lexer)
 {
+	t_token_type	type;
 	if (lexer->ch == '=')
-		// build logic to get token
+		type = create_token(T_ASSIGN, lexer->ch);
+	else if (lexer->ch == '|')
+		type = create_token(T_PIPE, lexer->ch);
+	else if (lexer->ch == '&')
+		type = create_token(T_AMPERSAND, lexer->ch);
+	else if (lexer->ch == '<')
+		type = create_token(T_REDIRECT_IN, lexer->ch);
+	else if (lexer->ch == '>')
+		type = create_token(T_REDIRECT_OUT, lexer->ch);
+	else if (lexer->ch == '*')
+		type = create_token(T_ASTERISK, lexer->ch);
+	else if (lexer->ch == '$')
+		type = create_token(T_DOLLAR, lexer->ch);
+	else if (lexer->ch == '?')
+		type = create_token(T_QUESTION, lexer->ch);
+	else if (lexer->ch == 0)
+		type = create_token(T_EOF, lexer->ch);
+	// Create other tokens
 }
 
 void	read_char(t_lexer *lexer)
