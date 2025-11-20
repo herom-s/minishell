@@ -3,45 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thawan <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/19 07:31:53 by thawan            #+#    #+#             */
-/*   Updated: 2025/11/19 07:31:54 by thawan           ###   ########.fr       */
+/*   Created: 2025/11/20 15:09:25 by thaperei          #+#    #+#             */
+/*   Updated: 2025/11/20 15:09:28 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
-#define LEXER_H
+# define LEXER_H
 
-// |  &  ;  <  >  (  )  $  `  \  "  '  <space>  <tab>  <newline>
-// = * ?
-typedef enum	e_token_type
+typedef enum
 {
-	T_WORD,
-	T_PIPE,
-	T_AMPERSAND,
-	T_SQUOTE,
-	T_DQUOTE,
-	T_LBRACE,
-	T_RBRACE,
-	T_LPAREN,
-	T_RPAREN,
-	T_REDIRECT_IN,
-	T_REDIRECT_OUT,
-	T_APPEND,
-	T_HEREDOC,
-	T_EQUAL,
-	T_ASTERISK,
-	T_QUESTION,
-	T_DOLLAR,
-	T_EOF,
-	T_ILLEGAL,
-} t_token_type;
+	IDENT,
+	KEYWORD,
+	PIPE,
+	AMPERSAND,
+	SQUOTE,
+	DQUOTE,
+	LBRACE,
+	RBRACE,
+	LPAREN,
+	RPAREN,
+	REDIRECT_IN,
+	REDIRECT_OUT,
+	APPEND,
+	HEREDOC,
+	EQUAL,
+	ASTERISK,
+	QUESTION,
+	DOLLAR,
+	END,
+	ILLEGAL,
+}	t_token_type;
 
 typedef struct	s_token
 {
 	t_token_type	type;
-//	char			*type_str;
 	char			*literal;
 }	t_token;
 
@@ -53,4 +51,10 @@ typedef struct	s_lexer
 	char	ch;
 }	t_lexer;
 
-#endif 
+t_token	*get_next_token(t_lexer *lexer);
+t_lexer	*create_lexer(char *input);
+
+// Utils
+void	read_char(t_lexer *lexer);
+void	skip_whitespace(t_lexer *lexer);
+#endif

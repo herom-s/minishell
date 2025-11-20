@@ -3,99 +3,109 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thawan <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/19 07:32:40 by thawan            #+#    #+#             */
-/*   Updated: 2025/11/19 07:41:38 by thawan           ###   ########.fr       */
+/*   Created: 2025/11/20 09:43:21 by thaperei          #+#    #+#             */
+/*   Updated: 2025/11/20 15:08:57 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <string.h>
 #include "lexer.h"
+#include "libft.h"
 
-void	skip_whitespace(t_lexer *lexer)
+t_token	*create_identifier(t_lexer *lexer)
 {
-	while (ft_isspace(lexer->ch)) {
+	t_token	*token;
+	int		start;
+
+	start = lexer->position;
+	while (ft_isalnum(lexer->ch) || lexer->ch == '_')
 		read_char(lexer);
-	}
+	token = ft_calloc(sizeof(t_token), 1);
+	if (token == NULL)
+		return (NULL);
+	token->type = IDENT;
+	token->literal = ft_substr(lexer->input, start, lexer->position - start);
+	return (token);
 }
 
-t_token	*create_token(t_token_type type, char ch)
+t_token	*create_token(t_token_type type, char *ch)
 {
 	t_token	*token;
 
-	token = (token *)ft_calloc(sizeof(token), 1);
+	token = (t_token *)ft_calloc(sizeof(t_token), 1);
 	if (token == NULL)
 		return (NULL);
 	token->type = type;
-	token->literal = &ch;
+	token->literal = ft_substr(ch, 0, 1);
 	return (token);
-}
-
-t_token	*get_next_token(t_lexer *lexer)
-{
-	t_token	*token;
-	
-	skip_whitespace(lexer);
-	if (lexer->ch == '=')
-		token = create_token(T_ASSIGN, lexer->ch);
-	else if (lexer->ch == '|')
-		token = create_token(T_PIPE, lexer->ch);
-	else if (lexer->ch == '&')
-		token = create_token(T_AMPERSAND, lexer->ch);
-	else if (lexer->ch == '<')
-		token = create_token(T_REDIRECT_IN, lexer->ch);
-	else if (lexer->ch == '>')
-		token = create_token(T_REDIRECT_OUT, lexer->ch);
-	else if (lexer->ch == '*')
-		token = create_token(T_ASTERISK, lexer->ch);
-	else if (lexer->ch == '$')
-		token = create_token(T_DOLLAR, lexer->ch);
-	else if (lexer->ch == '?')
-		token = create_token(T_QUESTION, lexer->ch);
-	else if (lexer->ch == '\'')
-		token = create_token(T_SQUOTE, lexer->ch);
-	else if (lexer->ch == '\"')
-		token = create_token(T_DQUOTE, lexer->ch);
-	else if (lexer->ch == '{')
-		token = create_token(T_LBRACE, lexer->ch);
-	else if (lexer->ch == '}')
-		token = create_token(T_RBRACE, lexer->ch);
-	else if (lexer->ch == '(')
-		token = create_token(T_LPAREN, lexer->ch);
-	else if (lexer->ch == ')')
-		token = create_token(T_RPAREN, lexer->ch);
-	else if (lexer->ch == 0)
-		token = create_token(T_EOF, '');
-	else
-	{
-		if (ft_isalpha(lexer->ch))
-			// look for indetifier
-		else
-			token = create_token(T_ILLEGAL, lexer->ch);
-	}
-	return (token);
-}
-
-void	read_char(t_lexer *lexer)
-{
-	if (lexer->next_position >= strlen(lexer->input))
-		lexer->ch = 0;
-	else
-		lexer->ch = lexer->input[lexer->read_position];
-	lexer->position = lexer->read_position;
-	lexer->read_position++;
 }
 
 t_lexer	*create_lexer(char *input)
 {
 	t_lexer	*lexer;
 
-	lexer = (lexer *)ft_calloc(sizeof(lexer), 1);
+	if (input == NULL)
+		return (NULL);
+	lexer = ft_calloc(sizeof(t_lexer), 1);
 	if (lexer == NULL)
 		return (NULL);
 	lexer->input = input;
 	lexer->position = 0;
-	lexer->read_position = 0;
-	lexer->ch = input[lexer->position];
+	lexer->read_position = 1;
+	lexer->ch = lexer->input[lexer->position];
 	return lexer;
+}
+
+t_token	*get_next_token(t_lexer *lexer)
+{
+	t_token	*token;
+	
+	if (lexer == NULL)
+		return (NULL);
+	token = NULL;
+	skip_whitespace(lexer);
+	if (lexer->ch == '=')
+		token = create_token(EQUAL, &lexer->ch);
+	else if (lexer->ch == '|')
+		token = create_token(PIPE, &lexer->ch);
+	else if (lexer->ch == '&')
+		token = create_token(AMPERSAND, &lexer->ch);
+	else if (lexer->ch == '<')
+		token = create_token(REDIRECT_IN, &lexer->ch);
+	else if (lexer->ch == '>')
+		token = create_token(REDIRECT_OUT, &lexer->ch);
+	else if (lexer->ch == '*')
+		token = create_token(ASTERISK, &lexer->ch);
+	else if (lexer->ch == '$')
+		token = create_token(DOLLAR, &lexer->ch);
+	else if (lexer->ch == '?')
+		token = create_token(QUESTION, &lexer->ch);
+	else if (lexer->ch == '\'')
+		token = create_token(SQUOTE, &lexer->ch);
+	else if (lexer->ch == '\"')
+		token = create_token(DQUOTE, &lexer->ch);
+	else if (lexer->ch == '{')
+		token = create_token(LBRACE, &lexer->ch);
+	else if (lexer->ch == '}')
+		token = create_token(RBRACE, &lexer->ch);
+	else if (lexer->ch == '(')
+		token = create_token(LPAREN, &lexer->ch);
+	else if (lexer->ch == ')')
+		token = create_token(RPAREN, &lexer->ch);
+	else if (lexer->ch == 0)
+		token = create_token(END, 0);
+	else
+	{
+		if (ft_isalpha(lexer->ch))
+		{
+			token = create_identifier(lexer);
+			return (token);
+		}
+		else
+			token = create_token(ILLEGAL, &lexer->ch);
+	}
+	read_char(lexer);
+	return (token);
 }
