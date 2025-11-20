@@ -1,7 +1,7 @@
 NAME = minishell
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-INCLUDES = -I./inc -I$(LIBFT_DIR)
+INCLUDES = -I./inc -I$(LIBFT_DIR)/inc
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = inc
@@ -131,3 +131,4 @@ setup: check-tools
 	@bash scripts/setup-hooks.sh
 
 .PHONY: all clean fclean re bonus test setup check-tools
+
