@@ -1,29 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   hashtable.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:10:16 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/20 13:48:57 by hermarti         ###   ########.fr       */
+/*   Created: 2025/11/20 13:40:57 by hermarti          #+#    #+#             */
+/*   Updated: 2025/11/20 14:54:39 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef HASHTABLE_H
+# define HASHTABLE_H
 
-# include "eval.h"
-# include "shell_ast.h"
-# include <signal.h>
+# include <stdlib.h>
 
-typedef struct s_minishell
+typedef struct s_hashtable_item
 {
-	char				*input;
-	int					sig_shell;
-	t_shell_ast			*ast_shell;
-	t_shell_response	*shell_response;
-	struct sigaction	sigaction_shell;
-}						t_minishell;
+	const char			*key;
+	void				*value;
+}						t_hashtable_item;
+
+typedef struct s_hashtable
+{
+	t_hashtable_item	*items;
+	size_t				capacity;
+	size_t				len;
+}						t_hashtable;
 
 #endif
