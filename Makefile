@@ -2,6 +2,7 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
 	CFLAGS += -g2 -O0
@@ -142,3 +143,4 @@ setup: check-tools
 	@bash scripts/setup-hooks.sh
 
 .PHONY: all clean fclean re bonus test setup check-tools
+
