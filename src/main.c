@@ -17,6 +17,7 @@
 #include "print.h"
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <stdlib.h>
 
 int	main(int argc, char *argv[], char *envp[])
 {
@@ -35,5 +36,5 @@ int	main(int argc, char *argv[], char *envp[])
 		print_shell_response(shell.shell_response);
 		free(shell.input);
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
