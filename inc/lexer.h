@@ -26,8 +26,6 @@ typedef enum	e_token_type
 	T_RBRACE,
 	T_LPAREN,
 	T_RPAREN,
-	T_TAB,
-	T_NEWLINE,
 	T_REDIRECT_IN,
 	T_REDIRECT_OUT,
 	T_APPEND,
@@ -43,8 +41,8 @@ typedef enum	e_token_type
 typedef struct	s_token
 {
 	t_token_type	type;
-	char	*type_str;
-	char	*literal;
+//	char			*type_str;
+	char			*literal;
 }	t_token;
 
 typedef struct	s_lexer

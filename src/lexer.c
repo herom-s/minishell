@@ -12,28 +12,68 @@
 
 #include "lexer.h"
 
-t_token_type	get_next_token(t_lexer *lexer)
+void	skip_whitespace(t_lexer *lexer)
 {
-	t_token_type	type;
+	while (ft_isspace(lexer->ch)) {
+		read_char(lexer);
+	}
+}
+
+t_token	*create_token(t_token_type type, char ch)
+{
+	t_token	*token;
+
+	token = (token *)ft_calloc(sizeof(token), 1);
+	if (token == NULL)
+		return (NULL);
+	token->type = type;
+	token->literal = &ch;
+	return (token);
+}
+
+t_token	*get_next_token(t_lexer *lexer)
+{
+	t_token	*token;
+	
+	skip_whitespace(lexer);
 	if (lexer->ch == '=')
-		type = create_token(T_ASSIGN, lexer->ch);
+		token = create_token(T_ASSIGN, lexer->ch);
 	else if (lexer->ch == '|')
-		type = create_token(T_PIPE, lexer->ch);
+		token = create_token(T_PIPE, lexer->ch);
 	else if (lexer->ch == '&')
-		type = create_token(T_AMPERSAND, lexer->ch);
+		token = create_token(T_AMPERSAND, lexer->ch);
 	else if (lexer->ch == '<')
-		type = create_token(T_REDIRECT_IN, lexer->ch);
+		token = create_token(T_REDIRECT_IN, lexer->ch);
 	else if (lexer->ch == '>')
-		type = create_token(T_REDIRECT_OUT, lexer->ch);
+		token = create_token(T_REDIRECT_OUT, lexer->ch);
 	else if (lexer->ch == '*')
-		type = create_token(T_ASTERISK, lexer->ch);
+		token = create_token(T_ASTERISK, lexer->ch);
 	else if (lexer->ch == '$')
-		type = create_token(T_DOLLAR, lexer->ch);
+		token = create_token(T_DOLLAR, lexer->ch);
 	else if (lexer->ch == '?')
-		type = create_token(T_QUESTION, lexer->ch);
+		token = create_token(T_QUESTION, lexer->ch);
+	else if (lexer->ch == '\'')
+		token = create_token(T_SQUOTE, lexer->ch);
+	else if (lexer->ch == '\"')
+		token = create_token(T_DQUOTE, lexer->ch);
+	else if (lexer->ch == '{')
+		token = create_token(T_LBRACE, lexer->ch);
+	else if (lexer->ch == '}')
+		token = create_token(T_RBRACE, lexer->ch);
+	else if (lexer->ch == '(')
+		token = create_token(T_LPAREN, lexer->ch);
+	else if (lexer->ch == ')')
+		token = create_token(T_RPAREN, lexer->ch);
 	else if (lexer->ch == 0)
-		type = create_token(T_EOF, lexer->ch);
-	// Create other tokens
+		token = create_token(T_EOF, '');
+	else
+	{
+		if (ft_isalpha(lexer->ch))
+			// look for indetifier
+		else
+			token = create_token(T_ILLEGAL, lexer->ch);
+	}
+	return (token);
 }
 
 void	read_char(t_lexer *lexer)
@@ -50,8 +90,8 @@ t_lexer	*create_lexer(char *input)
 {
 	t_lexer	*lexer;
 
-	lexer = (lexer *)malloc(sizeof(lexer));
-	if (!lexer)
+	lexer = (lexer *)ft_calloc(sizeof(lexer), 1);
+	if (lexer == NULL)
 		return (NULL);
 	lexer->input = input;
 	lexer->position = 0;
