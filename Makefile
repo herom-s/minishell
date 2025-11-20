@@ -1,13 +1,25 @@
 NAME = minishell
-CC = gcc
+
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
+
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CFLAGS += -g2 -O0
+endif
+
 INCLUDES = -I./inc -I$(LIBFT_DIR)/inc
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = inc
-SRC_FILES = main.c
+SRC_FILES = main.c \
+			parser.c \
+			eval.c \
+			print.c
+
 SRC = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+LIBS = -lft -lreadline
 
 # Libft
 LIBFT_DIR = libft
@@ -40,7 +52,7 @@ $(LIBFT):
 	@make -C $(LIBFT_DIR)
 
 $(NAME): $(LIBFT) $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -L$(LIBFT_DIR) -lft -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) -L$(LIBFT_DIR) $(LIBS) -o $(NAME)
 	@echo "[OK] $(NAME) compiled successfully"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -48,7 +60,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 bonus: $(LIBFT) $(BONUS_OBJ)
-	$(CC) $(CFLAGS) $(BONUS_OBJ) -L$(LIBFT_DIR) -lft -o $(NAME)
+	$(CC) $(CFLAGS) $(BONUS_OBJ) -L$(LIBFT_DIR) $(LIBS) -o $(NAME)
 	@echo "[OK] $(NAME) bonus compiled successfully"
 
 $(BONUS_OBJ_DIR)/%.o: $(BONUS_DIR)/%.c

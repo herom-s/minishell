@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:10:16 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/20 13:48:57 by hermarti         ###   ########.fr       */
+/*   Created: 2025/11/20 13:19:27 by hermarti          #+#    #+#             */
+/*   Updated: 2025/11/20 14:55:54 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef PARSER_H
+# define PARSER_H
 
-# include "eval.h"
 # include "shell_ast.h"
-# include <signal.h>
 
-typedef struct s_minishell
-{
-	char				*input;
-	int					sig_shell;
-	t_shell_ast			*ast_shell;
-	t_shell_response	*shell_response;
-	struct sigaction	sigaction_shell;
-}						t_minishell;
+t_shell_ast	*read_input(char *input);
 
 #endif
