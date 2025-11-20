@@ -33,6 +33,7 @@ int	main(int argc, char *argv[], char *envp[])
 		shell.ast_shell = read_input(shell.input);
 		shell.shell_response = eval_ast(shell.ast_shell);
 		print_shell_response(shell.shell_response);
+		free(shell.input);
 	}
 	return (0);
 }
