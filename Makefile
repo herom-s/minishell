@@ -15,7 +15,9 @@ INC_DIR = inc
 SRC_FILES = main.c \
 			parser.c \
 			eval.c \
-			print.c
+			print.c \
+			lexer.c \
+			lexer_helpers.c \
 
 SRC = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

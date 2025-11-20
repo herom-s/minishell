@@ -6,7 +6,7 @@
 /*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 15:09:25 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/20 15:53:30 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/20 17:24:41 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,12 @@ typedef struct s_lexer
 	int		read_position;
 	char	ch;
 }	t_lexer;
+
+typedef struct s_hash_item
+{
+	char	*key;
+	int		value;
+}	t_hash_item;
 
 t_token	*get_next_token(t_lexer *lexer);
 t_lexer	*create_lexer(char *input);
