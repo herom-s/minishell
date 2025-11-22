@@ -9,6 +9,7 @@ ifeq ($(DEBUG), 1)
 endif
 
 INCLUDES = -I./inc -I$(LIBFT_DIR)/inc
+LEX_DIR = lexer
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = inc
@@ -16,10 +17,11 @@ SRC_FILES = main.c \
 			parser.c \
 			eval.c \
 			print.c \
-			lexer.c \
-			lexer_helpers.c \
+			$(LEX_DIR)/lexer.c \
+			$(LEX_DIR)/lexer_helpers.c \
+			$(LEX_DIR)/token.c \
 
-SRC = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
+SRC = $(SRC_FILES:%=$(SRC_DIR)/%)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 LIBS = -lft -lreadline
 
@@ -58,7 +60,7 @@ $(NAME): $(LIBFT) $(OBJ)
 	@echo "[OK] $(NAME) compiled successfully"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 bonus: $(LIBFT) $(BONUS_OBJ)
