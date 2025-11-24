@@ -13,12 +13,22 @@
 #include "libft.h"
 #include "lexer.h"
 
+int	is_metacharacter(char ch)
+{
+	return (ch == '|' || ch == '&' || ch == '(' || ch == ')' || ch == '<'
+		|| ch == '>' || ch == ' ' || ch == '\t' || ch == '\n' || ch == ';');
+}
+
+int	is_quoting(char ch)
+{
+	return (ch == '\'' || ch == '\"');
+}
+
 char	peek_char(t_lexer *lexer)
 {
-	if (lexer->read_position >= (int) ft_strlen(lexer->input))
+	if (lexer->read_position >= lexer->input_len)
 		return ('\0');
-	else
-		return (lexer->input[lexer->read_position]);
+	return (lexer->input[lexer->read_position]);
 }
 
 void	next_char(t_lexer *lexer)

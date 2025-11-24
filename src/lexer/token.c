@@ -13,15 +13,15 @@
 #include "lexer.h"
 #include "libft.h"
 
-void	check_if_has_duplicates(t_hash_item operator, char ch, t_token *token,
+void	set_operators(t_hash_item operator, char ch, t_token *token,
 		int idx)
 {
-	const t_hash_item	dup_operator[] = {{"||", OR_IF}, {"&&", AND_IF},
+	const t_hash_item	dup_operators[] = {{"||", OR_IF}, {"&&", AND_IF},
 	{"<<", DLESS}, {">>", DGREAT}};
 
 	if (ch == *(operator.key))
 	{
-		*token = (t_token){dup_operator[idx].value, dup_operator[idx].key,
+		*token = (t_token){dup_operators[idx].value, dup_operators[idx].key,
 			DUP_SIZE};
 	}
 	else
@@ -41,8 +41,7 @@ void	check_duplicate_operators(t_lexer *lexer, t_token *token)
 	{
 		if (lexer->ch == *(operators[i].key))
 		{
-			check_if_has_duplicates(operators[i], peek_char(lexer),
-				token, i);
+			set_operators(operators[i], peek_char(lexer), token, i);
 			if (token->len == DUP_SIZE)
 				next_char(lexer);
 		}

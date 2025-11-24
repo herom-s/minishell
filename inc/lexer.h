@@ -43,6 +43,7 @@ typedef struct s_token
 typedef struct s_lexer
 {
 	char	*input;
+	int		input_len;
 	int		position;
 	int		read_position;
 	char	ch;
@@ -63,6 +64,8 @@ void	check_duplicate_operators(t_lexer *lexer, t_token *token);
 void	check_operators(t_lexer *lexer, t_token *token);
 
 // Utils
+int		is_quoting(char ch);
+int		is_metacharacter(char ch);
 char	peek_char(t_lexer *lexer);
 void	next_char(t_lexer *lexer);
 void	skip_whitespace(t_lexer *lexer);
