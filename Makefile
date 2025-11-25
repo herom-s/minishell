@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g2 -O0
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
@@ -45,7 +45,7 @@ CMOCKA_VERSION = 1.1.7
 
 TEST_DIR = tests
 TEST_OBJ_DIR = obj_tests
-TEST_FILES = test_main.c
+TEST_FILES = test_main.c test_lexer.c
 TEST_SRC = $(addprefix $(TEST_DIR)/, $(TEST_FILES))
 TEST_OBJ = $(TEST_SRC:$(TEST_DIR)/%.c=$(TEST_OBJ_DIR)/%.o)
 TEST_BIN = run_tests
@@ -94,12 +94,12 @@ $(CMOCKA_LIB):
 
 # Test compilation
 $(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(CMOCKA_LIB)
-	@mkdir -p $(TEST_OBJ_DIR)
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -I$(CMOCKA_INCLUDE) $(INCLUDES) -c $< -o $@
 
 # Test binary
 $(TEST_BIN): $(CMOCKA_LIB) $(TEST_OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(TEST_OBJ) -L$(CMOCKA_BUILD)/src -lcmocka -L$(LIBFT_DIR) -lft -o $(TEST_BIN)
+	$(CC) $(CFLAGS) $(TEST_OBJ) $(OBJ) -L$(CMOCKA_BUILD)/src -lcmocka -lreadline -L$(LIBFT_DIR) -lft -o $(TEST_BIN)
 	@echo "[OK] Tests compiled successfully"
 
 # Run tests

@@ -52,8 +52,8 @@ typedef struct s_lexer
 
 typedef struct s_hash_item
 {
-	char	*key;
-	int		value;
+	char			*key;
+	t_token_type	value;
 }	t_hash_item;
 
 t_token	*get_next_token(t_lexer *lexer);
