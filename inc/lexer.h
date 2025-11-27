@@ -14,31 +14,7 @@
 # define LEXER_H
 # define CHAR_SIZE 1
 # define DUP_SIZE 2
-
-typedef enum s_token_type
-{
-	WORD,
-	PIPE,
-	OR_IF,
-	AMPERSAND,
-	AND_IF,
-	GREAT,
-	DGREAT,
-	LESS,
-	DLESS,
-	LPAREN,
-	RPAREN,
-	EQUAL,
-	END,
-	ILLEGAL,
-}	t_token_type;
-
-typedef struct s_token
-{
-	t_token_type	type;
-	char			*literal;
-	int				len;
-}	t_token;
+# include "token.h"
 
 typedef struct s_lexer
 {
@@ -56,9 +32,8 @@ typedef struct s_hash_item
 	t_token_type	value;
 }	t_hash_item;
 
-t_token	*get_next_token(t_lexer *lexer);
 t_lexer	*create_lexer(char *input);
-t_token	*create_token(t_token token);
+t_token	*get_next_token(t_lexer *lexer);
 void	read_word(t_lexer *lexer, t_token *token);
 void	check_duplicate_operators(t_lexer *lexer, t_token *token);
 void	check_operators(t_lexer *lexer, t_token *token);
