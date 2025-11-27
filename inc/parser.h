@@ -12,9 +12,15 @@
 
 #ifndef PARSER_H
 # define PARSER_H
+# include "lexer.h"
+# include "ast.h"
 
-# include "shell_ast.h"
+typedef struct	s_parser
+{
+	t_lexer	*lexer;
+	t_token	*cur_token;
+	t_token	*peek_token;
+}	t_parser;
 
-t_shell_ast	*read_input(char *input);
-
+t_ast	*read_input(char *input);
 #endif
