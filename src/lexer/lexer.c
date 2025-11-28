@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 09:43:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/22 17:09:49 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/27 20:42:36 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,4 +87,9 @@ t_lexer	*create_lexer(char *input)
 	lexer->read_position = 1;
 	lexer->ch = lexer->input[lexer->position];
 	return (lexer);
+}
+
+void	free_lexer(t_lexer *lexer)
+{
+	free(lexer);
 }
