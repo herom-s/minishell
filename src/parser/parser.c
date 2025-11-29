@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:51:10 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/29 14:46:08 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/29 14:58:21 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ t_ast	*parse(t_parser *parser)
 {
 	t_ast	*ast;
 
+	(void)parser;
 	ast = NULL;
 	return (ast);
 }
@@ -38,7 +39,7 @@ t_parser	*create_parser(t_lexer *lexer)
 	parser = ft_calloc(sizeof(t_parser), 1);
 	if (parser == NULL)
 		return (NULL);
-	*parser = (t_parser){lexer, NULL, NULL};
+	*parser = (t_parser){lexer, NULL, NULL, NULL};
 	next_token(parser);
 	next_token(parser);
 	return (parser);
