@@ -5,6 +5,7 @@
 typedef enum s_token_type
 {
 	WORD,
+	ASSIGN_WORD,
 	PIPE,
 	OR_IF,
 	AMPERSAND,
