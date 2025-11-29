@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 09:43:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/27 20:42:36 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/29 13:00:40 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	read_word(t_lexer *lexer, t_token *token)
 	quote = '\0';
 	start = lexer->position;
 	while (lexer->ch != '\0' && (!is_metacharacter(lexer->ch)
-				|| quote != '\0'))
+			|| quote != '\0'))
 	{
 		if (check_backslash(lexer) == 1)
 			continue ;
@@ -47,7 +47,7 @@ void	read_word(t_lexer *lexer, t_token *token)
 		}
 		next_char(lexer);
 	}
-	*token = (t_token) {WORD, lexer->input + start, lexer->position - start};
+	*token = (t_token){WORD, lexer->input + start, lexer->position - start};
 }
 
 t_token	*get_next_token(t_lexer *lexer)
@@ -81,11 +81,9 @@ t_lexer	*create_lexer(char *input)
 	lexer = ft_calloc(sizeof(t_lexer), 1);
 	if (lexer == NULL)
 		return (NULL);
-	lexer->input = input;
-	lexer->input_len = ft_strlen(input);
-	lexer->position = 0;
-	lexer->read_position = 1;
-	lexer->ch = lexer->input[lexer->position];
+	*lexer = (t_lexer){.input = input, .input_len = ft_strlen(input),
+		.position = 0, .read_position = 0, .ch = '\0', .tokens = NULL};
+	next_char(lexer);
 	return (lexer);
 }
 
