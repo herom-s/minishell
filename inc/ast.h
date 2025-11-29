@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/29 13:08:14 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/29 14:06:33 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ typedef struct s_ast
 			struct s_ast	*io_file;
 		}	s_cmd_prefix;
 		struct {
-			struct s_ast	*cmd_suffix;
+			struct s_ast	*io_file;
 			const char		*word;
-			struct s_ast	*cmd_prefix;
+			struct s_ast	*cmd_suffix;
 		}	s_cmd_suffix;
 		struct {
 			t_token		*op;
