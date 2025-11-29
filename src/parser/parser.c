@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:51:10 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/29 13:39:08 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/29 14:46:08 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,6 @@ t_ast	*parse(t_parser *parser)
 	t_ast	*ast;
 
 	ast = NULL;
-	while (parser->cur_token->type != END)
-	{
-		#code
-	}
 	return (ast);
 }
 
