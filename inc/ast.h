@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/29 14:06:33 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/29 14:55:40 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define AST_H
 # include "token.h"
 
-typedef enum e_ast_type {
+typedef enum e_ast_type
+{
 	LIST,
 	AND_OR,
 	PIPE_SEQ,
@@ -28,38 +29,47 @@ typedef enum e_ast_type {
 typedef struct s_ast
 {
 	t_ast_type	type;
-	union {
-		struct {
+	union
+	{
+		struct
+		{
 			struct s_ast	*left;
 			struct s_ast	*right;
 		}	s_list;
-		struct {
+		struct
+		{
 			struct s_ast	*left;
 			t_token			*op;
 			struct s_ast	*right;
 		}	s_and_or;
-		struct {
+		struct
+		{
 			struct s_ast	*left;
 			struct s_ast	*right;
 		}	s_pipe_seq;
-		struct {
+		struct
+		{
 			struct s_ast	*and_or;
 		}	s_subshell;
-		struct {
+		struct
+		{
 			struct s_ast	*cmd_prefix;
 			char			*cmd_name;
 			struct s_ast	*cmd_suffix;
 		}	s_simple_cmd;
-		struct {
+		struct
+		{
 			struct s_ast	*cmd_prefix;
 			struct s_ast	*io_file;
 		}	s_cmd_prefix;
-		struct {
+		struct
+		{
 			struct s_ast	*io_file;
 			const char		*word;
 			struct s_ast	*cmd_suffix;
 		}	s_cmd_suffix;
-		struct {
+		struct
+		{
 			t_token		*op;
 			const char	*filename;
 		}	s_io_file;
