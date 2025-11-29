@@ -10,6 +10,7 @@ endif
 
 INCLUDES = -I./inc -I$(LIBFT_DIR)/inc
 LEX_DIR = lexer
+PARSER_DIR = parser
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = inc
@@ -20,9 +21,11 @@ SRC_FILES = main.c \
 			$(LEX_DIR)/lexer.c \
 			$(LEX_DIR)/lexer_helpers.c \
 			$(LEX_DIR)/token.c \
+			$(PARSER_DIR)/parser.c \
 
 SRC = $(SRC_FILES:%=$(SRC_DIR)/%)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJ_WITHOUT_MAIN = $(filter-out $(OBJ_DIR)/main.o, $(OBJ))
 LIBS = -lft -lreadline
 
 # Libft
@@ -98,8 +101,8 @@ $(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(CMOCKA_LIB)
 	$(CC) $(CFLAGS) -I$(CMOCKA_INCLUDE) $(INCLUDES) -c $< -o $@
 
 # Test binary
-$(TEST_BIN): $(CMOCKA_LIB) $(TEST_OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(TEST_OBJ) $(OBJ) -L$(CMOCKA_BUILD)/src -lcmocka -lreadline -L$(LIBFT_DIR) -lft -o $(TEST_BIN)
+$(TEST_BIN): $(CMOCKA_LIB) $(TEST_OBJ) $(LIBFT) $(OBJ_WITHOUT_MAIN)
+	$(CC) $(CFLAGS) $(TEST_OBJ) $(OBJ_WITHOUT_MAIN) -L$(CMOCKA_BUILD)/src -lcmocka -lreadline -L$(LIBFT_DIR) -lft -o $(TEST_BIN)
 	@echo "[OK] Tests compiled successfully"
 
 # Run tests
