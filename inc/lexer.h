@@ -6,55 +6,42 @@
 /*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 15:09:25 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/20 15:53:30 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/22 15:55:33 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
 # define LEXER_H
-
-typedef enum s_token_type
-{
-	IDENT,
-	KEYWORD,
-	PIPE,
-	AMPERSAND,
-	SQUOTE,
-	DQUOTE,
-	LBRACE,
-	RBRACE,
-	LPAREN,
-	RPAREN,
-	REDIRECT_IN,
-	REDIRECT_OUT,
-	APPEND,
-	HEREDOC,
-	EQUAL,
-	ASTERISK,
-	QUESTION,
-	DOLLAR,
-	END,
-	ILLEGAL,
-}	t_token_type;
-
-typedef struct s_token
-{
-	t_token_type	type;
-	char			*literal;
-}	t_token;
+# define CHAR_SIZE 1
+# define DUP_SIZE 2
+# include "token.h"
 
 typedef struct s_lexer
 {
 	char	*input;
+	int		input_len;
 	int		position;
 	int		read_position;
 	char	ch;
+	t_token	*tokens;
 }	t_lexer;
 
-t_token	*get_next_token(t_lexer *lexer);
+typedef struct s_hash_item
+{
+	char			*key;
+	t_token_type	value;
+}	t_hash_item;
+
 t_lexer	*create_lexer(char *input);
+t_token	*get_next_token(t_lexer *lexer);
+void	read_word(t_lexer *lexer, t_token *token);
+void	check_duplicate_operators(t_lexer *lexer, t_token *token);
+void	check_operators(t_lexer *lexer, t_token *token);
 
 // Utils
-void	read_char(t_lexer *lexer);
+int		is_quoting(char ch);
+int		is_metacharacter(char ch);
+char	peek_char(t_lexer *lexer);
+void	next_char(t_lexer *lexer);
 void	skip_whitespace(t_lexer *lexer);
 #endif

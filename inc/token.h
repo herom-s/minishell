@@ -1,30 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_helpers.c                                    :+:      :+:    :+:   */
+/*   token.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 15:09:38 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/20 15:09:44 by thaperei         ###   ########.fr       */
+/*   Created: 2025/11/29 14:46:31 by thaperei          #+#    #+#             */
+/*   Updated: 2025/11/29 14:46:34 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "lexer.h"
+#ifndef TOKEN_H
+# define TOKEN_H
 
-void	read_char(t_lexer *lexer)
+typedef enum s_token_type
 {
-	if (lexer->read_position >= (int) ft_strlen(lexer->input))
-		lexer->ch = 0;
-	else
-		lexer->ch = lexer->input[lexer->read_position];
-	lexer->position = lexer->read_position;
-	lexer->read_position++;
-}
+	WORD,
+	ASSIGN_WORD,
+	PIPE,
+	OR_IF,
+	AMPERSAND,
+	AND_IF,
+	GREAT,
+	DGREAT,
+	LESS,
+	DLESS,
+	LPAREN,
+	RPAREN,
+	EQUAL,
+	END,
+	ILLEGAL,
+}	t_token_type;
 
-void	skip_whitespace(t_lexer *lexer)
+typedef struct s_token
 {
-	while (ft_isspace(lexer->ch))
-		read_char(lexer);
-}
+	t_token_type	type;
+	char			*literal;
+	int				len;
+}	t_token;
+
+t_token	*create_token(t_token token);
+#endif
