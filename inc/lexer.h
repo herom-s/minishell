@@ -6,7 +6,7 @@
 /*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 15:09:25 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/22 15:55:33 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/11/30 10:42:59 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_hash_item
 }	t_hash_item;
 
 t_lexer	*create_lexer(char *input);
+void	free_lexer(t_lexer *lexer);
 t_token	*get_next_token(t_lexer *lexer);
 void	read_word(t_lexer *lexer, t_token *token);
 void	check_duplicate_operators(t_lexer *lexer, t_token *token);

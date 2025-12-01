@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g2 -O0
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
@@ -20,7 +20,8 @@ SRC_FILES = main.c \
 			$(LEX_DIR)/lexer.c \
 			$(LEX_DIR)/lexer_helpers.c \
 			$(LEX_DIR)/token.c \
-			$(PARSER_DIR)/parser.c
+			$(PARSER_DIR)/parser.c \
+			$(PARSER_DIR)/parser_helpers.c
 
 SRC = $(SRC_FILES:%=$(SRC_DIR)/%)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
