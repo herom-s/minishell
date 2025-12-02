@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 06:50:01 by marvin            #+#    #+#             */
-/*   Updated: 2025/12/02 07:09:34 by marvin           ###   ########.fr       */
+/*   Updated: 2025/12/02 18:58:04 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,8 @@ void	print_ast(t_ast *node)
 
 char	*ast_type_to_str(t_ast_type type)
 {
-	const char	ast_type_hashmap[] = {
-	[LIST] = "list",
-	[AND_OR] = "and_or",
-	[PIPE_SEQ] = "pipe_seq",
-	[SUBSHELL] = "subshell",
-	[SIMPLE_CMD] = "simple_cmd",
-	[CMD_PREFIX] = "cmd_prefix",
-	[CMD_SUFFIX] = "cmd_suffix",
-	[IO_FILE] = "io_file"};
+	const char	*ast_literal_list[] = { "list", "and_or", "pipe_seq",
+		"subshell", "simple_cmd", "cmd_prefix", "cmd_suffix", "io_file"};
 
-	return (ast_type_hashmap[type]);
+	return ((char *) ast_literal_list[type]);
 }
