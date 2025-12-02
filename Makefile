@@ -10,18 +10,20 @@ endif
 
 INCLUDES = -I./inc -I$(LIBFT_DIR)/inc
 LEX_DIR = lexer
+AST_DIR = ast
 PARSER_DIR = parser
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = inc
 SRC_FILES = main.c \
-			eval.c \
-			print.c \
-			$(LEX_DIR)/lexer.c \
-			$(LEX_DIR)/lexer_helpers.c \
-			$(LEX_DIR)/token.c \
-			$(PARSER_DIR)/parser.c \
-			$(PARSER_DIR)/parser_helpers.c
+	    eval.c \
+	    print.c \
+	    $(LEX_DIR)/lexer.c \
+	    $(LEX_DIR)/lexer_helpers.c \
+	    $(LEX_DIR)/token.c \
+	    $(PARSER_DIR)/parser.c \
+	    $(PARSER_DIR)/parser_helpers.c \
+	    $(AST_DIR)/ast.c
 
 SRC = $(SRC_FILES:%=$(SRC_DIR)/%)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

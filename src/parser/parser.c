@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:51:10 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/01 07:25:36 by marvin           ###   ########.fr       */
+/*   Updated: 2025/12/02 07:18:50 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,22 +19,6 @@ void	next_token(t_parser *parser)
 {
 	parser->cur_token = parser->peek_token;
 	parser->peek_token = get_next_token(parser->lexer);
-}
-
-t_ast	*parsing(t_parser *parser)
-{
-	t_ast	*ast;
-
-	ast = NULL;
-	while (!cur_token_is(parser->cur_token->type, END))
-	{
-		ft_printf("token %s - %d\n", parser->cur_token->literal,
-			parser->cur_token->type);
-		free(parser->cur_token->literal);
-		free(parser->cur_token);
-		next_token(parser);
-	}
-	return (ast);
 }
 
 t_parser	*create_parser(t_lexer *lexer)
@@ -62,4 +46,20 @@ void	parser_error(t_parser *parser)
 void	free_parser(t_parser *parser)
 {
 	free(parser);
+}
+
+t_ast	*parsing(t_parser *parser)
+{
+	t_ast	*ast;
+
+	ast = NULL;
+	while (!cur_token_is(parser->cur_token->type, END))
+	{
+		ft_printf("token %s - %d\n", parser->cur_token->literal,
+			parser->cur_token->type);
+		free(parser->cur_token->literal);
+		free(parser->cur_token);
+		next_token(parser);
+	}
+	return (ast);
 }
