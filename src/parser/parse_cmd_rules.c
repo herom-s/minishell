@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast.c                                              :+:      :+:    :+:   */
+/*   parse_cmd_rules.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/03 06:54:35 by thaperei         ###   ########.fr       */
+/*   Created: 2025/12/03 07:43:26 by thaperei          #+#    #+#             */
+/*   Updated: 2025/12/03 07:48:20 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "token.h"
 #include "ast.h"
 #include "parser.h"
+#include "libft.h"
 
-// Do later
-// do a if-else check for the type of node and print
-void	print_ast(t_ast *node)
+void	parse_simple_cmd()
 {
-	if (!node)
-		return ;
+	// To do
 }
 
-char	*ast_type_to_str(t_ast_type type)
+void	parse_cmd_prefix()
 {
-	const char	*ast_literal_list[] = { "list", "and_or", "pipe_seq",
-		"subshell", "simple_cmd", "cmd_prefix", "cmd_suffix", "io_file"};
+	// To do
+}
 
-	return ((char *) ast_literal_list[type]);
+void	parse_cmd_suffix()
+{
+	// To do
 }

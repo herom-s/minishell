@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:19:27 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/01 07:30:55 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/03 07:48:10 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,14 @@ typedef struct s_parser
 t_parser	*create_parser(t_lexer *lexer);
 t_ast		*parsing(t_parser *parser);
 void		free_parser(t_parser *parser);
+
+void	parse_list();
+void	parse_and_or();
+void	parse_pipe_sequence();
+void	parse_io_redirect();
+void	parse_simple_cmd();
+void	parse_cmd_prefix();
+void	parse_cmd_suffix();
 
 // Parser helpers
 int	cur_token_is(t_token_type type, t_token_type expected);
