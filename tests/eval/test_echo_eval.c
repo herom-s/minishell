@@ -1,18 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_eval.c                                        :+:      :+:    :+:   */
+/*   test_echo_eval.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/01 11:24:57 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/01 11:25:55 by hermarti         ###   ########.fr       */
+/*   Created: 2025/12/03 16:58:33 by hermarti          #+#    #+#             */
+/*   Updated: 2025/12/03 16:58:52 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "eval.h"
-#include <cmocka.h>
 #include <fcntl.h>
 #include <setjmp.h>
 #include <stdarg.h>
@@ -21,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <cmocka.h>
 
 /*
  *   Helper struct to pass test parameters

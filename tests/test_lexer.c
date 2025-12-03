@@ -12,12 +12,12 @@
 
 #include "lexer.h"
 #include "libft.h"
-#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cmocka.h>
 
 void	test_one_char_operators(void **state)
 {

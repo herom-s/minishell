@@ -21,7 +21,12 @@ CMOCKA_VERSION = 1.1.7
 
 INCLUDES += -I$(CMOCKA_INCLUDE) -I$(TEST_INC_DIR)
 
-TEST_FILES = test_main.c test_lexer.c test_eval.c
+TEST_EVAL_DIR = eval
+TEST_FILES = test_main.c \
+			 test_lexer.c \
+			 $(TEST_EVAL_DIR)/test_echo_eval.c \
+			 $(TEST_EVAL_DIR)/test_pwd_eval.c
+
 TEST_OBJ = $(TEST_FILES:%.c=$(TEST_OBJ_DIR)/%.o)
 TEST_BIN = run_tests
 
