@@ -1,175 +1,104 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test_main.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+
+	+:+     */
+/*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+
+	+#+        */
+/*                                                +#+#+#+#+#+
+	+#+           */
+/*   Created: 2025/12/01 11:57:53 by hermarti          #+#    #+#             */
+/*   Updated: 2025/12/01 11:57:55 by hermarti         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+#include <cmocka.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <setjmp.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <cmocka.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
-/* 
- * Tests for minishell's main function
- * Since the main just prints "Hello, 42!\n", we'll test:
- * 1. Basic functionality
- * 2. Output validation (if we redirect stdout)
- * 3. Return value
- * 4. Argument handling
- */
-
-// Test 1: Verify the program can be called
-static void test_main_exists(void **state)
+static int	run_lexer_tests(void)
 {
-    (void)state;
-    // If this test runs, it means the program compiled successfully
-    assert_true(1);
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_one_char_operators),
+	};
+	printf("\n--- Lexer Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
-// Test 2: Test argument count handling
-static void test_argc_handling(void **state)
+static int	run_echo_builtin_tests(void)
 {
-    (void)state;
-    // Your main accepts argc and argv but doesn't use them yet
-    // We can verify this by checking it accepts different argument counts
-    
-    int argc1 = 1;
-    char *argv1[] = {"./minishell", NULL};
-    
-    int argc2 = 3;
-    char *argv2[] = {"./minishell", "arg1", "arg2", NULL};
-    
-    // These should both be valid
-    assert_true(argc1 > 0);
-    assert_true(argc2 > 0);
-    assert_non_null(argv1);
-    assert_non_null(argv2);
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_built_in_echo_basic,
+			setup_built_in_echo_basic_ast, teardown_free_echo_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_echo_n_basic,
+			setup_built_in_echo_n_basic_ast, teardown_free_echo_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_echo_empty,
+			setup_built_in_echo_empty_ast, teardown_free_echo_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_echo_n_empty,
+			setup_built_in_echo_n_empty_ast, teardown_free_echo_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_echo_mutiple_args,
+			setup_built_in_echo_mutiple_args_ast, teardown_free_echo_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_echo_n_mutiple_args,
+			setup_built_in_echo_n_mutiple_args_ast, teardown_free_echo_ast),
+	};
+	printf("\n--- Echo Builtin Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
-// Test 3: Verify expected output string
-static void test_expected_output(void **state)
+static void	print_usage(void)
 {
-    (void)state;
-    const char *expected = "Hello, 42!\n";
-    
-    // Test the string properties
-    assert_int_equal(strlen(expected), 11);
-    assert_true(expected[0] == 'H');
-    assert_true(expected[10] == '\n');
-    assert_string_equal(expected, "Hello, 42!\n");
+	printf("Usage: ./run_tests [OPTIONS]\n");
+	printf("Options:\n");
+	printf("  (no args)    Run all tests\n");
+	printf("  lexer        Run lexer tests only\n");
+	printf("  echo         Run echo builtin tests only\n");
+	printf("  -h, --help   Show this help message\n");
 }
 
-// Test 4: Verify return value expectation
-static void test_return_value(void **state)
+int	main(int argc, char *argv[])
 {
-    (void)state;
-    int expected_return = 0;
-    
-    // Main should return 0 for success
-    assert_int_equal(expected_return, 0);
-}
+	int	result;
+	int	failed;
 
-// Test 5: Test basic printf functionality
-static void test_printf_functionality(void **state)
-{
-    (void)state;
-    
-    // Redirect stdout to capture output
-    int pipefd[2];
-    pipe(pipefd);
-    
-    int saved_stdout = dup(STDOUT_FILENO);
-    dup2(pipefd[1], STDOUT_FILENO);
-    close(pipefd[1]);
-    
-    // Print the expected message
-    printf("Hello, 42!\n");
-    fflush(stdout);
-    
-    // Restore stdout
-    dup2(saved_stdout, STDOUT_FILENO);
-    close(saved_stdout);
-    
-    // Read what was printed
-    char buffer[100] = {0};
-    read(pipefd[0], buffer, sizeof(buffer) - 1);
-    close(pipefd[0]);
-    
-    // Verify output
-    assert_string_equal(buffer, "Hello, 42!\n");
-}
-
-// Test 6: Test string format components
-static void test_output_components(void **state)
-{
-    (void)state;
-    
-    // Test individual components of the output
-    char *greeting = "Hello";
-    int number = 42;
-    
-    assert_string_equal(greeting, "Hello");
-    assert_int_equal(number, 42);
-    
-    // Test formatted string
-    char output[50];
-    snprintf(output, sizeof(output), "%s, %d!\n", greeting, number);
-    assert_string_equal(output, "Hello, 42!\n");
-}
-
-// Test 7: Test argument array structure
-static void test_argv_structure(void **state)
-{
-    (void)state;
-    
-    char *argv[] = {"./minishell", "test", NULL};
-    
-    assert_non_null(argv[0]);
-    assert_string_equal(argv[0], "./minishell");
-    assert_non_null(argv[1]);
-    assert_string_equal(argv[1], "test");
-    assert_null(argv[2]);
-}
-
-// Test 8: Verify main signature expectations
-static void test_main_signature(void **state)
-{
-    (void)state;
-    
-    // Verify the expected types match
-    int argc = 1;
-    char **argv = malloc(sizeof(char *) * 2);
-    argv[0] = strdup("./minishell");
-    argv[1] = NULL;
-    
-    assert_true(argc >= 0);
-    assert_non_null(argv);
-    assert_non_null(argv[0]);
-    
-    free(argv[0]);
-    free(argv);
-}
-
-int main(void)
-{
-    printf("\n=== Running Minishell Tests ===\n");
-    printf("Testing main function: printf(\"Hello, 42!\\n\");\n\n");
-    
-    const struct CMUnitTest tests[] = {
-        cmocka_unit_test(test_main_exists),
-        cmocka_unit_test(test_argc_handling),
-        cmocka_unit_test(test_expected_output),
-        cmocka_unit_test(test_return_value),
-        cmocka_unit_test(test_printf_functionality),
-        cmocka_unit_test(test_output_components),
-        cmocka_unit_test(test_argv_structure),
-        cmocka_unit_test(test_main_signature),
-    };
-    
-    int result = cmocka_run_group_tests(tests, NULL, NULL);
-    
-    printf("\n=== Test Suite Complete ===\n");
-    printf("All tests verify the main function structure and behavior.\n\n");
-    
-    return result;
+	if (argc > 1)
+	{
+		if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
+		{
+			print_usage();
+			return (0);
+		}
+		if (strcmp(argv[1], "lexer") == 0)
+		{
+			printf("\n=== Running Lexer Tests ===\n");
+			return (run_lexer_tests());
+		}
+		if (strcmp(argv[1], "echo") == 0)
+		{
+			printf("\n=== Running Echo Builtin Tests ===\n");
+			return (run_echo_builtin_tests());
+		}
+		printf("Unknown option: %s\n", argv[1]);
+		print_usage();
+		return (1);
+	}
+	printf("\n=== Running Minishell Tests ===\n");
+	failed = 0;
+	result = run_lexer_tests();
+	if (result != 0)
+		failed += result;
+	result = run_echo_builtin_tests();
+	if (result != 0)
+		failed += result;
+	printf("\n=== Test Suite Complete ===\n");
+	if (failed > 0)
+		printf("Total failures: %d\n", failed);
+	else
+		printf("All tests passed!\n");
+	return (failed);
 }
