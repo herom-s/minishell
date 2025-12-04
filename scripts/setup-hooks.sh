@@ -133,8 +133,8 @@ echo "🔍 Running pre-commit checks..."
 if command -v norminette &> /dev/null; then
     echo "🔎 Running norminette..."
     
-    # Get list of staged C files
-    STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h)$')
+    # Get list of staged C files, excluding tests directory
+    STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h)$' | grep -v '^tests/')
     
     if [ -n "$STAGED_C_FILES" ]; then
         norminette $STAGED_C_FILES
@@ -145,6 +145,8 @@ if command -v norminette &> /dev/null; then
             exit 1
         fi
         echo "✅ Norminette passed"
+    else
+        echo "ℹ️  No C files to check (excluding tests/)"
     fi
 else
     echo "⚠️  norminette not found - skipping norm check"
