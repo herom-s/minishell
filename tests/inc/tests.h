@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 11:57:12 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/01 11:57:13 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/04 12:18:46 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ void	test_eval_built_in_echo_n_empty(void **state);
 void	test_eval_built_in_echo_mutiple_args(void **state);
 void	test_eval_built_in_echo_n_mutiple_args(void **state);
 
-// teardown for echo eval
-int		teardown_free_echo_ast(void **state);
 
 // setupt for pwd eval
 int		setup_built_in_pwd_basic_ast(void **state);
@@ -40,7 +38,13 @@ int		setup_built_in_pwd_basic_ast(void **state);
 // test for pwd eval
 void	test_eval_built_in_pwd_basic(void **stati);
 
-// teardown for pwd eval
-int		teardown_free_pwd_ast(void **state);
+
+// setupt for pwd eval
+int	setup_built_in_cd_path_ast(void **state);
+int	setup_built_in_cd_to_many_args_ast(void **state);
+
+// test for pwd eval
+void	test_eval_built_in_cd_path(void **state);
+void	test_eval_built_in_cd_to_many_args(void **state);
 
 #endif

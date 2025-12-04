@@ -19,6 +19,7 @@ SRC_FILES = main.c \
             $(LEX_DIR)/token.c \
             $(PARSER_DIR)/parser.c \
             $(EVAL_DIR)/eval.c \
+            $(EVAL_DIR)/util.c \
             $(EVAL_DIR)/cmd_str.c \
             $(EVAL_DIR)/cmd_str_helpers.c \
             $(EVAL_DIR)/builtin/cd.c \

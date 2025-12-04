@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/03 11:58:06 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:15:55 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef enum s_cmd_type
 typedef struct s_shell_response
 {
 	char				*output;
+	char				*curr_dir;
 	int					exit_code;
 	char				*erro_msg;
 }						t_shell_response;
@@ -36,6 +37,7 @@ typedef struct s_shell_response
 typedef struct s_cmd_response
 {
 	char				*output;
+	char				*curr_dir;
 	int					exit_code;
 	char				*erro_msg;
 }						t_cmd_response;
@@ -74,5 +76,7 @@ t_cmd_response			*func_built_in_pwd(t_ast *shell_ast, char **cmd_str,
 							char *envp[]);
 t_cmd_response			*func_built_in_unset(t_ast *shell_ast, char **cmd_str,
 							char *envp[]);
+
+char					*get_curdir(void);
 
 #endif

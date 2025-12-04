@@ -63,6 +63,7 @@ t_shell_response	*eval_ast(t_ast *shell_ast, char *envp[])
 			res->output = cmd_res->output;
 			res->exit_code = cmd_res->exit_code;
 			res->erro_msg = cmd_res->erro_msg;
+			res->curr_dir = cmd_res->curr_dir;
 			free(cmd_res);
 		}
 		free_cmd_str(call->cmd_str);
