@@ -20,8 +20,9 @@ SRC_FILES = main.c \
             $(PARSER_DIR)/parser.c \
             $(EVAL_DIR)/eval.c \
             $(EVAL_DIR)/util.c \
-            $(EVAL_DIR)/cmd_str.c \
-            $(EVAL_DIR)/cmd_str_helpers.c \
+			$(EVAL_DIR)/cmd/cmd.c \
+            $(EVAL_DIR)/cmd/cmd_str.c \
+            $(EVAL_DIR)/cmd/cmd_str_helpers.c \
             $(EVAL_DIR)/builtin/cd.c \
             $(EVAL_DIR)/builtin/echo.c \
             $(EVAL_DIR)/builtin/env.c \

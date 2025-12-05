@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/04 15:15:55 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/05 14:56:57 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define EVAL_H
 
 # include "ast.h"
+# include <stdlib.h>
 
 typedef enum s_cmd_type
 {
@@ -62,6 +63,8 @@ char					**get_bin_paths(char *envp[]);
 int						check_path(char *path, char *argv);
 int						check_builtin(char *cmd_name);
 
+t_cmd_response			*func_exec_cmd(t_ast *shell_ast, char **cmd_str,
+							char *envp[]);
 t_cmd_response			*func_built_in_cd(t_ast *shell_ast, char **cmd_str,
 							char *envp[]);
 t_cmd_response			*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
@@ -78,5 +81,6 @@ t_cmd_response			*func_built_in_unset(t_ast *shell_ast, char **cmd_str,
 							char *envp[]);
 
 char					*get_curdir(void);
+size_t					num_arguments(char **cmd_str);
 
 #endif

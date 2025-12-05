@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:50:32 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/03 11:54:00 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/05 16:56:52 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,25 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-t_cmd_func_call	*check_built_in_cmd(t_ast *shell_ast, char *envp[])
+t_cmd_func_call	*check_cmd(t_ast *shell_ast, char *envp[])
 {
 	int					i;
-	const char			*names[7] = {"cd", "pwd", "env", "export", "unset",
-		"echo", "exit"};
-	const t_cmd_func	funcs[7] = {&func_built_in_cd, &func_built_in_pwd,
-		&func_built_in_env, &func_built_in_export, &func_built_in_unset,
-		&func_built_in_echo, &func_built_in_exit};
 	t_cmd_func_call		*call;
+	const t_cmd_func	funcs[8] = {&func_built_in_cd, &func_built_in_pwd,
+		&func_built_in_env, &func_built_in_export, &func_built_in_unset,
+		&func_built_in_echo, &func_built_in_exit, &func_exec_cmd};
 
 	i = 0;
-	while (i < 7)
+	while (i < 8)
 	{
-		if (ft_strcmp(names[i], shell_ast->s_simple_cmd.cmd_name) == 0)
-		{
-			call = calloc(1, sizeof(t_cmd_func_call));
-			if (!call)
-				return (NULL);
-			call->cmd_func = funcs[i];
-			call->cmd_str = get_cmd_str(shell_ast->s_simple_cmd.cmd_name,
-					shell_ast->s_simple_cmd.cmd_suffix, envp);
-			call->envp = envp;
-			return (call);
-		}
+		call = ft_calloc(1, sizeof(t_cmd_func_call));
+		if (!call)
+			return (NULL);
+		call->cmd_func = funcs[i];
+		call->cmd_str = get_cmd_str(shell_ast->s_simple_cmd.cmd_name,
+				shell_ast->s_simple_cmd.cmd_suffix, envp);
+		call->envp = envp;
+		return (call);
 		i++;
 	}
 	return (NULL);
@@ -54,7 +49,7 @@ t_shell_response	*eval_ast(t_ast *shell_ast, char *envp[])
 	res = calloc(1, sizeof(t_shell_response));
 	if (!res)
 		return (NULL);
-	call = check_built_in_cmd(shell_ast, envp);
+	call = check_cmd(shell_ast, envp);
 	if (call)
 	{
 		cmd_res = call->cmd_func(shell_ast, call->cmd_str, envp);

@@ -74,15 +74,28 @@ static int	run_cd_builtin_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_exit_builtin_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_built_in_exit_single_arg_path,
+			setup_built_in_exit_single_arg_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_exit_to_many_args_path,
+			setup_built_in_exit_to_many_args_ast, teardown_free_cmd_ast),
+	};
+	printf("\n--- exit Builtin Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static void	print_usage(void)
 {
 	printf("Usage: ./run_tests [OPTIONS]\n");
 	printf("Options:\n");
 	printf("  (no args)    Run all tests\n");
 	printf("  lexer        Run lexer tests only\n");
-	printf("  echo         Run echo builtin tests only\n");
-	printf("  pwd          Run pwd builtin tests only\n");
 	printf("  cd           Run cd builtin tests only\n");
+	printf("  echo         Run echo builtin tests only\n");
+	printf("  exit         Run exit builtin tests only\n");
+	printf("  pwd          Run pwd builtin tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 
@@ -118,6 +131,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running cd Builtin Tests ===\n");
 			return (run_cd_builtin_tests());
 		}
+		if (strcmp(argv[1], "exit") == 0)
+		{
+			printf("\n=== Running exit Builtin Tests ===\n");
+			return (run_exit_builtin_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -127,13 +145,16 @@ int	main(int argc, char *argv[])
 	result = run_lexer_tests();
 	if (result != 0)
 		failed += result;
+	result = run_cd_builtin_tests();
+	if (result != 0)
+		failed += result;
 	result = run_echo_builtin_tests();
 	if (result != 0)
 		failed += result;
-	result = run_pwd_builtin_tests();
+	result = run_exit_builtin_tests();
 	if (result != 0)
 		failed += result;
-	result = run_cd_builtin_tests();
+	result = run_pwd_builtin_tests();
 	if (result != 0)
 		failed += result;
 	printf("\n=== Test Suite Complete ===\n");
