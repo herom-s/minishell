@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/03 06:54:35 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/05 07:56:28 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,19 @@ void	print_ast(t_ast *node)
 
 char	*ast_type_to_str(t_ast_type type)
 {
-	const char	*ast_literal_list[] = { "list", "and_or", "pipe_seq",
+	const char	*ast_literal_list[] = {"list", "and_or", "pipe_seq",
 		"subshell", "simple_cmd", "cmd_prefix", "cmd_suffix", "io_file"};
 
-	return ((char *) ast_literal_list[type]);
+	return ((char *)ast_literal_list[type]);
+}
+
+t_ast	*create_node(t_ast node)
+{
+	t_ast	*ast_node;
+
+	ast_node = ft_calloc(sizeof(t_ast), 1);
+	if (ast_node == NULL)
+		return (NULL);
+	*ast_node = node;
+	return (ast_node);
 }
