@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "eval.h"
-#include "libft.h"
 #include "lexer.h"
+#include "libft.h"
 #include "minishell.h"
 #include "parser.h"
 #include "print.h"
@@ -22,8 +22,8 @@
 
 void	parse_input(char *input)
 {
-	t_lexer		*lexer;
-	t_token		*token;
+	t_lexer	*lexer;
+	t_token	*token;
 
 	lexer = create_lexer(input);
 	while (1)
@@ -52,9 +52,6 @@ int	main(int argc, char *argv[], char *envp[])
 		shell.input = readline("minishell> ");
 		parse_input(shell.input);
 		add_history(shell.input);
-//		shell.ast_shell = read_input(shell.input);
-//		shell.shell_response = eval_ast(shell.ast_shell);
-//		print_shell_response(shell.shell_response);
 	}
 	return (EXIT_SUCCESS);
 }
