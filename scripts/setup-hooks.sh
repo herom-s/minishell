@@ -16,15 +16,7 @@ if [ ! -d ".git" ]; then
 fi
 
 # Check for required tools
-FORMATTER_INSTALLED=false
 NORMINETTE_INSTALLED=false
-
-if command -v c_formatter_42 &> /dev/null; then
-    FORMATTER_INSTALLED=true
-    echo -e "${GREEN}[OK]${NC} c_formatter_42 found"
-else
-    echo -e "${YELLOW}[WARNING]${NC} c_formatter_42 not found"
-fi
 
 if command -v norminette &> /dev/null; then
     NORMINETTE_INSTALLED=true
@@ -127,46 +119,22 @@ chmod +x "$COMMIT_MSG_HOOK"
 
 echo -e "${GREEN}[OK]${NC} commit-msg hook installed"
 
-# Create pre-commit hook for formatting and norminette
+# Create pre-commit hook for norminette only
 PRE_COMMIT_HOOK=".git/hooks/pre-commit"
 
 cat > "$PRE_COMMIT_HOOK" << 'EOF'
 #!/bin/sh
 
-# Pre-commit hook for formatting and norminette
+# Pre-commit hook for norminette
 
 echo "🔍 Running pre-commit checks..."
-
-# Check if c_formatter_42 is available
-if command -v c_formatter_42 &> /dev/null; then
-    echo "📝 Formatting C files with c_formatter_42..."
-    
-    # Get list of staged C files
-    STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h)$')
-    
-    if [ -n "$STAGED_C_FILES" ]; then
-        for file in $STAGED_C_FILES; do
-            if [ -f "$file" ]; then
-                echo "  Formatting: $file"
-                c_formatter_42 "$file"
-                git add "$file"
-            fi
-        done
-        echo "✅ C files formatted successfully"
-    else
-        echo "ℹ️  No C files to format"
-    fi
-else
-    echo "⚠️  c_formatter_42 not found - skipping formatting"
-    echo "    Install with: pip3 install --user 42-formatter"
-fi
 
 # Run norminette if available
 if command -v norminette &> /dev/null; then
     echo "🔎 Running norminette..."
     
-    # Get list of staged C files
-    STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h)$')
+    # Get list of staged C files, excluding tests directory
+    STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h)$' | grep -v '^tests/')
     
     if [ -n "$STAGED_C_FILES" ]; then
         norminette $STAGED_C_FILES
@@ -177,6 +145,8 @@ if command -v norminette &> /dev/null; then
             exit 1
         fi
         echo "✅ Norminette passed"
+    else
+        echo "ℹ️  No C files to check (excluding tests/)"
     fi
 else
     echo "⚠️  norminette not found - skipping norm check"
@@ -197,18 +167,11 @@ echo -e "${GREEN}✨ Git hooks setup complete!${NC}"
 echo ""
 echo "Installed hooks:"
 echo "  - commit-msg: Validates conventional commit format"
-echo "  - pre-commit: Formats C files and runs norminette"
+echo "  - pre-commit: Runs norminette"
 echo ""
 
 # Show tool status
 echo "Development tools status:"
-if [ "$FORMATTER_INSTALLED" = true ]; then
-    echo -e "  ${GREEN}✓${NC} c_formatter_42 - installed"
-else
-    echo -e "  ${RED}✗${NC} c_formatter_42 - not installed"
-    echo -e "    ${BLUE}→${NC} pip3 install --user 42-formatter"
-fi
-
 if [ "$NORMINETTE_INSTALLED" = true ]; then
     echo -e "  ${GREEN}✓${NC} norminette - installed"
 else
@@ -218,14 +181,9 @@ fi
 
 echo ""
 
-if [ "$FORMATTER_INSTALLED" = false ] || [ "$NORMINETTE_INSTALLED" = false ]; then
-    echo -e "${YELLOW}[INFO]${NC} Some tools are missing. Install them for full functionality:"
+if [ "$NORMINETTE_INSTALLED" = false ]; then
+    echo -e "${YELLOW}[INFO]${NC} Norminette is missing. Install it for full functionality:"
     echo ""
-    if [ "$FORMATTER_INSTALLED" = false ]; then
-        echo "  pip3 install --user 42-formatter"
-    fi
-    if [ "$NORMINETTE_INSTALLED" = false ]; then
-        echo "  pip3 install --user norminette"
-    fi
+    echo "  pip3 install --user norminette"
     echo ""
 fi

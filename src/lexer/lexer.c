@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 09:43:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/29 13:00:40 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/06 16:17:07 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,4 @@ t_lexer	*create_lexer(char *input)
 		.position = 0, .read_position = 0, .ch = '\0', .tokens = NULL};
 	next_char(lexer);
 	return (lexer);
-}
-
-void	free_lexer(t_lexer *lexer)
-{
-	free(lexer);
 }

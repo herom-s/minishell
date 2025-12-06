@@ -6,13 +6,13 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/01 06:25:07 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/06 16:16:06 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "eval.h"
-#include "libft.h"
 #include "lexer.h"
+#include "libft.h"
 #include "minishell.h"
 #include "parser.h"
 #include "print.h"
@@ -36,12 +36,12 @@ void	parse_input(char *input)
 	if (parser == NULL)
 	{
 		ft_printf("Failed to create parser\n");
-		free_lexer(lexer);
+		free(lexer);
 		return ;
 	}
 	ast = parsing(parser);
-	free_lexer(lexer);
-	free_parser(parser);
+	free(lexer);
+	free(parser);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -59,10 +59,6 @@ int	main(int argc, char *argv[], char *envp[])
 			break ;
 		parse_input(shell.input);
 		add_history(shell.input);
-//		shell.ast_shell = read_input(shell.input);
-//		shell.shell_response = eval_ast(shell.ast_shell);
-//		print_shell_response(shell.shell_response);
-		free(shell.input);
 	}
 	return (EXIT_SUCCESS);
 }
