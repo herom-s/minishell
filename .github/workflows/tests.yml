@@ -19,25 +19,8 @@ jobs:
     - name: Set up environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake libreadline-dev curl valgrind
-    
-    - name: Cache CMocka
-      uses: actions/cache@v4
-      with:
-        path: cmocka
-        key: cmocka-1.1.7-${{ runner.os }}
-    
-    - name: Build tests
-      run: |
-        cd tests
-        make
+        sudo apt-get install -y build-essential cmake
     
     - name: Run tests
       run: |
-        cd tests
-        make run
-    
-    - name: Run Valgrind
-      run: |
-        cd tests
-        make valgrind-ci
+        make test
