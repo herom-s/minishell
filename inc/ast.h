@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/05 07:37:00 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/06 10:35:43 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,48 +31,48 @@ typedef struct s_ast
 	t_ast_type	type;
 	union
 	{
-		struct s_list
+		struct
 		{
 			struct s_ast	*left;
 			struct s_ast	*right;
-		};
-		struct s_and_or
+		}	s_list;
+		struct
 		{
 			struct s_ast	*left;
 			t_token			*op;
 			struct s_ast	*right;
-		};
-		struct s_pipe_seq
+		}	s_and_or;
+		struct
 		{
 			struct s_ast	*left;
 			struct s_ast	*right;
-		};
-		struct s_subshell
+		}	s_pipe_seq;
+		struct
 		{
 			struct s_ast	*and_or;
-		};
-		struct s_simple_cmd
+		}	s_subshell;
+		struct
 		{
 			struct s_ast	*cmd_prefix;
 			char			*cmd_name;
 			struct s_ast	*cmd_suffix;
-		};
-		struct s_cmd_prefix
+		}	s_simple_cmd;
+		struct
 		{
 			struct s_ast	*cmd_prefix;
 			struct s_ast	*io_file;
-		};
-		struct s_cmd_suffix
+		}	s_cmd_prefix;
+		struct
 		{
 			struct s_ast	*io_file;
 			const char		*word;
 			struct s_ast	*cmd_suffix;
-		};
-		struct s_io_file
+		}	s_cmd_suffix;
+		struct
 		{
 			t_token		*op;
 			const char	*filename;
-		};
+		}	s_io_file;
 	} u_ast;
 }	t_ast;
 #endif
