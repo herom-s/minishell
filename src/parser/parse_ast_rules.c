@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:40:57 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/06 14:09:59 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/06 17:25:03 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,34 +67,39 @@ t_ast	*parse_simple_cmd(t_parser *parser)
 	t_ast	*cmd_suffix;
 
 	cmd_prefix = parse_cmd_prefix(parser);
-	if (cur_token_is(parser->cur_token, (1 << WORD)))
-	{
-		node.cmd_name = parser->cur_token->literal;
-	}
+	node.cmd_name = parser->cur_token->literal;
 	next_token(parser);
 	cmd_suffix = parse_cmd_suffix(parser);
 	node = (t_ast){.cmd_prefix = cmd_prefix, .cmd_suffix = cmd_suffix};
 	return create_ast(node);
 }
 
-// To do
-// cat > echo > file1
 t_ast	*parse_cmd_prefix(t_parser *parser)
 {
 	t_ast	node;
 	t_ast	*io_file;
 	t_ast	*cmd_prefix;
 
+	cmd_prefix = NULL;
 	io_file = parse_io_redirect(parser);
 	if (peek_token_is(parser, (1 << GREAT) | (1 << DGREAT)
 			| (1 << LESS) | (1 << DLESS)))
 		cmd_prefix = parse_io_redirect(parser);
-	node = (t_ast){.type = AST_CMD_PREFIX, .io_file = io_file, .cmd_prefix = cmd_prefix};
+	node = (t_ast){.type = AST_CMD_PREFIX, .io_file = io_file,
+		.cmd_prefix = cmd_prefix};
 	return create_ast(node);
 }
 
-// To do
-void	parse_cmd_suffix()
+t_ast	*parse_cmd_suffix(t_parser *parser)
 {
-	return ;
+	t_ast	node;
+	t_ast	*io_file;
+	t_ast	*cmd_prefix;
+
+	cmd_prefix = parse_cmd_prefix(parser);
+	node.word = parser->cur_token->literal;
+	next_token(parser);
+	cmd_suffix = parse_cmd_suffix(parser);
+	node = (t_ast){.cmd_prefix = cmd_prefix, .cmd_suffix = cmd_suffix}
+	return create_ast(node);
 }
