@@ -6,13 +6,14 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/05 07:56:28 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/06 10:49:42 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "token.h"
 #include "ast.h"
 #include "parser.h"
+#include "libft.h"
 
 // Do later
 // do a if-else check for the type of node and print
@@ -34,7 +35,7 @@ t_ast	*create_node(t_ast node)
 {
 	t_ast	*ast_node;
 
-	ast_node = ft_calloc(sizeof(t_ast), 1);
+	ast_node = ft_calloc(1, sizeof(t_ast));
 	if (ast_node == NULL)
 		return (NULL);
 	*ast_node = node;
