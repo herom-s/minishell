@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/06 10:35:43 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/07 09:06:11 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,7 @@ typedef struct s_ast
 		}	s_io_file;
 	} u_ast;
 }	t_ast;
+
+t_ast	*create_ast(t_ast node);
+void	print_ast(t_ast *node);
 #endif
