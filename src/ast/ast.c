@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/06 10:49:42 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/07 09:05:30 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,48 @@
 #include "ast.h"
 #include "parser.h"
 #include "libft.h"
-
-// Do later
-// do a if-else check for the type of node and print
-void	print_ast(t_ast *node)
-{
-	if (!node)
-		return ;
-}
+#include <stdio.h>
 
 char	*ast_type_to_str(t_ast_type type)
 {
-	const char	*ast_literal_list[] = {"list", "and_or", "pipe_seq",
-		"subshell", "simple_cmd", "cmd_prefix", "cmd_suffix", "io_file"};
+	const char	*ast_literal_list[] = {
+		[AST_LIST] = "list",
+		[AST_AND_OR] = "and_or",
+		[AST_PIPE_SEQ] "pipe_seq",
+		[AST_SUBSHELL] = "subshell",
+		[AST_SIMPLE_CMD] = "simple_cmd",
+		[AST_CMD_PREFIX] = "cmd_prefix",
+		[AST_CMD_SUFFIX] = "cmd_suffix",
+		[AST_IO_FILE] = "io_file",
+	};
 
 	return ((char *)ast_literal_list[type]);
 }
 
-t_ast	*create_node(t_ast node)
+void	print_ast(t_ast *node)
+{
+	if (!node)
+	 	return ;
+
+	if (node->type == AST_AND_OR)
+	{
+		printf("operation: %s\n", node->u_ast.s_and_or.op->literal);
+		print_ast(node->u_ast.s_and_or.left);
+		print_ast(node->u_ast.s_and_or.right);
+	}
+	else if (node->type == AST_PIPE_SEQ)
+	{
+		printf("type: %s\n", ast_type_to_str(node->type));
+		print_ast(node->u_ast.s_pipe_seq.left);
+		print_ast(node->u_ast.s_pipe_seq.right);
+	}
+	else if (node->type == AST_SIMPLE_CMD)
+	{
+		printf("cmd_name: %s\n", node->u_ast.s_simple_cmd.cmd_name);
+	}
+}
+
+t_ast	*create_ast(t_ast node)
 {
 	t_ast	*ast_node;
 

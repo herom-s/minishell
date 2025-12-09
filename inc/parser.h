@@ -35,6 +35,7 @@ t_ast	*parse_io_redirect(t_parser *parser);
 t_ast	*parse_simple_cmd(t_parser *parser);
 t_ast	*parse_cmd_prefix(t_parser *parser);
 t_ast	*parse_cmd_suffix(t_parser *parser);
+t_ast	*parse_subshell(t_parser *parser);
 
 // Parser helpers
 int		cur_token_is(t_token *token, t_token_type expected);

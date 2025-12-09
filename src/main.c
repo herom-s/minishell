@@ -40,6 +40,7 @@ void	parse_input(char *input)
 		return ;
 	}
 	ast = parsing(parser);
+	(void)ast;
 	free(lexer);
 	free(parser);
 }
