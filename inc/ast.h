@@ -77,5 +77,5 @@ typedef struct s_ast
 }	t_ast;
 
 t_ast	*create_ast(t_ast node);
-void	print_ast(t_ast *node);
+void	print_ast(t_ast *node, int depth);
 #endif
