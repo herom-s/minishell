@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/07 09:05:30 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/12 18:37:40 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ast_type_to_str(t_ast_type type)
 	const char	*ast_literal_list[] = {
 		[AST_LIST] = "list",
 		[AST_AND_OR] = "and_or",
-		[AST_PIPE_SEQ] "pipe_seq",
+		[AST_PIPE_SEQ] = "pipe_seq",
 		[AST_SUBSHELL] = "subshell",
 		[AST_SIMPLE_CMD] = "simple_cmd",
 		[AST_CMD_PREFIX] = "cmd_prefix",

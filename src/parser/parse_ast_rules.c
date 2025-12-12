@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:40:57 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/12 18:11:33 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/12 18:37:13 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,9 @@ t_ast	*parse_cmd_suffix(t_parser *parser)
 	char	*word;
 
 	cmd_suffix = NULL;
+	io_file = NULL;
+	cmd_suffix = NULL;
+	word = NULL;
 	if (cur_token_is(parser->cur_token, ((1 << GREAT) | (1 << DGREAT)
 			| (1 << LESS) | (1 << DLESS))))
 		io_file = parse_io_redirect(parser);
