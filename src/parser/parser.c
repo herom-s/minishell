@@ -43,8 +43,8 @@ t_ast	*parsing(t_parser *parser)
 	ast = NULL;
 	while (!cur_token_is(parser->cur_token, 1 << END))
 	{
-		ft_printf("token %s - %d\n", parser->cur_token->literal,
-			parser->cur_token->type);
+		ast = parse_and_or(parser);
+		print_ast(ast, 0);
 		free(parser->cur_token->literal);
 		free(parser->cur_token);
 		next_token(parser);

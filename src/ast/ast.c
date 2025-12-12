@@ -32,26 +32,61 @@ char	*ast_type_to_str(t_ast_type type)
 	return ((char *)ast_literal_list[type]);
 }
 
-void	print_ast(t_ast *node)
+void	print_ast(t_ast *node, int depth)
 {
+	int	ident_space;
+
 	if (!node)
 	 	return ;
-
+	ident_space = 2;
 	if (node->type == AST_AND_OR)
 	{
-		printf("operation: %s\n", node->u_ast.s_and_or.op->literal);
-		print_ast(node->u_ast.s_and_or.left);
-		print_ast(node->u_ast.s_and_or.right);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+		print_ast(node->u_ast.s_and_or.left, depth + 1);
+		print_ast(node->u_ast.s_and_or.right, depth + 1);
 	}
 	else if (node->type == AST_PIPE_SEQ)
 	{
-		printf("type: %s\n", ast_type_to_str(node->type));
-		print_ast(node->u_ast.s_pipe_seq.left);
-		print_ast(node->u_ast.s_pipe_seq.right);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+		print_ast(node->u_ast.s_pipe_seq.left, depth + 1);
+		print_ast(node->u_ast.s_pipe_seq.right, depth + 1);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
 	}
 	else if (node->type == AST_SIMPLE_CMD)
 	{
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+		print_ast(node->u_ast.s_simple_cmd.cmd_prefix, depth + 1);
 		printf("cmd_name: %s\n", node->u_ast.s_simple_cmd.cmd_name);
+		print_ast(node->u_ast.s_simple_cmd.cmd_suffix, depth + 1);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+	}
+	else if (node->type == AST_CMD_PREFIX)
+	{
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+		print_ast(node->u_ast.s_cmd_prefix.cmd_prefix, depth + 1);
+		print_ast(node->u_ast.s_cmd_prefix.io_file, depth + 1);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+	}
+	else if (node->type == AST_CMD_SUFFIX)
+	{
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+		print_ast(node->u_ast.s_cmd_suffix.io_file, depth + 1);
+		printf("word: %s\n", node->u_ast.s_cmd_suffix.word);
+		print_ast(node->u_ast.s_cmd_suffix.cmd_suffix, depth + 1);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+	}
+	else if (node->type == AST_IO_FILE)
+	{
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+		printf("operation: %s\n", node->u_ast.s_io_file.op->literal);
+		printf("filename: %s\n", node->u_ast.s_io_file.filename);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+	}
+	else if (node->type == AST_SUBSHELL)
+	{
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
+		print_ast(node->u_ast.s_subshell.and_or, depth + 1);
+		printf("%*s<%s>\n", ident_space * depth, "", ast_type_to_str(node->type));
 	}
 }
 
