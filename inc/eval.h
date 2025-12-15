@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/05 14:56:57 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/15 14:10:45 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define EVAL_H
 
 # include "ast.h"
+# include "hashtable.h"
 # include <stdlib.h>
 
 typedef enum s_cmd_type
@@ -43,17 +44,25 @@ typedef struct s_cmd_response
 	char				*erro_msg;
 }						t_cmd_response;
 
+typedef struct s_shell_env
+{
+	t_hashtable			*vars;
+	t_list				*order;
+}						t_shell_env;
+
 typedef t_cmd_response	*(*t_cmd_func)(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *shell_env, char *envp[]);
 
 typedef struct s_cmd_func_call
 {
 	t_cmd_func			cmd_func;
+	t_shell_env			*env;
 	char				**cmd_str;
 	char				**envp;
 }						t_cmd_func_call;
 
-t_shell_response		*eval_ast(t_ast *shell_ast, char *envp[]);
+t_shell_response		*eval_ast(t_ast *shell_ast, t_shell_env *env,
+							char *envp[]);
 
 char					**get_cmd_str(char *cmd_name, t_ast *cmd_suffix,
 							char *envp[]);
@@ -64,23 +73,27 @@ int						check_path(char *path, char *argv);
 int						check_builtin(char *cmd_name);
 
 t_cmd_response			*func_exec_cmd(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_cd(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_env(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_export(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_pwd(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_unset(t_ast *shell_ast, char **cmd_str,
-							char *envp[]);
+							t_shell_env *env, char *envp[]);
+
+t_shell_env				*create_shell_env(char *envp[]);
+void					*destroy_shell_env(t_shell_env *env);
 
 char					*get_curdir(void);
+t_cmd_func				get_cmd_func(char *cmd_name);
 size_t					num_arguments(char **cmd_str);
 
 #endif

@@ -26,6 +26,7 @@ typedef struct s_test_cmd_params
 
 
 t_ast	*create_cmd_ast(char *cmd_name, char **args, int arg_count);
+void	free_cmd_ast(t_ast *ast);
 
 int	teardown_free_cmd_ast(void **state);
 

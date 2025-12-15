@@ -13,8 +13,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "tests.h"
 #include "test_eval.h"
+#include "tests.h"
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -74,6 +74,20 @@ static int	run_cd_builtin_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_env_builtin_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_built_in_env_no_args,
+			setup_built_in_env_no_args_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_env_not_empty,
+			setup_built_in_env_no_args_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_env_contains_path,
+			setup_built_in_env_no_args_ast, teardown_free_cmd_ast),
+	};
+	printf("\n--- env Builtin Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static int	run_exit_builtin_tests(void)
 {
 	const struct CMUnitTest tests[] = {
@@ -86,6 +100,36 @@ static int	run_exit_builtin_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_export_builtin_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_built_in_export_no_args,
+			setup_built_in_export_no_args_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_export_arg,
+			setup_built_in_export_arg_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_export_mutiple_args,
+			setup_built_in_export_mutiple_args_ast, teardown_free_cmd_ast),
+	};
+	printf("\n--- export Builtin Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
+static int	run_unset_builtin_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_built_in_unset_no_args,
+			setup_built_in_unset_no_args_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_unset_single_var,
+			setup_built_in_unset_single_var_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_unset_multiple_vars,
+			setup_built_in_unset_multiple_vars_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_unset_nonexistent,
+			setup_built_in_unset_nonexistent_ast, teardown_free_cmd_ast),
+	};
+	printf("\n--- unset Builtin Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static void	print_usage(void)
 {
 	printf("Usage: ./run_tests [OPTIONS]\n");
@@ -94,8 +138,11 @@ static void	print_usage(void)
 	printf("  lexer        Run lexer tests only\n");
 	printf("  cd           Run cd builtin tests only\n");
 	printf("  echo         Run echo builtin tests only\n");
+	printf("  env          Run env  builtin tests only\n");
 	printf("  exit         Run exit builtin tests only\n");
+	printf("  export       Run export builtin tests only\n");
 	printf("  pwd          Run pwd builtin tests only\n");
+	printf("  unset        Run unset builtin tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 
@@ -131,10 +178,25 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running cd Builtin Tests ===\n");
 			return (run_cd_builtin_tests());
 		}
+		if (strcmp(argv[1], "env") == 0)
+		{
+			printf("\n=== Running env Builtin Tests ===\n");
+			return (run_env_builtin_tests());
+		}
 		if (strcmp(argv[1], "exit") == 0)
 		{
 			printf("\n=== Running exit Builtin Tests ===\n");
 			return (run_exit_builtin_tests());
+		}
+		if (strcmp(argv[1], "export") == 0)
+		{
+			printf("\n=== Running export Builtin Tests ===\n");
+			return (run_export_builtin_tests());
+		}
+		if (strcmp(argv[1], "unset") == 0)
+		{
+			printf("\n=== Running unset Builtin Tests ===\n");
+			return (run_unset_builtin_tests());
 		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
@@ -151,10 +213,19 @@ int	main(int argc, char *argv[])
 	result = run_echo_builtin_tests();
 	if (result != 0)
 		failed += result;
+	result = run_env_builtin_tests();
+	if (result != 0)
+		failed += result;
 	result = run_exit_builtin_tests();
 	if (result != 0)
 		failed += result;
+	result = run_export_builtin_tests();
+	if (result != 0)
+		failed += result;
 	result = run_pwd_builtin_tests();
+	if (result != 0)
+		failed += result;
+	result = run_unset_builtin_tests();
 	if (result != 0)
 		failed += result;
 	printf("\n=== Test Suite Complete ===\n");
