@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/15 14:10:45 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/16 14:25:31 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,12 @@ t_cmd_response			*func_built_in_env(t_ast *shell_ast, char **cmd_str,
 							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
 							t_shell_env *env, char *envp[]);
+
+void					append_env_line(char **output, char *key, t_shell_env *env);
+int						process_export_arg(char *arg, t_shell_env *env, char **error);
 t_cmd_response			*func_built_in_export(t_ast *shell_ast, char **cmd_str,
 							t_shell_env *env, char *envp[]);
+
 t_cmd_response			*func_built_in_pwd(t_ast *shell_ast, char **cmd_str,
 							t_shell_env *env, char *envp[]);
 t_cmd_response			*func_built_in_unset(t_ast *shell_ast, char **cmd_str,
