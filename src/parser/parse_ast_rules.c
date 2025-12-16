@@ -115,21 +115,26 @@ t_ast	*parse_cmd_prefix(t_parser *parser)
 
 t_ast	*parse_cmd_suffix(t_parser *parser)
 {
-	t_ast	node;
-	t_ast	*io_file;
-	t_ast	*cmd_suffix;
-	char	*word;
+	t_ast		node;
+	t_ast		*io_file;
+	t_ast		*cmd_suffix;
+	const char	*word;
 
-	cmd_suffix = NULL;
-	io_file = NULL;
-	cmd_suffix = NULL;
-	word = NULL;
-	if (cur_token_is(parser->cur_token, ((1 << GREAT) | (1 << DGREAT)
-				| (1 << LESS) | (1 << DLESS))))
-		io_file = parse_io_redirect(parser);
-	else if (cur_token_is(parser->cur_token, (1 << WORD)))
-		word = parser->cur_token->literal;
+	io_file = parse_io_redirect(parser);
+	if (io_file)
+	{
+		cmd_suffix = parse_cmd_suffix(parser);
+		node = (t_ast){.type = AST_CMD_SUFFIX,
+			.u_ast.s_cmd_suffix.io_file = io_file,
+			.u_ast.s_cmd_suffix.word = NULL,
+			.u_ast.s_cmd_suffix.cmd_suffix = cmd_suffix};
+		return create_ast(node);
+	}
+	if (!cur_token_is(parser->cur_token, (1 << WORD)))
+		return (NULL);
+	word = parser->cur_token->literal;
 	next_token(parser);
+	cmd_suffix = parse_cmd_suffix(parser);
 	node = (t_ast){.type = AST_CMD_SUFFIX,
 		.u_ast.s_cmd_suffix.io_file = io_file,
 		.u_ast.s_cmd_suffix.word = word,
