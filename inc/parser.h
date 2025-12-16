@@ -24,7 +24,7 @@ typedef struct s_parser
 }	t_parser;
 
 t_parser	*create_parser(t_lexer *lexer);
-t_ast		*parsing(t_parser *parser);
+t_ast		*parsing(t_parser *parser, char *envp[]);
 void		free_parser(t_parser *parser);
 void		next_token(t_parser *parser);
 

@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/06 16:16:06 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/14 10:36:40 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
-void	parse_input(char *input)
+void	parse_input(char *input, char *envp[])
 {
 	t_lexer		*lexer;
 	t_parser	*parser;
@@ -39,8 +39,8 @@ void	parse_input(char *input)
 		free(lexer);
 		return ;
 	}
-	ast = parsing(parser);
-	(void)ast;
+	ast = parsing(parser, envp);
+	free_ast(ast);
 	free(lexer);
 	free(parser);
 }
@@ -58,7 +58,7 @@ int	main(int argc, char *argv[], char *envp[])
 		shell.input = readline("minishell> ");
 		if (ft_strncmp(shell.input, "exit", 4) == 0)
 			break ;
-		parse_input(shell.input);
+		parse_input(shell.input, envp);
 		add_history(shell.input);
 	}
 	return (EXIT_SUCCESS);
