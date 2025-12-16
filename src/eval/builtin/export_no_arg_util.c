@@ -45,4 +45,3 @@ void	append_env_line(char **output, char *key, t_shell_env *env)
 	free(tmp);
 	free(line);
 }
-

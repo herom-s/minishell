@@ -13,7 +13,6 @@
 #include "eval.h"
 #include "libft.h"
 
-
 char	*build_error_msg(char *arg)
 {
 	char	*msg;
