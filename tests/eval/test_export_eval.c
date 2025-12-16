@@ -139,7 +139,7 @@ void	test_eval_built_in_export_arg(void **state)
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res);
-    free_cmd_ast(ast_list);
+	free_cmd_ast(ast_list);
 	destroy_shell_env(env);
 }
 
@@ -185,6 +185,132 @@ void	test_eval_built_in_export_mutiple_args(void **state)
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res);
-    free_cmd_ast(ast_list);
+	free_cmd_ast(ast_list);
+	destroy_shell_env(env);
+}
+
+/*
+ *   setup: export with invalid var (starts with digit)
+ */
+int	setup_built_in_export_invalid_digit_ast(void **state)
+{
+	char	*args[] = {"1FOO=bar"};
+
+	*state = create_cmd_ast("export", args, 1);
+	if (!*state)
+		return (-1);
+	return (0);
+}
+
+/*
+ *   test: export invalid var should return error
+ */
+void	test_eval_built_in_export_invalid_digit(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	assert_non_null(ast);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 1);
+	assert_non_null(res->erro_msg);
+	assert_non_null(strstr(res->erro_msg, "not a valid identifier"));
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
+}
+
+/*
+ *   setup: export with invalid var (special char)
+ */
+int	setup_built_in_export_invalid_special_ast(void **state)
+{
+	char	*args[] = {"FOO-BAR=baz"};
+
+	*state = create_cmd_ast("export", args, 1);
+	if (!*state)
+		return (-1);
+	return (0);
+}
+
+/*
+ *   test: export invalid var with special char should return error
+ */
+void	test_eval_built_in_export_invalid_special(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	assert_non_null(ast);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 1);
+	assert_non_null(res->erro_msg);
+	assert_non_null(strstr(res->erro_msg, "FOO-BAR=baz"));
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
+}
+
+/*
+ *   setup: export with mixed valid and invalid args
+ */
+int	setup_built_in_export_mixed_args_ast(void **state)
+{
+	char	*args[] = {"VALID=ok", "2INVALID=bad", "ALSO_VALID=yes"};
+
+	*state = create_cmd_ast("export", args, 3);
+	if (!*state)
+		return (-1);
+	return (0);
+}
+
+/*
+ *   test: export mixed args should set valid vars and error on invalid
+ */
+void	test_eval_built_in_export_mixed_args(void **state)
+{
+	t_ast *ast;
+	t_ast *ast_list;
+	t_shell_response *res;
+	t_shell_env *env;
+	extern char **environ;
+
+	ast = (t_ast *)(*state);
+	assert_non_null(ast);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 1);
+	assert_non_null(res->erro_msg);
+	assert_non_null(strstr(res->erro_msg, "2INVALID=bad"));
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	ast_list = create_cmd_ast("export", NULL, 0);
+	res = eval_ast(ast_list, env, environ);
+	assert_non_null(res);
+	assert_non_null(res->output);
+	assert_non_null(strstr(res->output, "declare -x VALID=\"ok\""));
+	assert_non_null(strstr(res->output, "declare -x ALSO_VALID=\"yes\""));
+	assert_null(strstr(res->output, "2INVALID"));
+	assert_int_equal(res->exit_code, 0);
+	free(res->output);
+	free(res);
+	free_cmd_ast(ast_list);
 	destroy_shell_env(env);
 }

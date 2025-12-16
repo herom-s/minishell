@@ -2,14 +2,11 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   test_main.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+
-	+:+     */
-/*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+
-	+#+        */
-/*                                                +#+#+#+#+#+
-	+#+           */
-/*   Created: 2025/12/01 11:57:53 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/01 11:57:55 by hermarti         ###   ########.fr       */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/16 14:14:46 by hermarti          #+#    #+#             */
+/*   Updated: 2025/12/16 14:15:21 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +106,15 @@ static int	run_export_builtin_tests(void)
 			setup_built_in_export_arg_ast, teardown_free_cmd_ast),
 		cmocka_unit_test_setup_teardown(test_eval_built_in_export_mutiple_args,
 			setup_built_in_export_mutiple_args_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_export_invalid_digit,
+			setup_built_in_export_invalid_digit_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_export_invalid_special,
+			setup_built_in_export_invalid_special_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_export_mixed_args,
+			setup_built_in_export_mixed_args_ast, teardown_free_cmd_ast),
 	};
 	printf("\n--- export Builtin Tests ---\n");
-	return (cmocka_run_group_tests(tests, NULL, NULL));
+	return (cmocka_run_group_tests_name("export", tests, NULL, NULL));
 }
 
 static int	run_unset_builtin_tests(void)

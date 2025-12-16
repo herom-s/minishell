@@ -66,11 +66,17 @@ void	test_eval_built_in_exit_to_many_args_path(void **state);
 int		setup_built_in_export_no_args_ast(void **state);
 int		setup_built_in_export_arg_ast(void **state);
 int		setup_built_in_export_mutiple_args_ast(void **state);
+int		setup_built_in_export_invalid_digit_ast(void **state);
+int		setup_built_in_export_invalid_special_ast(void **state);
+int		setup_built_in_export_mixed_args_ast(void **state);
 
 // tests for export eval
 void	test_eval_built_in_export_no_args(void **state);
 void	test_eval_built_in_export_arg(void **state);
 void	test_eval_built_in_export_mutiple_args(void **state);
+void	test_eval_built_in_export_invalid_digit(void **state);
+void	test_eval_built_in_export_invalid_special(void **state);
+void	test_eval_built_in_export_mixed_args(void **state);
 
 // setup for unset eval
 int		setup_built_in_unset_no_args_ast(void **state);
