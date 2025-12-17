@@ -13,7 +13,7 @@
 #include "ast.h"
 #include "eval.h"
 #include "libft.h"
-#include <stddef.h>
+#include <stdlib.h>
 
 t_cmd_response	*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env, char *envp[])
