@@ -44,6 +44,7 @@ void	test_eval_built_in_cd_path(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	char				*buffer;
 	char				*old_dir;
 	char				*curr_dir;
@@ -52,9 +53,11 @@ void	test_eval_built_in_cd_path(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	mkdir(expected_dir, 0755);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
+	mkdir(expected_dir, 0755);
 	buffer = calloc(1, PATH_MAX + 1);
 	if (!buffer)
 		return ;
@@ -69,6 +72,7 @@ void	test_eval_built_in_cd_path(void **state)
 	free(res->curr_dir);
 	free(res);
 	free(buffer);
+    destroy_shell_env(env);
 }
 
 /*
@@ -90,15 +94,19 @@ void	test_eval_built_in_cd_to_many_args(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	char				*expected_msg = "too many arguments\n";
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->erro_msg, expected_msg);
 	assert_int_equal(res->exit_code, 1);
 	free(res->erro_msg);
 	free(res);
+    destroy_shell_env(env);
 }

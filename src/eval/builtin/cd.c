@@ -17,12 +17,13 @@
 #include <unistd.h>
 
 t_cmd_response	*func_built_in_cd(t_ast *shell_ast, char **cmd_str,
-		char *envp[])
+		t_shell_env *env, char *envp[])
 {
 	t_cmd_response	*res;
 	size_t			num_args;
 
 	(void)shell_ast;
+	(void)env;
 	(void)envp;
 	res = ft_calloc(1, sizeof(t_cmd_response));
 	if (!res)

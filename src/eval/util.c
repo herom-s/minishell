@@ -11,8 +11,9 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <unistd.h>
+#include "eval.h"
 #include <limits.h>
+#include <unistd.h>
 
 char	*get_curdir(void)
 {
@@ -35,4 +36,23 @@ size_t	num_arguments(char **cmd_str)
 	while (cmd_str[i + 1])
 		i++;
 	return (i);
+}
+
+t_cmd_func	get_cmd_func(char *cmd_name)
+{
+	const char			*names[] = {"cd", "pwd", "env", "export", "unset",
+		"echo", "exit", NULL};
+	const t_cmd_func	funcs[] = {&func_built_in_cd, &func_built_in_pwd,
+		&func_built_in_env, &func_built_in_export, &func_built_in_unset,
+		&func_built_in_echo, &func_built_in_exit};
+	int					i;
+
+	i = 0;
+	while (names[i])
+	{
+		if (ft_strcmp(cmd_name, names[i]) == 0)
+			return (funcs[i]);
+		i++;
+	}
+	return (&func_exec_cmd);
 }

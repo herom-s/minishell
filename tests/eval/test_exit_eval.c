@@ -44,18 +44,22 @@ void	test_eval_built_in_exit_single_arg_path(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	char				*expected = "too many arguments\n";
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->erro_msg, expected);
 	assert_int_equal(res->exit_code, 1);
 	free(res->erro_msg);
 	free(res->curr_dir);
 	free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -77,16 +81,20 @@ void	test_eval_built_in_exit_to_many_args_path(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	char				*expected = "too many arguments\n";
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->erro_msg, expected);
 	assert_int_equal(res->exit_code, 1);
 	free(res->erro_msg);
 	free(res->curr_dir);
 	free(res);
+    destroy_shell_env(env);
 }

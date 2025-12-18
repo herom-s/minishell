@@ -27,7 +27,10 @@ TEST_FILES = test_main.c \
 			 test_lexer.c \
 			 $(TEST_EVAL_DIR)/test_cd_eval.c \
 			 $(TEST_EVAL_DIR)/test_echo_eval.c \
+			 $(TEST_EVAL_DIR)/test_env_eval.c \
 			 $(TEST_EVAL_DIR)/test_exit_eval.c \
+			 $(TEST_EVAL_DIR)/test_export_eval.c \
+			 $(TEST_EVAL_DIR)/test_unset_eval.c \
 			 $(TEST_EVAL_DIR)/test_pwd_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval.c
 
