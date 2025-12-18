@@ -33,7 +33,7 @@ t_cmd_response	*func_built_in_env(t_ast *shell_ast, char **cmd_str,
 	node = env->order;
 	while (node)
 	{
-		append_env_line(&res->output, (char *)node->content, env);
+		append_env_plain_line(&res->output, (char *)node->content, env);
 		node = node->next;
 	}
 	res->exit_code = 0;

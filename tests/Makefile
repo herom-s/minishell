@@ -1,14 +1,13 @@
-ROOT_DIR = ..
+ROOT_DIR ?= ..
 
 include $(ROOT_DIR)/config.mk
 
 CFLAGS += -g2 -O0
 
-LIBFT_DIR := $(ROOT_DIR)/$(LIBFT_DIR)
-SRC_DIR := $(ROOT_DIR)/$(SRC_DIR)
-LIBFT_DIR := $(ROOT_DIR)/$(LIBFT_DIR)
-LIBFT := $(ROOT_DIR)/$(LIBFT)
-INCLUDES := -I$(ROOT_DIR)/$(INC_DIR) -I$(LIBFT_DIR)/inc
+LIBFT_PATH := $(ROOT_DIR)/$(LIBFT_DIR)
+SRC_PATH := $(ROOT_DIR)/$(SRC_DIR)
+LIBFT_LIB := $(ROOT_DIR)/$(LIBFT)
+INCLUDES := -I$(ROOT_DIR)/$(INC_DIR) -I$(LIBFT_PATH)/inc
 
 TEST_OBJ_DIR = obj
 TEST_INC_DIR = inc
@@ -40,7 +39,7 @@ TEST_BIN = run_tests
 PROJECT_OBJ = $(SRC_FILES:%.c=$(TEST_OBJ_DIR)/project/%.o)
 PROJECT_OBJ := $(filter-out $(TEST_OBJ_DIR)/project/main.o, $(PROJECT_OBJ))	
 
-TEST_LIBS = -L$(CMOCKA_BUILD)/src -lcmocka -L$(LIBFT_DIR) -lft -lreadline
+TEST_LIBS = -L$(CMOCKA_BUILD)/src -lcmocka -L$(LIBFT_PATH) -lft -lreadline
 
 GREEN = \033[0;32m
 YELLOW = \033[0;33m
@@ -48,8 +47,8 @@ RESET = \033[0m
 
 all: $(TEST_BIN)
 
-$(LIBFT):
-	@make -C $(LIBFT_DIR)
+$(LIBFT_LIB):
+	@make -C $(LIBFT_PATH)
 
 $(CMOCKA_LIB):
 	@if [ -f "$(CMOCKA_LIB)" ]; then \
@@ -73,11 +72,11 @@ $(TEST_OBJ_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(TEST_OBJ_DIR)/project/%.o: $(SRC_DIR)/%.c
+$(TEST_OBJ_DIR)/project/%.o: $(SRC_PATH)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(TEST_BIN): $(CMOCKA_LIB) $(LIBFT) $(TEST_OBJ) $(PROJECT_OBJ)
+$(TEST_BIN): $(CMOCKA_LIB) $(LIBFT_LIB) $(TEST_OBJ) $(PROJECT_OBJ)
 	$(CC) $(CFLAGS) $(TEST_OBJ) $(PROJECT_OBJ) $(TEST_LIBS) -o $(TEST_BIN)
 	@echo "$(GREEN)[OK] Tests compiled$(RESET)"
 
