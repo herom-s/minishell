@@ -28,10 +28,10 @@ SRC_FILES = main.c \
 			$(EVAL_DIR)/builtin/cd.c \
 			$(EVAL_DIR)/builtin/echo.c \
 			$(EVAL_DIR)/builtin/env.c \
+			$(EVAL_DIR)/builtin/env_util.c \
 			$(EVAL_DIR)/builtin/exit.c \
 			$(EVAL_DIR)/builtin/export.c \
 			$(EVAL_DIR)/builtin/export_args_util.c \
-			$(EVAL_DIR)/builtin/export_no_arg_util.c \
 			$(EVAL_DIR)/builtin/pwd.c \
 			$(EVAL_DIR)/builtin/unset.c \
 			$(HASHTABLE_DIR)/hashtable.c \
