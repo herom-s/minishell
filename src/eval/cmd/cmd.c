@@ -27,5 +27,10 @@ t_cmd_response	*func_exec_cmd(t_ast *shell_ast, char **cmd_str,
 	res = ft_calloc(1, sizeof(t_cmd_response));
 	if (!res)
 		return (NULL);
+	if (execve(cmd_str[0], cmd_str, envp) < 0)
+	{
+		res->erro_msg = ft_strjoin(cmd_str[0], ": command not found\n");
+		res->exit_code = 127;
+	}
 	return (res);
 }

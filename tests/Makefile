@@ -31,6 +31,7 @@ TEST_FILES = test_main.c \
 			 $(TEST_EVAL_DIR)/test_export_eval.c \
 			 $(TEST_EVAL_DIR)/test_unset_eval.c \
 			 $(TEST_EVAL_DIR)/test_pwd_eval.c \
+			 $(TEST_EVAL_DIR)/test_cmd_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval.c
 
 TEST_OBJ = $(TEST_FILES:%.c=$(TEST_OBJ_DIR)/%.o)

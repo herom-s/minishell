@@ -90,4 +90,10 @@ void	test_eval_built_in_unset_single_var(void **state);
 void	test_eval_built_in_unset_multiple_vars(void **state);
 void	test_eval_built_in_unset_nonexistent(void **state);
 
+// setup for external cat eval
+int		setup_external_cat_abs_ast(void **state);
+
+// tests for external cat eval
+void	test_eval_external_cat_abs(void **state);
+
 #endif

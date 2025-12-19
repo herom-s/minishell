@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/18 14:14:17 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/19 17:20:36 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 # include "ast.h"
 # include "hashtable.h"
 # include <stdlib.h>
+
+# define INPUT_END 0
+# define OUTPUT_END 1
 
 typedef enum s_cmd_type
 {

@@ -133,6 +133,16 @@ static int	run_unset_builtin_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_external_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_external_cat_abs,
+			setup_external_cat_abs_ast, teardown_free_cmd_ast),
+	};
+	printf("\n--- External Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static void	print_usage(void)
 {
 	printf("Usage: ./run_tests [OPTIONS]\n");
@@ -146,6 +156,7 @@ static void	print_usage(void)
 	printf("  export       Run export builtin tests only\n");
 	printf("  pwd          Run pwd builtin tests only\n");
 	printf("  unset        Run unset builtin tests only\n");
+	printf("  external     Run external tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 
@@ -201,6 +212,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running unset Builtin Tests ===\n");
 			return (run_unset_builtin_tests());
 		}
+		if (strcmp(argv[1], "external") == 0)
+		{
+			printf("\n=== Running External Tests ===\n");
+			return (run_external_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -229,6 +245,9 @@ int	main(int argc, char *argv[])
 	if (result != 0)
 		failed += result;
 	result = run_unset_builtin_tests();
+	if (result != 0)
+		failed += result;
+	result = run_external_tests();
 	if (result != 0)
 		failed += result;
 	printf("\n=== Test Suite Complete ===\n");
