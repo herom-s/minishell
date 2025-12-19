@@ -23,7 +23,6 @@
 #include <unistd.h>
 #include <cmocka.h>
 
-
 /*
  *   setup: echo -n basic
  */
@@ -44,17 +43,21 @@ void	test_eval_built_in_echo_n_basic(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->output, "hello world");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -77,17 +80,21 @@ void	test_eval_built_in_echo_basic(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->output, "hello world\n");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -110,17 +117,21 @@ void	test_eval_built_in_echo_empty(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->output, "\n");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -143,17 +154,21 @@ void	test_eval_built_in_echo_n_empty(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->output, "");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -176,17 +191,21 @@ void	test_eval_built_in_echo_mutiple_args(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->output, "hello world world\n");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -209,15 +228,19 @@ void	test_eval_built_in_echo_n_mutiple_args(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	extern char			**environ;
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	assert_string_equal(res->output, "hello world world");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
+    destroy_shell_env(env);
 }
