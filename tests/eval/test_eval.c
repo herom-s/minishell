@@ -55,6 +55,30 @@ t_ast	*create_cmd_ast(char *cmd_name, char **args, int arg_count)
 	return (simple);
 }
 
+void	free_cmd_ast(t_ast *ast)
+{
+	t_ast	*suf;
+	t_ast	*next;
+
+	if (!ast)
+		return ;
+	if (ast->type == SIMPLE_CMD)
+	{
+		if (ast->s_simple_cmd.cmd_name)
+			free(ast->s_simple_cmd.cmd_name);
+		suf = ast->s_simple_cmd.cmd_suffix;
+		while (suf)
+		{
+			next = suf->s_cmd_suffix.cmd_suffix;
+			if (suf->s_cmd_suffix.word)
+				free((void *)suf->s_cmd_suffix.word);
+			free(suf);
+			suf = next;
+		}
+	}
+	free(ast);
+}
+
 /*
  *  teardown: free cmd AST with chained suffixes
  */

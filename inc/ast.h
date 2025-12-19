@@ -78,4 +78,12 @@ typedef struct s_ast
 
 t_ast	*create_ast(t_ast node);
 void	print_ast(t_ast *node, int depth);
+
+// Free Memory
+void	free_ast(t_ast *node);
+void	free_left_right_node(t_ast *node);
+void	free_subshell(t_ast *node);
+void	free_simple_cmd(t_ast *node);
+void	free_cmd_prefix(t_ast *node);
+void	free_cmd_suffix(t_ast *node);
 #endif

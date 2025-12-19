@@ -44,6 +44,7 @@ void	test_eval_built_in_pwd_basic(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
+	t_shell_env			*env;
 	char				*buffer;
 	char				*curr_dir;
 	char				*expected;
@@ -51,7 +52,9 @@ void	test_eval_built_in_pwd_basic(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	res = eval_ast(ast, environ);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env, environ);
 	assert_non_null(res);
 	buffer = calloc(1, PATH_MAX + 1);
 	if (!buffer)
@@ -72,4 +75,5 @@ void	test_eval_built_in_pwd_basic(void **state)
 	free(res);
 	free(buffer);
 	free(expected);
+    destroy_shell_env(env);
 }

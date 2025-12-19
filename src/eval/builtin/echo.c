@@ -51,7 +51,7 @@ static char	*build_output(t_ast *node, int *newline_flag)
 }
 
 t_cmd_response	*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
-		char *envp[])
+		t_shell_env *env, char *envp[])
 {
 	t_cmd_response	*res;
 	char			*output;
@@ -59,6 +59,7 @@ t_cmd_response	*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
 	int				newline_flag;
 
 	(void)cmd_str;
+	(void)env;
 	(void)envp;
 	if (!shell_ast)
 		return (NULL);
