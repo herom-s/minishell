@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/14 10:36:40 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 10:38:31 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@ void	parse_input(char *input, char *envp[])
 	}
 	ast = parsing(parser, envp);
 	free_ast(ast);
-	free(lexer);
 	free(parser);
+	ft_lstclear(&(lexer->tokens), &free_token);
+	free(lexer);
 }
 
 int	main(int argc, char *argv[], char *envp[])
