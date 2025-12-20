@@ -21,10 +21,10 @@ SRC_FILES = main.c \
 			$(LEX_DIR)/token.c \
 			$(PARSER_DIR)/parser.c \
 			$(PARSER_DIR)/parser_helpers.c \
-			$(PARSER_DIR)/parse_ast_rules.c \
-			$(PARSER_DIR)/parse_cmd_rules.c \
 			$(AST_DIR)/ast.c \
 			$(AST_DIR)/free_ast.c \
+			$(AST_DIR)/parse_ast_rules.c \
+			$(AST_DIR)/parse_cmd_rules.c \
 			$(EVAL_DIR)/eval.c \
 			$(EVAL_DIR)/util.c \
 			$(EVAL_DIR)/cmd/cmd.c \

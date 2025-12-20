@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:51:10 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/20 10:54:59 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 11:07:51 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ t_parser	*create_parser(t_lexer *lexer)
 	next_token(parser);
 	return (parser);
 }
-
 
 t_ast	*parsing(t_parser *parser, char *envp[])
 {

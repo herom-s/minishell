@@ -6,13 +6,14 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/07 09:06:11 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 11:14:18 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef AST_H
 # define AST_H
 # include "token.h"
+# include "parser.h"
 
 typedef enum e_ast_type
 {
@@ -77,7 +78,18 @@ typedef struct s_ast
 }	t_ast;
 
 t_ast	*create_ast(t_ast node);
+t_ast	*init_ast(t_parser *parser);
+t_ast	*parsing(t_parser *parser, char *envp[]);
 void	print_ast(t_ast *node, int depth);
+
+// Parse functions
+t_ast	*parse_and_or(t_parser *parser);
+t_ast	*parse_pipe_sequence(t_parser *parser);
+t_ast	*parse_io_redirect(t_parser *parser);
+t_ast	*parse_simple_cmd(t_parser *parser);
+t_ast	*parse_cmd_prefix(t_parser *parser);
+t_ast	*parse_cmd_suffix(t_parser *parser);
+t_ast	*parse_subshell(t_parser *parser);
 
 // Free Memory
 void	free_ast(t_ast *node);
