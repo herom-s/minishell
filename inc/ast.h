@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/20 11:14:18 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 17:04:46 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ typedef struct s_ast
 
 t_ast	*create_ast(t_ast node);
 t_ast	*init_ast(t_parser *parser);
-t_ast	*parsing(t_parser *parser, char *envp[]);
 void	print_ast(t_ast *node, int depth);
 
 // Parse functions

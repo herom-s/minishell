@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/20 10:38:31 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 15:41:43 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	parse_input(char *input, char *envp[])
 	t_parser	*parser;
 	t_ast		*ast;
 
+	(void)envp;
 	lexer = create_lexer(input);
 	if (lexer == NULL)
 	{
@@ -39,8 +40,12 @@ void	parse_input(char *input, char *envp[])
 		free(lexer);
 		return ;
 	}
-	ast = parsing(parser, envp);
-	free_ast(ast);
+	ast = init_ast(parser);
+	if (ast)
+	{
+		print_ast(ast, 0);
+		free_ast(ast);
+	}
 	free(parser);
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);

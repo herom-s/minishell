@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:40:57 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/13 16:02:35 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 16:33:33 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@ t_ast	*parse_and_or(t_parser *parser)
 	op = parser->cur_token;
 	next_token(parser);
 	if (cur_token_is(parser->cur_token, (1 << AND_IF) | (1 << OR_IF)
-			| (1 << PIPE)))
+			| (1 << PIPE) | (1 << AMPERSAND)))
 	{
 		parser_error(parser);
+		free_ast(left);
 		return (NULL);
 	}
 	right = parse_and_or(parser);
@@ -102,11 +103,10 @@ t_ast	*parse_cmd_prefix(t_parser *parser)
 	t_ast	*io_file;
 	t_ast	*cmd_prefix;
 
-	cmd_prefix = NULL;
 	io_file = parse_io_redirect(parser);
-	if (peek_token_is(parser, (1 << GREAT) | (1 << DGREAT)
-			| (1 << LESS) | (1 << DLESS)))
-		cmd_prefix = parse_cmd_prefix(parser);
+	if (!io_file)
+		return (NULL);
+	cmd_prefix = parse_cmd_prefix(parser);
 	node = (t_ast){.type = AST_CMD_PREFIX,
 		.u_ast.s_cmd_prefix.io_file = io_file,
 		.u_ast.s_cmd_prefix.cmd_prefix = cmd_prefix};
