@@ -6,11 +6,13 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 14:14:46 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/16 14:15:21 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/22 10:18:51 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test_eval.h"
+#include "test_lexer.h"
+#include "test_parser.h"
 #include "tests.h"
 #include <setjmp.h>
 #include <stdarg.h>
@@ -20,10 +22,103 @@
 #include <string.h>
 #include <cmocka.h>
 
+static int	run_parser_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		// Simple command tests
+		cmocka_unit_test(test_parser_simple_command_single_word),
+		cmocka_unit_test(test_parser_simple_command_with_args),
+		cmocka_unit_test(test_parser_simple_command_with_path),
+		cmocka_unit_test(test_parser_command_multiple_args),
+
+		// Pipeline tests
+		cmocka_unit_test(test_parser_simple_pipe),
+		cmocka_unit_test(test_parser_multiple_pipes),
+
+		// Redirection tests
+		cmocka_unit_test(test_parser_output_redirect),
+		cmocka_unit_test(test_parser_input_redirect),
+		cmocka_unit_test(test_parser_append_redirect),
+		cmocka_unit_test(test_parser_heredoc),
+		cmocka_unit_test(test_parser_multiple_redirects),
+
+		// Logical operator tests
+		cmocka_unit_test(test_parser_and_operator),
+		cmocka_unit_test(test_parser_or_operator),
+		cmocka_unit_test(test_parser_mixed_logical_operators),
+		cmocka_unit_test(test_parser_precedence_and_vs_pipe),
+
+		// Subshell tests (bonus)
+		cmocka_unit_test(test_parser_simple_subshell),
+		cmocka_unit_test(test_parser_subshell_with_pipe),
+		cmocka_unit_test(test_parser_nested_subshells),
+		cmocka_unit_test(test_parser_subshell_with_logical_ops),
+
+		// Complex combinations
+		cmocka_unit_test(test_parser_pipe_with_redirects),
+		cmocka_unit_test(test_parser_logical_with_pipes),
+		cmocka_unit_test(test_parser_subshell_in_pipeline),
+		cmocka_unit_test(test_parser_subshell_and_logical),
+
+		// Edge cases and errors
+		cmocka_unit_test(test_parser_empty_input),
+		cmocka_unit_test(test_parser_only_pipe),
+		cmocka_unit_test(test_parser_pipe_without_right_side),
+		cmocka_unit_test(test_parser_redirect_without_filename),
+		cmocka_unit_test(test_parser_unclosed_subshell),
+		cmocka_unit_test(test_parser_unopened_subshell),
+		cmocka_unit_test(test_parser_double_pipe),
+		cmocka_unit_test(test_parser_double_redirect),
+
+		// Quote handling
+		cmocka_unit_test(test_parser_command_with_quoted_args),
+		cmocka_unit_test(test_parser_redirect_with_quoted_filename),
+		cmocka_unit_test(test_parser_mixed_quotes),
+	};
+	printf("\n--- parser Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static int	run_lexer_tests(void)
 {
 	const struct CMUnitTest tests[] = {
-		cmocka_unit_test(test_one_char_operators),
+		// Basic tests
+		cmocka_unit_test(test_single_word),
+		cmocka_unit_test(test_multiple_words),
+		cmocka_unit_test(test_empty_input),
+		cmocka_unit_test(test_whitespace_only),
+
+		// Operator tests
+		cmocka_unit_test(test_pipe_operator),
+		cmocka_unit_test(test_redirect_input),
+		cmocka_unit_test(test_redirect_output),
+		cmocka_unit_test(test_redirect_append),
+		cmocka_unit_test(test_heredoc),
+		cmocka_unit_test(test_and_operator),
+		cmocka_unit_test(test_or_operator),
+
+		// Bonus: Parentheses
+		cmocka_unit_test(test_parentheses),
+		cmocka_unit_test(test_nested_parentheses),
+
+		// Quoting tests
+		cmocka_unit_test(test_single_quotes),
+		cmocka_unit_test(test_double_quotes),
+		cmocka_unit_test(test_quotes_with_metacharacters),
+		cmocka_unit_test(test_mixed_quotes),
+		cmocka_unit_test(test_empty_quotes),
+
+		// Complex commands
+		cmocka_unit_test(test_complex_pipeline),
+		cmocka_unit_test(test_multiple_redirects),
+		cmocka_unit_test(test_operators_without_spaces),
+		cmocka_unit_test(test_subshell_with_pipeline),
+
+		// Edge cases
+		cmocka_unit_test(test_multiple_pipes),
+		cmocka_unit_test(test_word_with_numbers),
+		cmocka_unit_test(test_special_characters_in_word),
+		cmocka_unit_test(test_ampersand_operator),
 	};
 	printf("\n--- lexer Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
@@ -148,7 +243,6 @@ static void	print_usage(void)
 	printf("  unset        Run unset builtin tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
-
 int	main(int argc, char *argv[])
 {
 	int	result;
@@ -165,6 +259,11 @@ int	main(int argc, char *argv[])
 		{
 			printf("\n=== Running lexer Tests ===\n");
 			return (run_lexer_tests());
+		}
+		if (strcmp(argv[1], "parser") == 0)
+		{
+			printf("\n=== Running parser Tests ===\n");
+			return (run_parser_tests());
 		}
 		if (strcmp(argv[1], "echo") == 0)
 		{
@@ -208,6 +307,9 @@ int	main(int argc, char *argv[])
 	printf("\n=== Running Minishell Tests ===\n");
 	failed = 0;
 	result = run_lexer_tests();
+	if (result != 0)
+		failed += result;
+	result = run_parser_tests();
 	if (result != 0)
 		failed += result;
 	result = run_cd_builtin_tests();
