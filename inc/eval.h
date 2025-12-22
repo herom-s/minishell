@@ -58,6 +58,7 @@ typedef t_cmd_response	*(*t_cmd_func)(t_ast *shell_ast, char **cmd_str,
 
 typedef struct s_cmd_func_call
 {
+	int					is_builtin;
 	t_cmd_func			cmd_func;
 	t_shell_env			*env;
 	char				**cmd_str;

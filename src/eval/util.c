@@ -56,3 +56,19 @@ t_cmd_func	get_cmd_func(char *cmd_name)
 	}
 	return (&func_exec_cmd);
 }
+
+int	check_builtin(char *cmd_name)
+{
+	const char	*built_in_names[] = {"cd", "pwd", "env", "export", "unset",
+		"echo", "exit", NULL};
+	int			i;
+
+	i = 0;
+	while (built_in_names[i])
+	{
+		if (ft_strcmp(cmd_name, built_in_names[i]) == 0)
+			return (1);
+		i++;
+	}
+	return (0);
+}
