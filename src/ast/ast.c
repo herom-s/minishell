@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/22 08:34:37 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 14:32:44 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,10 +110,10 @@ void	print_ast(t_ast *node, int depth)
 	}
 }
 
-void	free_ast(t_ast *node)
+void	*free_ast(t_ast *node)
 {
 	if (node == NULL)
-		return ;
+		return (NULL);
 	if (node->type == AST_AND_OR || node->type == AST_PIPE_SEQ)
 		free_left_right_node(node);
 	else if (node->type == AST_SUBSHELL)
@@ -125,6 +125,7 @@ void	free_ast(t_ast *node)
 	else if (node->type == AST_CMD_SUFFIX)
 		free_cmd_suffix(node);
 	free(node);
+	return (NULL);
 }
 
 t_ast	*create_ast(t_ast node)

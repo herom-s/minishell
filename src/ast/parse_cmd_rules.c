@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:43:26 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/13 14:10:59 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 16:25:25 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,6 @@ t_ast	*parse_subshell(t_parser *parser)
 		return (NULL);
 	}
 	next_token(parser);
-	if (cur_token_is(parser->cur_token, (1 << LPAREN) | (1 << RPAREN)
-			| (1 << WORD)))
-	{
-		parser_error(parser);
-		return (NULL);
-	}
 	node = (t_ast){.type = AST_SUBSHELL, .u_ast.s_subshell.and_or = and_or};
 	return (create_ast(node));
 }

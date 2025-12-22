@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/22 09:29:40 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 14:33:03 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ t_ast	*parse_cmd_suffix(t_parser *parser);
 t_ast	*parse_subshell(t_parser *parser);
 
 // Free Memory
-void	free_ast(t_ast *node);
+void	*free_ast(t_ast *node);
 void	free_left_right_node(t_ast *node);
 void	free_subshell(t_ast *node);
 void	free_simple_cmd(t_ast *node);

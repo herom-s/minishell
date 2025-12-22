@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:40:57 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/22 08:34:55 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 16:34:04 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,27 @@ t_ast	*parse_and_or(t_parser *parser)
 	t_ast	*right;
 	t_token	*op;
 
-	left = NULL;
-	right = NULL;
-	op = NULL;
 	left = parse_pipe_sequence(parser);
-	if (!cur_token_is(parser->cur_token, (1 << AND_IF) | (1 << OR_IF)))
-		return (left);
-	op = parser->cur_token;
-	next_token(parser);
-	if (cur_token_is(parser->cur_token, (1 << AND_IF) | (1 << OR_IF)
-			| (1 << PIPE) | (1 << AMPERSAND)))
-	{
-		parser_error(parser);
-		free_ast(left);
+	if (left == NULL)
 		return (NULL);
+	while (cur_token_is(parser->cur_token, (1 << AND_IF) | (1 << OR_IF)))
+	{
+		op = parser->cur_token;
+		next_token(parser);
+		if (cur_token_is(parser->cur_token, (1 << AND_IF) | (1 << OR_IF)
+				| (1 << PIPE) | (1 << AMPERSAND)))
+		{
+			parser_error(parser);
+			return (free_ast(left));
+		}
+		right = parse_pipe_sequence(parser);
+		if (!right)
+			return (free_ast(left));
+		node = (t_ast){.type = AST_AND_OR, .u_ast.s_and_or.left = left,
+			.u_ast.s_and_or.op = op, .u_ast.s_and_or.right = right};
+		left = create_ast(node);
 	}
-	right = parse_and_or(parser);
-	node = (t_ast){.type = AST_AND_OR, .u_ast.s_and_or.left = left,
-		.u_ast.s_and_or.op = op, .u_ast.s_and_or.right = right};
-	return (create_ast(node));
+	return (left);
 }
 
 t_ast	*parse_pipe_sequence(t_parser *parser)
@@ -48,58 +50,48 @@ t_ast	*parse_pipe_sequence(t_parser *parser)
 	t_ast	*left;
 	t_ast	*right;
 
+	left = parse_simple_cmd(parser);
+	if (left == NULL)
+		return (NULL);
+	while (cur_token_is(parser->cur_token, (1 << PIPE)))
+	{
+		next_token(parser);
+		if (cur_token_is(parser->cur_token, (1 << PIPE) | (1 << AND_IF)
+				| (1 << OR_IF)))
+			return (parser_error(parser));
+		right = parse_simple_cmd(parser);
+		if (right == NULL)
+			return (NULL);
+		node = (t_ast){.type = AST_PIPE_SEQ, .u_ast.s_pipe_seq.left = left,
+			.u_ast.s_pipe_seq.right = right};
+		left = create_ast(node);
+	}
+	return (left);
+}
+
+t_ast	*parse_simple_cmd(t_parser *parser)
+{
+	t_ast	*cmd_prefix;
+	t_ast	*cmd_suffix;
+	char	*cmd_name;
+
 	if (cur_token_is(parser->cur_token, (1 << LPAREN)))
 	{
 		next_token(parser);
 		return (parse_subshell(parser));
 	}
-	left = parse_simple_cmd(parser);
-	if (!cur_token_is(parser->cur_token, (1 << PIPE)))
-		return (left);
+	cmd_prefix = parse_cmd_prefix(parser);
+	cmd_name = parser->cur_token->literal;
 	next_token(parser);
-	if (cur_token_is(parser->cur_token, (1 << PIPE) | (1 << AND_IF)
-			| (1 << OR_IF)))
-	{
-		parser_error(parser);
-		return (NULL);
-	}
-	right = parse_pipe_sequence(parser);
-	node = (t_ast){.type = AST_PIPE_SEQ, .u_ast.s_pipe_seq.left = left,
-		.u_ast.s_pipe_seq.right = right};
-	return (create_ast(node));
-}
-
-t_ast	*parse_simple_cmd(t_parser *parser)
-{
-	t_ast	node;
-	t_ast	*cmd_prefix;
-	t_ast	*cmd_suffix;
-	char	*cmd_name;
-
-	cmd_prefix = NULL;
-	cmd_suffix = NULL;
-	cmd_name = NULL;
-	if (cur_token_is(parser->cur_token, ((1 << GREAT) | (1 << DGREAT)
-				| (1 << LESS) | (1 << DLESS))))
-		cmd_prefix = parse_cmd_prefix(parser);
-	if (cur_token_is(parser->cur_token, (1 << WORD)))
-	{
-		cmd_name = parser->cur_token->literal;
-		next_token(parser);
-	}
-	if (cur_token_is(parser->cur_token, ((1 << GREAT) | (1 << DGREAT)
-				| (1 << LESS) | (1 << DLESS) | (1 << WORD))))
-		cmd_suffix = parse_cmd_suffix(parser);
-	node = (t_ast){.type = AST_SIMPLE_CMD,
-		.u_ast.s_simple_cmd.cmd_prefix = cmd_prefix,
-		.u_ast.s_simple_cmd.cmd_name = cmd_name,
-		.u_ast.s_simple_cmd.cmd_suffix = cmd_suffix};
-	return (create_ast(node));
+	cmd_suffix = parse_cmd_suffix(parser);
+	return (create_ast((t_ast){.type = AST_SIMPLE_CMD,
+			.u_ast.s_simple_cmd.cmd_prefix = cmd_prefix,
+			.u_ast.s_simple_cmd.cmd_name = cmd_name,
+			.u_ast.s_simple_cmd.cmd_suffix = cmd_suffix}));
 }
 
 t_ast	*parse_cmd_prefix(t_parser *parser)
 {
-	t_ast	node;
 	t_ast	*io_file;
 	t_ast	*cmd_prefix;
 
@@ -107,10 +99,9 @@ t_ast	*parse_cmd_prefix(t_parser *parser)
 	if (!io_file)
 		return (NULL);
 	cmd_prefix = parse_cmd_prefix(parser);
-	node = (t_ast){.type = AST_CMD_PREFIX,
-		.u_ast.s_cmd_prefix.io_file = io_file,
-		.u_ast.s_cmd_prefix.cmd_prefix = cmd_prefix};
-	return (create_ast(node));
+	return (create_ast((t_ast){.type = AST_CMD_PREFIX,
+			.u_ast.s_cmd_prefix.io_file = io_file,
+			.u_ast.s_cmd_prefix.cmd_prefix = cmd_prefix}));
 }
 
 t_ast	*parse_cmd_suffix(t_parser *parser)
