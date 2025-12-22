@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/20 10:55:43 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 08:34:37 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,5 +140,5 @@ t_ast	*create_ast(t_ast node)
 
 t_ast	*init_ast(t_parser *parser)
 {
-	return parse_and_or(parser);
+	return (parse_and_or(parser));
 }

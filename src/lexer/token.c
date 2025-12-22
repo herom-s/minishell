@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:13:51 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/20 10:38:45 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 08:35:30 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,9 @@ t_token	*create_token(t_token token)
 
 void	free_token(void *node)
 {
-	t_token	*token = (t_token *)node;
+	t_token	*token;
+
+	token = (t_token *)node;
 	free(token->literal);
 	free(token);
 }
-

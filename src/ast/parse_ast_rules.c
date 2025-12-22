@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:40:57 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/20 16:33:33 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 08:34:55 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ t_ast	*parse_cmd_suffix(t_parser *parser)
 			.u_ast.s_cmd_suffix.io_file = io_file,
 			.u_ast.s_cmd_suffix.word = NULL,
 			.u_ast.s_cmd_suffix.cmd_suffix = cmd_suffix};
-		return create_ast(node);
+		return (create_ast(node));
 	}
 	if (!cur_token_is(parser->cur_token, (1 << WORD)))
 		return (NULL);

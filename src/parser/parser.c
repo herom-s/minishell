@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:51:10 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/20 15:35:00 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 08:34:14 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "parser.h"
 #include "libft.h"
 #include <stdlib.h>
-
 
 void	next_token(t_parser *parser)
 {
