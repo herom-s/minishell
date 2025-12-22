@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:00:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/20 17:04:46 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 09:29:40 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,6 @@ typedef struct s_ast
 	t_ast_type	type;
 	union
 	{
-		struct
-		{
-			struct s_ast	*left;
-			struct s_ast	*right;
-		}	s_list;
 		struct
 		{
 			struct s_ast	*left;
