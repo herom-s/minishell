@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:19:27 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/22 15:06:23 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/23 16:51:28 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,6 @@ void		next_token(t_parser *parser);
 
 // Parser helpers
 int			cur_token_is(t_token *token, t_token_type expected);
-int			peek_token_is(t_parser *parser, t_token_type expected);
+int			peek_token_is(t_token *token, t_token_type expected);
 void		*parser_error(t_parser *parser);
 #endif

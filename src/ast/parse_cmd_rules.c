@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:43:26 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/22 16:25:25 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/23 16:05:52 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,7 @@ t_ast	*parse_io_redirect(t_parser *parser)
 	op = parser->cur_token;
 	next_token(parser);
 	if (!cur_token_is(parser->cur_token, 1 << WORD))
-	{
-		parser_error(parser);
-		return (NULL);
-	}
+		return (parser_error(parser));
 	filename = parser->cur_token->literal;
 	next_token(parser);
 	node = (t_ast){.type = AST_IO_FILE, .u_ast.s_io_file.filename = filename,
