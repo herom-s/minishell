@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:40:57 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/22 16:34:04 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/23 13:47:30 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_ast	*parse_pipe_sequence(t_parser *parser)
 	{
 		next_token(parser);
 		if (cur_token_is(parser->cur_token, (1 << PIPE) | (1 << AND_IF)
-				| (1 << OR_IF)))
+				| (1 << OR_IF) | (1 << END)))
 			return (parser_error(parser));
 		right = parse_simple_cmd(parser);
 		if (right == NULL)
@@ -81,6 +81,8 @@ t_ast	*parse_simple_cmd(t_parser *parser)
 		return (parse_subshell(parser));
 	}
 	cmd_prefix = parse_cmd_prefix(parser);
+	if (!cur_token_is(parser->cur_token, (1 << WORD)))
+		return (parser_error(parser));
 	cmd_name = parser->cur_token->literal;
 	next_token(parser);
 	cmd_suffix = parse_cmd_suffix(parser);
