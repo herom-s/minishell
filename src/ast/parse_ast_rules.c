@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 07:40:57 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/23 13:47:30 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/23 14:11:57 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ t_ast	*parse_simple_cmd(t_parser *parser)
 	cmd_name = parser->cur_token->literal;
 	next_token(parser);
 	cmd_suffix = parse_cmd_suffix(parser);
+	if (parser->has_error)
+		return (NULL);
 	return (create_ast((t_ast){.type = AST_SIMPLE_CMD,
 			.u_ast.s_simple_cmd.cmd_prefix = cmd_prefix,
 			.u_ast.s_simple_cmd.cmd_name = cmd_name,
