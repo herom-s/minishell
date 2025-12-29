@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:39:22 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/11 17:46:47 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/29 17:03:24 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static t_cmd_response	*pwd_error(t_cmd_response *res, char *curr_dir)
 }
 
 t_cmd_response	*func_built_in_pwd(t_ast *shell_ast, char **cmd_str,
-		t_shell_env *env, char *envp[])
+		t_shell_env *env)
 {
 	t_cmd_response	*res;
 	char			*curr_dir;
@@ -44,7 +44,6 @@ t_cmd_response	*func_built_in_pwd(t_ast *shell_ast, char **cmd_str,
 	(void)shell_ast;
 	(void)cmd_str;
 	(void)env;
-	(void)envp;
 	res = ft_calloc(1, sizeof(t_cmd_response));
 	if (!res)
 		return (NULL);

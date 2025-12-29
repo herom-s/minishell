@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:42:29 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/16 14:26:50 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/29 17:02:55 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,11 @@ int	export_args(char **cmd_str, t_shell_env *env, char **output, char **error)
 }
 
 t_cmd_response	*func_built_in_export(t_ast *shell_ast, char **cmd_str,
-		t_shell_env *env, char *envp[])
+		t_shell_env *env)
 {
 	t_cmd_response	*res;
 
 	(void)shell_ast;
-	(void)envp;
 	res = ft_calloc(1, sizeof(t_cmd_response));
 	if (!res)
 		return (NULL);

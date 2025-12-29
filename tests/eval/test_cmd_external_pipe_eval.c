@@ -54,7 +54,7 @@ void	test_eval_pipe_two_stage(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "1\n");
 	assert_int_equal(res->exit_code, 0);
@@ -108,7 +108,7 @@ void	test_eval_pipe_file_cat_wc(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "3\n");
 	assert_int_equal(res->exit_code, 0);
@@ -152,7 +152,7 @@ void	test_eval_pipe_long_chain(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "1\n");
 	assert_int_equal(res->exit_code, 0);
@@ -210,7 +210,7 @@ void	test_eval_pipe_large_buffer(void **state)
 	env = create_shell_env(environ);
 	
 	// This will hang indefinitely if pipe concurrency is wrong
-	res = eval_ast(ast, env, environ); 
+	res = eval_ast(ast, env); 
 	assert_non_null(res);
 	// 100000 bytes
 	assert_string_equal(res->output, "100000\n"); 
@@ -251,7 +251,7 @@ void	test_eval_pipe_builtin_to_external(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "6\n");
 	assert_int_equal(res->exit_code, 0);
@@ -288,7 +288,7 @@ void	test_eval_pipe_exit_code_success(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
@@ -322,7 +322,7 @@ void	test_eval_pipe_exit_code_fail(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_int_not_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
@@ -361,7 +361,7 @@ void	test_eval_pipe_error_propagation(void **state)
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
 	
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	
 	assert_non_null(res);
 	// STDOUT: ls failed, so it wrote nothing to stdout. wc -l counts 0.

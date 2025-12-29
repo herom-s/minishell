@@ -52,7 +52,7 @@ void	test_eval_built_in_exit_single_arg_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->erro_msg, expected);
 	assert_int_equal(res->exit_code, 1);
@@ -89,7 +89,7 @@ void	test_eval_built_in_exit_to_many_args_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->erro_msg, expected);
 	assert_int_equal(res->exit_code, 1);

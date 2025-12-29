@@ -54,7 +54,7 @@ void	test_eval_built_in_pwd_basic(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	buffer = calloc(1, PATH_MAX + 1);
 	if (!buffer)

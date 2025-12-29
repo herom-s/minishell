@@ -110,9 +110,19 @@ void	test_eval_external_ls_abs(void **state);
 int		setup_pipe_two_stage(void **state);
 int		setup_pipe_file_cat_wc(void **state);
 int		setup_pipe_long_chain(void **state);
+int		setup_pipe_large_buffer(void **state);
+int		setup_pipe_builtin_to_external(void **state);
+int		setup_pipe_exit_code_success(void **state);
+int		setup_pipe_exit_code_fail(void **state);
+int		setup_pipe_error_propagation(void **state);
 
 // tests for external pipe cmd eval
 void	test_eval_pipe_two_stage(void **state);
 void	test_eval_pipe_file_cat_wc(void **state);
 void	test_eval_pipe_long_chain(void **state);
+void	test_eval_pipe_large_buffer(void **state);
+void	test_eval_pipe_builtin_to_external(void **state);
+void	test_eval_pipe_exit_code_success(void **state);
+void	test_eval_pipe_exit_code_fail(void **state);
+void	test_eval_pipe_error_propagation(void **state);
 #endif

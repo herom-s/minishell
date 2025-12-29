@@ -63,7 +63,7 @@ void	test_eval_external_cat_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "hello world\n");
 	assert_int_equal(res->exit_code, 0);
@@ -98,7 +98,7 @@ void	test_eval_external_echo_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "hello world\n");
 	assert_int_equal(res->exit_code, 0);
@@ -130,7 +130,7 @@ void	test_eval_external_true_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "");
 	assert_int_equal(res->exit_code, 0);
@@ -162,7 +162,7 @@ void	test_eval_external_false_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "");
 	assert_true(res->exit_code != 0);
@@ -206,7 +206,7 @@ void	test_eval_external_ls_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->output, "file.txt\n");
 	assert_int_equal(res->exit_code, 0);
@@ -243,7 +243,7 @@ void	test_eval_external_invalid_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->erro_msg, "gat: command not found\n");
 	assert_int_equal(res->exit_code, 127);
