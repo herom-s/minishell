@@ -161,3 +161,218 @@ void	test_eval_pipe_long_chain(void **state)
 	free(res);
 	destroy_shell_env(env);
 }
+
+/*
+ *   setup: large file pipeline (cat large_file | wc -c)
+ *   Writes 100KB to a file. 100KB > 64KB pipe buffer, so this tests
+ *   if processes run in parallel.
+ */
+int	setup_pipe_large_buffer(void **state)
+{
+	const char	*path = "/tmp/minishell_large_test.txt";
+	int			fd;
+	char		*buffer;
+	int			size = 100000; // 100KB
+	t_ast		*cmds[2];
+
+	fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (fd < 0)
+		return (-1);
+	
+	buffer = malloc(size);
+	memset(buffer, 'A', size); // Fill with 'A'
+	if (write(fd, buffer, size) < 0)
+	{
+		free(buffer);
+		close(fd);
+		return (-1);
+	}
+	free(buffer);
+	close(fd);
+
+	cmds[0] = create_cmd_ast("cat", (char *[]){(char *)path, NULL}, 1);
+	cmds[1] = create_cmd_ast("wc", (char *[]){"-c", NULL}, 1);
+	
+	if (!cmds[0] || !cmds[1])
+		return (-1);
+	*state = create_pipeline_ast(cmds, 2);
+	return (0);
+}
+
+void	test_eval_pipe_large_buffer(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	env = create_shell_env(environ);
+	
+	// This will hang indefinitely if pipe concurrency is wrong
+	res = eval_ast(ast, env, environ); 
+	assert_non_null(res);
+	// 100000 bytes
+	assert_string_equal(res->output, "100000\n"); 
+	assert_int_equal(res->exit_code, 0);
+	
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
+	unlink("/tmp/minishell_large_test.txt");
+}
+
+/*
+ *   setup: builtin to external (echo "12345" | wc -c)
+ *   Tests if builtins write to pipe correctly
+ */
+int	setup_pipe_builtin_to_external(void **state)
+{
+	t_ast	*cmds[2];
+
+	// echo -n "12345" (5 bytes)
+	// We use echo without -n, so "12345\n" = 6 bytes
+	cmds[0] = create_cmd_ast("echo", (char *[]){"12345", NULL}, 1);
+	cmds[1] = create_cmd_ast("wc", (char *[]){"-c", NULL}, 1);
+
+	if (!cmds[0] || !cmds[1])
+		return (-1);
+	*state = create_pipeline_ast(cmds, 2);
+	return (0);
+}
+
+void	test_eval_pipe_builtin_to_external(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	env = create_shell_env(environ);
+	res = eval_ast(ast, env, environ);
+	assert_non_null(res);
+	assert_string_equal(res->output, "6\n");
+	assert_int_equal(res->exit_code, 0);
+
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
+}
+
+/*
+ *   setup: false | true
+ *   Expects exit code 0 (last command wins)
+ */
+int	setup_pipe_exit_code_success(void **state)
+{
+	t_ast	*cmds[2];
+
+	cmds[0] = create_cmd_ast("false", NULL, 0);
+	cmds[1] = create_cmd_ast("true", NULL, 0);
+
+	if (!cmds[0] || !cmds[1])
+		return (-1);
+	*state = create_pipeline_ast(cmds, 2);
+	return (0);
+}
+
+void	test_eval_pipe_exit_code_success(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	env = create_shell_env(environ);
+	res = eval_ast(ast, env, environ);
+	assert_int_equal(res->exit_code, 0);
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
+}
+
+/*
+ *   setup: true | false
+ *   Expects exit code 1 (last command wins)
+ */
+int	setup_pipe_exit_code_fail(void **state)
+{
+	t_ast	*cmds[2];
+
+	cmds[0] = create_cmd_ast("true", NULL, 0);
+	cmds[1] = create_cmd_ast("false", NULL, 0);
+
+	if (!cmds[0] || !cmds[1])
+		return (-1);
+	*state = create_pipeline_ast(cmds, 2);
+	return (0);
+}
+
+void	test_eval_pipe_exit_code_fail(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	env = create_shell_env(environ);
+	res = eval_ast(ast, env, environ);
+	assert_int_not_equal(res->exit_code, 0);
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
+}
+
+/*
+ *   setup: ls /tmp/does_not_exist | wc -l
+ *   'ls' will write an error to stderr and exit with an error code.
+ *   'wc' will receive no input on stdout.
+ */
+int	setup_pipe_error_propagation(void **state)
+{
+	t_ast	*cmds[2];
+	// Use a filename that definitely doesn't exist
+	char	*ls_args[] = {"/tmp/does_not_exist_minishell_test", NULL};
+	char	*wc_args[] = {"-l", NULL};
+
+	cmds[0] = create_cmd_ast("ls", ls_args, 1);
+	cmds[1] = create_cmd_ast("wc", wc_args, 1);
+
+	if (!cmds[0] || !cmds[1])
+		return (-1);
+	*state = create_pipeline_ast(cmds, 2);
+	return (0);
+}
+
+void	test_eval_pipe_error_propagation(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	env = create_shell_env(environ);
+	
+	res = eval_ast(ast, env, environ);
+	
+	assert_non_null(res);
+	// STDOUT: ls failed, so it wrote nothing to stdout. wc -l counts 0.
+	assert_string_equal(res->output, "0\n");
+	// STDERR: Should contain the error message from ls
+	assert_non_null(res->erro_msg);
+	// Exit code should be that of the LAST command (wc), which succeeded (0)
+	// Even though ls failed, the pipeline exit code is usually the last one.
+	assert_int_equal(res->exit_code, 0);
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
+}

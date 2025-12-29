@@ -51,6 +51,7 @@ typedef struct s_shell_env
 {
 	t_hashtable			*vars;
 	t_list				*order;
+	t_ast				*root_node;
 }						t_shell_env;
 
 typedef t_cmd_response	*(*t_cmd_func)(t_ast *shell_ast, char **cmd_str,
