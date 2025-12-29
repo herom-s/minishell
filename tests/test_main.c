@@ -164,6 +164,10 @@ static int	run_external_tests(void)
 			setup_pipe_exit_code_fail, teardown_free_pipe_ast),
 		cmocka_unit_test_setup_teardown(test_eval_pipe_error_propagation,
 			setup_pipe_error_propagation, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_mid_cmd_not_found,
+			setup_pipe_mid_cmd_not_found, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_env_grep,
+			setup_pipe_env_grep, teardown_free_pipe_ast),
 	};
 	printf("\n--- external commands Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));

@@ -115,6 +115,8 @@ int		setup_pipe_builtin_to_external(void **state);
 int		setup_pipe_exit_code_success(void **state);
 int		setup_pipe_exit_code_fail(void **state);
 int		setup_pipe_error_propagation(void **state);
+int		setup_pipe_mid_cmd_not_found(void **state);
+int		setup_pipe_env_grep(void **state);
 
 // tests for external pipe cmd eval
 void	test_eval_pipe_two_stage(void **state);
@@ -125,4 +127,6 @@ void	test_eval_pipe_builtin_to_external(void **state);
 void	test_eval_pipe_exit_code_success(void **state);
 void	test_eval_pipe_exit_code_fail(void **state);
 void	test_eval_pipe_error_propagation(void **state);
+void	test_eval_pipe_mid_cmd_not_found(void **state);
+void	test_eval_pipe_env_grep(void **state);
 #endif
