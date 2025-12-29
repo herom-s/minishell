@@ -49,6 +49,11 @@ void	*destroy_cmd_res(t_cmd_response *cmd_res)
 		free(cmd_res->erro_msg);
 		cmd_res->erro_msg = NULL;
 	}
+	if (cmd_res->curr_dir)
+	{
+		free(cmd_res->curr_dir);
+		cmd_res->erro_msg = NULL;
+	}
 	free(cmd_res);
 	cmd_res = NULL;
 	return (cmd_res);
