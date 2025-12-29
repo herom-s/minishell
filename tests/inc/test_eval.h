@@ -13,21 +13,21 @@
 #ifndef TEST_EVAL_H
 # define TEST_EVAL_H
 
-#include "ast.h"
+# include "ast.h"
 
 typedef struct s_test_cmd_params
 {
-	char		*cmd_name;
-	char		**args;
-	int			arg_count;
-	char		*expected_output;
-	int			expected_exit_code;
-}				t_test_cmd_params;
+	char	*cmd_name;
+	char	**args;
+	int		arg_count;
+	char	*expected_output;
+	int		expected_exit_code;
+}			t_test_cmd_params;
 
+t_ast		*create_cmd_ast(char *cmd_name, char **args, int arg_count);
+void		free_cmd_ast(t_ast *ast);
+int			teardown_free_cmd_ast(void **state);
 
-t_ast	*create_cmd_ast(char *cmd_name, char **args, int arg_count);
-void	free_cmd_ast(t_ast *ast);
-
-int	teardown_free_cmd_ast(void **state);
-
+t_ast		*create_pipeline_ast(t_ast **cmds, int count);
+int			teardown_free_pipe_ast(void **state);
 #endif

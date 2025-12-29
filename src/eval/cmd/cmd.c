@@ -21,16 +21,14 @@ t_cmd_response	*func_exec_cmd(t_ast *shell_ast, char **cmd_str,
 	t_cmd_response	*res;
 
 	(void)shell_ast;
-	(void)cmd_str;
 	(void)env;
-	(void)envp;
-	res = ft_calloc(1, sizeof(t_cmd_response));
-	if (!res)
-		return (NULL);
 	if (execve(cmd_str[0], cmd_str, envp) < 0)
 	{
-		res->erro_msg = ft_strjoin(cmd_str[0], ": command not found\n");
-		res->exit_code = 127;
+		ft_dprintf(STDERR_FILENO, "%s: command not found\n", cmd_str[0]);
+		res = ft_calloc(1, sizeof(t_cmd_response));
+		if (res)
+			res->exit_code = 127;
+		return (res);
 	}
-	return (res);
+	return (NULL);
 }

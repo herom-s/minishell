@@ -138,8 +138,24 @@ static int	run_external_tests(void)
 	const struct CMUnitTest tests[] = {
 		cmocka_unit_test_setup_teardown(test_eval_external_cat_abs,
 			setup_external_cat_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_invalid_abs,
+			setup_external_invalid_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_echo_abs,
+			setup_external_echo_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_true_abs,
+			setup_external_true_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_false_abs,
+			setup_external_false_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_ls_abs,
+			setup_external_ls_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_two_stage,
+			setup_pipe_two_stage, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_file_cat_wc,
+			setup_pipe_file_cat_wc, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_long_chain,
+			setup_pipe_long_chain, teardown_free_pipe_ast),
 	};
-	printf("\n--- External Tests ---\n");
+	printf("\n--- external commands Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
@@ -156,7 +172,7 @@ static void	print_usage(void)
 	printf("  export       Run export builtin tests only\n");
 	printf("  pwd          Run pwd builtin tests only\n");
 	printf("  unset        Run unset builtin tests only\n");
-	printf("  external     Run external tests only\n");
+	printf("  external     Run external commands tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 

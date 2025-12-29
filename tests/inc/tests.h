@@ -90,10 +90,29 @@ void	test_eval_built_in_unset_single_var(void **state);
 void	test_eval_built_in_unset_multiple_vars(void **state);
 void	test_eval_built_in_unset_nonexistent(void **state);
 
-// setup for external cat eval
+// setup for external cmd eval
 int		setup_external_cat_abs_ast(void **state);
+int		setup_external_invalid_abs_ast(void **state);
+int		setup_external_echo_abs_ast(void **state);
+int		setup_external_true_abs_ast(void **state);
+int		setup_external_false_abs_ast(void **state);
+int		setup_external_ls_abs_ast(void **state);
 
-// tests for external cat eval
+// tests for external cmd eval
 void	test_eval_external_cat_abs(void **state);
+void	test_eval_external_invalid_abs(void **state);
+void	test_eval_external_echo_abs(void **state);
+void	test_eval_external_true_abs(void **state);
+void	test_eval_external_false_abs(void **state);
+void	test_eval_external_ls_abs(void **state);
 
+// setup for exernal pipe cmd eval
+int		setup_pipe_two_stage(void **state);
+int		setup_pipe_file_cat_wc(void **state);
+int		setup_pipe_long_chain(void **state);
+
+// tests for external pipe cmd eval
+void	test_eval_pipe_two_stage(void **state);
+void	test_eval_pipe_file_cat_wc(void **state);
+void	test_eval_pipe_long_chain(void **state);
 #endif

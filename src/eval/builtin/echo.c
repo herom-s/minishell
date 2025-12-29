@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:37:48 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/03 11:39:00 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/23 18:24:18 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ static char	*build_output(t_ast *node, int *newline_flag)
 	output = NULL;
 	while (node)
 	{
-		if (ft_strcmp(node->s_cmd_suffix.word, "-n") == 0)
+		if (ft_strcmp(node->u_ast.s_cmd_suffix.word, "-n") == 0)
 			*newline_flag = 0;
 		else
-			output = append_word(output, node->s_cmd_suffix.word);
-		node = node->s_cmd_suffix.cmd_suffix;
+			output = append_word(output, node->u_ast.s_cmd_suffix.word);
+		node = node->u_ast.s_cmd_suffix.cmd_suffix;
 	}
 	if (!output)
 		return (ft_strdup(""));
@@ -67,7 +67,7 @@ t_cmd_response	*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
 	if (!res)
 		return (NULL);
 	newline_flag = 1;
-	output = build_output(shell_ast->s_simple_cmd.cmd_suffix, &newline_flag);
+	output = build_output(shell_ast->u_ast.s_simple_cmd.cmd_suffix, &newline_flag);
 	if (newline_flag)
 	{
 		tmp = ft_strjoin(output, "\n");
