@@ -37,15 +37,11 @@ void	parse_input(char *input, char *envp[])
 	if (parser == NULL)
 	{
 		ft_printf("Failed to create parser\n");
-		free(lexer);
-		return ;
+		return (free(lexer));
 	}
 	ast = init_ast(parser);
 	if (ast)
-	{
-		print_ast(ast, 0);
 		free_ast(ast);
-	}
 	free(parser);
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);
