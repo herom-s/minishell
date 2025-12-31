@@ -141,5 +141,13 @@ t_ast	*create_ast(t_ast node)
 
 t_ast	*init_ast(t_parser *parser)
 {
-	return (parse_and_or(parser));
+    t_ast   *root;
+
+    root = parse_and_or(parser);
+    if (cur_token_is(parser->cur_token, (1 << RPAREN)))
+    {
+        parser_error(parser);
+        return (free_ast(root));
+    }
+	return (root);
 }

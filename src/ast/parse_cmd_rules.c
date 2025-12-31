@@ -23,7 +23,7 @@ t_ast	*parse_subshell(t_parser *parser)
 	if (!cur_token_is(parser->cur_token, (1 << RPAREN)))
 	{
 		parser_error(parser);
-		return (NULL);
+		return (free_ast(and_or));
 	}
 	next_token(parser);
 	node = (t_ast){.type = AST_SUBSHELL, .u_ast.s_subshell.and_or = and_or};

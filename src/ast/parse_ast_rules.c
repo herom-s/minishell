@@ -58,7 +58,10 @@ t_ast	*parse_pipe_sequence(t_parser *parser)
 		next_token(parser);
 		if (cur_token_is(parser->cur_token, (1 << PIPE) | (1 << AND_IF)
 				| (1 << OR_IF) | (1 << END)))
-			return (parser_error(parser));
+        {
+            parser_error(parser);
+            return (free_ast(left));
+        }
 		right = parse_simple_cmd(parser);
 		if (right == NULL)
 			return (NULL);
@@ -130,9 +133,12 @@ t_ast	*parse_cmd_suffix(t_parser *parser)
 	word = parser->cur_token->literal;
 	next_token(parser);
 	cmd_suffix = parse_cmd_suffix(parser);
-	node = (t_ast){.type = AST_CMD_SUFFIX,
+    if (parser->has_error)
+    {
+        return (NULL);
+    }
+	return (create_ast((t_ast){.type = AST_CMD_SUFFIX,
 		.u_ast.s_cmd_suffix.io_file = io_file,
 		.u_ast.s_cmd_suffix.word = word,
-		.u_ast.s_cmd_suffix.cmd_suffix = cmd_suffix};
-	return (create_ast(node));
+		.u_ast.s_cmd_suffix.cmd_suffix = cmd_suffix}));
 }
