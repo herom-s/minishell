@@ -59,15 +59,15 @@ void free_parse_result(t_parse_result *result)
 	free(result);
 }
 
-void print_parser_ast(t_parse_result *result)
-{
-	ft_printf("\n=== AST Structure ===\n");
-	if (result && result->ast)
-		print_ast(result->ast, 0);
-	else
-		ft_printf("NULL or ERROR\n");
-	ft_printf("=====================\n");
-}
+// void print_parser_ast(t_parse_result *result)
+// {
+// 	ft_printf("\n=== AST Structure ===\n");
+// 	if (result && result->ast)
+// 		print_ast(result->ast, 0);
+// 	else
+// 		ft_printf("NULL or ERROR\n");
+// 	ft_printf("=====================\n");
+// }
 
 // ============================================================================
 // SIMPLE COMMAND TESTS
