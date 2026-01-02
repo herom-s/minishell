@@ -55,7 +55,7 @@ void	test_eval_built_in_cd_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	mkdir(expected_dir, 0755);
 	buffer = calloc(1, PATH_MAX + 1);
@@ -102,7 +102,7 @@ void	test_eval_built_in_cd_to_many_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_string_equal(res->erro_msg, expected_msg);
 	assert_int_equal(res->exit_code, 1);

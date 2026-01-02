@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_echo_eval.c                                   :+:      :+:    :+:   */
+/*   test_cmd_eval.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/03 16:58:33 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/04 12:13:15 by hermarti         ###   ########.fr       */
+/*   Created: 2025/12/19 15:54:08 by hermarti          #+#    #+#             */
+/*   Updated: 2025/12/19 17:02:36 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "eval.h"
 #include "test_eval.h"
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <linux/limits.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -24,59 +26,33 @@
 #include <cmocka.h>
 
 /*
- *   setup: echo -n basic
+ *   setup: setup cat external command
  */
-int	setup_built_in_echo_n_basic_ast(void **state)
+int	setup_external_cat_abs_ast(void **state)
 {
-	char	*args[] = {"-n", "hello world"};
+	char		*args[] = {"/tmp/minishell_test_cat.txt", NULL};
+	int			fd;
+	const char	*txt = "hello world\n";
 
-	*state = create_cmd_ast("echo", args, 2);
+	fd = open(args[0], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (fd < 0)
+		return (-1);
+	if (write(fd, txt, strlen(txt)) < 0)
+	{
+		close(fd);
+		return (-1);
+	}
+	close(fd);
+	*state = create_cmd_ast("cat", args, 1);
 	if (!*state)
 		return (-1);
 	return (0);
 }
 
 /*
- *   test: echo -n should not print newline
+ *   test: basic eval test of cat command printing a hello world
  */
-void	test_eval_built_in_echo_n_basic(void **state)
-{
-	t_ast				*ast;
-	t_shell_response	*res;
-	t_shell_env			*env;
-	extern char			**environ;
-
-	ast = (t_ast *)(*state);
-	assert_non_null(ast);
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_string_equal(res->output, "hello world");
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
-    destroy_shell_env(env);
-}
-
-/*
- *   setup: echo basic
- */
-int	setup_built_in_echo_basic_ast(void **state)
-{
-	char	*args[] = {"hello world"};
-
-	*state = create_cmd_ast("echo", args, 1);
-	if (!*state)
-		return (-1);
-	return (0);
-}
-
-/*
- *   test: basic eval test of echo command printing a hello world
- */
-void	test_eval_built_in_echo_basic(void **state)
+void	test_eval_external_cat_abs(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
@@ -94,26 +70,24 @@ void	test_eval_built_in_echo_basic(void **state)
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
+	unlink("/tmp/minishell_test_cat.txt");
 }
 
 /*
- *   setup: echo empty args
+ *   setup: external echo using absolute path
  */
-int	setup_built_in_echo_empty_ast(void **state)
+int	setup_external_echo_abs_ast(void **state)
 {
-	char	*args[] = {""};
+	char	*args[] = {"hello", "world", NULL};
 
-	*state = create_cmd_ast("echo", args, 1);
+	*state = create_cmd_ast("/bin/echo", args, 2);
 	if (!*state)
 		return (-1);
 	return (0);
 }
 
-/*
- *   test: empty eval test of echo command printing nothing
- */
-void	test_eval_built_in_echo_empty(void **state)
+void	test_eval_external_echo_abs(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
@@ -126,31 +100,26 @@ void	test_eval_built_in_echo_empty(void **state)
 	assert_non_null(env);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "\n");
+	assert_string_equal(res->output, "hello world\n");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }
 
 /*
- *   setup: echo empty args
+ *   setup: external true (absolute path) - should exit 0, no output
  */
-int	setup_built_in_echo_n_empty_ast(void **state)
+int	setup_external_true_abs_ast(void **state)
 {
-	char	*args[] = {"-n", ""};
-
-	*state = create_cmd_ast("echo", args, 2);
+	*state = create_cmd_ast("/bin/true", NULL, 0);
 	if (!*state)
 		return (-1);
 	return (0);
 }
 
-/*
- *   test: empty eval test of echo command printing nothing
- */
-void	test_eval_built_in_echo_n_empty(void **state)
+void	test_eval_external_true_abs(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
@@ -168,26 +137,21 @@ void	test_eval_built_in_echo_n_empty(void **state)
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }
 
 /*
- *   setup: echo mutiple args
+ *   setup: external false (absolute path) - should exit non-zero, no output
  */
-int	setup_built_in_echo_mutiple_args_ast(void **state)
+int	setup_external_false_abs_ast(void **state)
 {
-	char	*args[] = {"hello", "world", "world"};
-
-	*state = create_cmd_ast("echo", args, 3);
+	*state = create_cmd_ast("/bin/false", NULL, 0);
 	if (!*state)
 		return (-1);
 	return (0);
 }
 
-/*
- *   test: mutiple args eval test of echo command printing hello world world\n
- */
-void	test_eval_built_in_echo_mutiple_args(void **state)
+void	test_eval_external_false_abs(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
@@ -200,31 +164,38 @@ void	test_eval_built_in_echo_mutiple_args(void **state)
 	assert_non_null(env);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world world\n");
-	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(res->output, "");
+	assert_true(res->exit_code != 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }
 
 /*
- *   setup: echo mutiple args
+ *   setup: ls on a temporary dir using absolute path
  */
-int	setup_built_in_echo_n_mutiple_args_ast(void **state)
+int	setup_external_ls_abs_ast(void **state)
 {
-	char	*args[] = {"-n", "hello", "world", "world"};
+	const char	*dir = "/tmp/minishell_test_ls_dir";
+	char		*args[] = {(char *)dir, NULL};
+	char		path[PATH_MAX];
+	int			fd;
 
-	*state = create_cmd_ast("echo", args, 4);
+	if (mkdir(dir, 0700) < 0 && access(dir, F_OK) != 0)
+		return (-1);
+	snprintf(path, sizeof(path), "%s/%s", dir, "file.txt");
+	fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (fd < 0)
+		return (-1);
+	close(fd);
+	*state = create_cmd_ast("/bin/ls", args, 1);
 	if (!*state)
 		return (-1);
 	return (0);
 }
 
-/*
- *   test: mutiple args eval test of echo command printing hello world world\n
- */
-void	test_eval_built_in_echo_n_mutiple_args(void **state)
+void	test_eval_external_ls_abs(void **state)
 {
 	t_ast				*ast;
 	t_shell_response	*res;
@@ -237,10 +208,47 @@ void	test_eval_built_in_echo_n_mutiple_args(void **state)
 	assert_non_null(env);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world world");
+	assert_string_equal(res->output, "file.txt\n");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
+	rmdir("/tmp/minishell_test_ls_dir");
+}
+
+/*
+ *   setup: setup invalid external command
+ */
+int	setup_external_invalid_abs_ast(void **state)
+{
+	*state = create_cmd_ast("gat", NULL, 0);
+	if (!*state)
+		return (-1);
+	return (0);
+}
+
+/*
+ *   test: basic eval test of invalid command printing a error about
+ *         command not found
+ */
+void	test_eval_external_invalid_abs(void **state)
+{
+	t_ast				*ast;
+	t_shell_response	*res;
+	t_shell_env			*env;
+	extern char			**environ;
+
+	ast = (t_ast *)(*state);
+	assert_non_null(ast);
+	env = create_shell_env(environ);
+	assert_non_null(env);
+	res = eval_ast(ast, env);
+	assert_non_null(res);
+	assert_string_equal(res->erro_msg, "gat: command not found\n");
+	assert_int_equal(res->exit_code, 127);
+	free(res->output);
+	free(res->erro_msg);
+	free(res);
+	destroy_shell_env(env);
 }

@@ -228,6 +228,102 @@ static int	run_unset_builtin_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_external_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_external_cat_abs,
+			setup_external_cat_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_invalid_abs,
+			setup_external_invalid_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_echo_abs,
+			setup_external_echo_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_true_abs,
+			setup_external_true_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_false_abs,
+			setup_external_false_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_external_ls_abs,
+			setup_external_ls_abs_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_two_stage,
+			setup_pipe_two_stage, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_file_cat_wc,
+			setup_pipe_file_cat_wc, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_long_chain,
+			setup_pipe_long_chain, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_large_buffer,
+			setup_pipe_large_buffer, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_builtin_to_external,
+			setup_pipe_builtin_to_external, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_exit_code_success,
+			setup_pipe_exit_code_success, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_exit_code_fail,
+			setup_pipe_exit_code_fail, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_error_propagation,
+			setup_pipe_error_propagation, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_mid_cmd_not_found,
+			setup_pipe_mid_cmd_not_found, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_env_grep,
+			setup_pipe_env_grep, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_single_command,
+			setup_pipe_single_command, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_very_long_chain,
+			setup_pipe_very_long_chain, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_sigpipe,
+			setup_pipe_sigpipe_test, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_builtin_pwd_to_cat,
+			setup_pipe_builtin_pwd_to_cat, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_cd_in_pipeline,
+			setup_pipe_cd_in_pipeline, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_exit_in_middle,
+			setup_pipe_exit_in_middle, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_cat_file_to_wc,
+			setup_pipe_cat_file_to_wc, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_export_in_pipeline,
+			setup_pipe_export_in_pipeline, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_notfound_first,
+			setup_pipe_notfound_first, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_notfound_last,
+			setup_pipe_notfound_last, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_grep_chain,
+			setup_pipe_grep_chain, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_sort_uniq,
+			setup_pipe_sort_uniq, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_grep_inverse,
+			setup_pipe_grep_inverse, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_mixed_paths,
+			setup_pipe_mixed_paths, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_special_chars,
+			setup_pipe_special_chars, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_head_tail,
+			setup_pipe_head_tail, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_tr_uppercase,
+			setup_pipe_tr_uppercase, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_cut_field,
+			setup_pipe_cut_field, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_awk_field,
+			setup_pipe_awk_field, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_sed_substitute,
+			setup_pipe_sed_substitute, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_xargs,
+			setup_pipe_xargs, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_tee,
+			setup_pipe_tee, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_rev,
+			setup_pipe_rev, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_wc_words,
+			setup_pipe_wc_words, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_ls_grep,
+			setup_pipe_ls_grep, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_multiple_cats,
+			setup_pipe_multiple_cats, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_empty_output,
+			setup_pipe_empty_output, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_printf,
+			setup_pipe_printf, teardown_free_pipe_ast),
+	};
+	printf("\n--- external commands Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static void	print_usage(void)
 {
 	printf("Usage: ./run_tests [OPTIONS]\n");
@@ -241,6 +337,7 @@ static void	print_usage(void)
 	printf("  export       Run export builtin tests only\n");
 	printf("  pwd          Run pwd builtin tests only\n");
 	printf("  unset        Run unset builtin tests only\n");
+	printf("  external     Run external commands tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -300,6 +397,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running unset Builtin Tests ===\n");
 			return (run_unset_builtin_tests());
 		}
+		if (strcmp(argv[1], "external") == 0)
+		{
+			printf("\n=== Running External Tests ===\n");
+			return (run_external_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -331,6 +433,9 @@ int	main(int argc, char *argv[])
 	if (result != 0)
 		failed += result;
 	result = run_unset_builtin_tests();
+	if (result != 0)
+		failed += result;
+	result = run_external_tests();
 	if (result != 0)
 		failed += result;
 	printf("\n=== Test Suite Complete ===\n");

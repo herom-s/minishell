@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 14:46:29 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/11 14:46:30 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/29 17:04:39 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_shell_env	*create_shell_env(char *envp[])
 	env->vars = hashtable_create();
 	if (!env->vars)
 		return (free(env), NULL);
-	env->order = NULL;
+	env->envp = envp;
 	i = 0;
 	while (envp[i])
 	{

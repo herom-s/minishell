@@ -83,7 +83,7 @@ void	test_eval_built_in_export_no_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_non_null(res->output);
 	i = 0;
@@ -126,13 +126,13 @@ void	test_eval_built_in_export_arg(void **state)
 	assert_non_null(ast_export);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast_export, env, environ);
+	res = eval_ast(ast_export, env);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res);
 	ast_list = create_cmd_ast("export", NULL, 0);
-	res = eval_ast(ast_list, env, environ);
+	res = eval_ast(ast_list, env);
 	assert_non_null(res);
 	assert_non_null(res->output);
 	assert_non_null(strstr(res->output, "declare -x FOO=\"bar\""));
@@ -171,13 +171,13 @@ void	test_eval_built_in_export_mutiple_args(void **state)
 	assert_non_null(ast_export);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast_export, env, environ);
+	res = eval_ast(ast_export, env);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res);
 	ast_list = create_cmd_ast("export", NULL, 0);
-	res = eval_ast(ast_list, env, environ);
+	res = eval_ast(ast_list, env);
 	assert_non_null(res);
 	assert_non_null(res->output);
 	assert_non_null(strstr(res->output, "declare -x FOO=\"bar\""));
@@ -216,7 +216,7 @@ void	test_eval_built_in_export_invalid_digit(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 1);
 	assert_non_null(res->erro_msg);
@@ -254,7 +254,7 @@ void	test_eval_built_in_export_invalid_special(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 1);
 	assert_non_null(res->erro_msg);
@@ -293,7 +293,7 @@ void	test_eval_built_in_export_mixed_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 1);
 	assert_non_null(res->erro_msg);
@@ -302,7 +302,7 @@ void	test_eval_built_in_export_mixed_args(void **state)
 	free(res->erro_msg);
 	free(res);
 	ast_list = create_cmd_ast("export", NULL, 0);
-	res = eval_ast(ast_list, env, environ);
+	res = eval_ast(ast_list, env);
 	assert_non_null(res);
 	assert_non_null(res->output);
 	assert_non_null(strstr(res->output, "declare -x VALID=\"ok\""));
