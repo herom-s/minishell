@@ -59,15 +59,15 @@ void free_parse_result(t_parse_result *result)
 	free(result);
 }
 
-void print_parser_ast(t_parse_result *result)
-{
-	ft_printf("\n=== AST Structure ===\n");
-	if (result && result->ast)
-		print_ast(result->ast, 0);
-	else
-		ft_printf("NULL or ERROR\n");
-	ft_printf("=====================\n");
-}
+// void print_parser_ast(t_parse_result *result)
+// {
+// 	ft_printf("\n=== AST Structure ===\n");
+// 	if (result && result->ast)
+// 		print_ast(result->ast, 0);
+// 	else
+// 		ft_printf("NULL or ERROR\n");
+// 	ft_printf("=====================\n");
+// }
 
 // ============================================================================
 // SIMPLE COMMAND TESTS
@@ -313,8 +313,20 @@ void test_parser_multiple_redirects(void **state)
 	assert_int_equal(result->parser->has_error, 0);
 
 	assert_int_equal(result->ast->type, AST_SIMPLE_CMD);
-	assert_non_null(result->ast->u_ast.s_simple_cmd.cmd_prefix);
-	assert_non_null(result->ast->u_ast.s_simple_cmd.cmd_suffix);
+
+    t_ast *suffix = result->ast->u_ast.s_simple_cmd.cmd_suffix;
+    assert_non_null(suffix);
+    assert_int_equal(suffix->type, AST_CMD_SUFFIX);
+    assert_non_null(suffix->u_ast.s_cmd_suffix.io_file);
+    assert_int_equal(suffix->u_ast.s_cmd_suffix.io_file->u_ast.s_io_file.op->type, LESS);
+    assert_string_equal(suffix->u_ast.s_cmd_suffix.io_file->u_ast.s_io_file.filename, "input.txt");
+
+    t_ast *next_suffix = suffix->u_ast.s_cmd_suffix.cmd_suffix;
+    assert_non_null(next_suffix);
+    assert_int_equal(next_suffix->type, AST_CMD_SUFFIX);
+    assert_non_null(next_suffix->u_ast.s_cmd_suffix.io_file);
+    assert_int_equal(next_suffix->u_ast.s_cmd_suffix.io_file->u_ast.s_io_file.op->type, GREAT);
+    assert_string_equal(next_suffix->u_ast.s_cmd_suffix.io_file->u_ast.s_io_file.filename, "output.txt");
 
 	free_parse_result(result);
 }
