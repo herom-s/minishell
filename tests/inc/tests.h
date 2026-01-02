@@ -186,4 +186,37 @@ void	test_eval_pipe_multiple_cats(void **state);
 void	test_eval_pipe_empty_output(void **state);
 void	test_eval_pipe_printf(void **state);
 
+// setup for redir eval
+int		setup_redir_output_create(void **state);
+int		setup_redir_output_content(void **state);
+int		setup_redir_output_truncate(void **state);
+int		setup_redir_append_create(void **state);
+int		setup_redir_append_content(void **state);
+int		setup_redir_input_read(void **state);
+int		setup_redir_input_nonexistent(void **state);
+int		setup_redir_input_output(void **state);
+int		setup_redir_multiple_output(void **state);
+int		setup_redir_output_invalid_path(void **state);
+int		setup_redir_builtin_output(void **state);
+int		setup_redir_env_output(void **state);
+int		setup_redir_external_input(void **state);
+int		setup_redir_external_both(void **state);
+int		setup_redir_append_no_newline(void **state);
+
+// tests for redir eval
+void	test_eval_redir_output_create(void **state);
+void	test_eval_redir_output_content(void **state);
+void	test_eval_redir_output_truncate(void **state);
+void	test_eval_redir_append_create(void **state);
+void	test_eval_redir_append_content(void **state);
+void	test_eval_redir_input_read(void **state);
+void	test_eval_redir_input_nonexistent(void **state);
+void	test_eval_redir_input_output(void **state);
+void	test_eval_redir_multiple_output(void **state);
+void	test_eval_redir_output_invalid_path(void **state);
+void	test_eval_redir_builtin_output(void **state);
+void	test_eval_redir_env_output(void **state);
+void	test_eval_redir_external_input(void **state);
+void	test_eval_redir_external_both(void **state);
+void	test_eval_redir_append_no_newline(void **state);
 #endif

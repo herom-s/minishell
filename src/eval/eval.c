@@ -101,6 +101,11 @@ t_shell_response	*eval_ast(t_ast *shell_ast, t_shell_env *env)
 		cmd_res = eval_cmd(shell_ast, env);
 	else if (shell_ast->type == AST_PIPE_SEQ)
 		cmd_res = eval_pipe(shell_ast, env);
+	else if (shell_ast->type == AST_IO_FILE)
+	{
+		print_ast(shell_ast, 0);
+		//cmd_res = eval_io_file(shell_ast, env);
+	}
 	if (!cmd_res)
 		return (NULL);
 	res = ft_calloc(1, sizeof(t_shell_response));

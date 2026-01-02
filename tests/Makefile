@@ -36,8 +36,10 @@ TEST_FILES = test_main.c \
 			 $(TEST_EVAL_DIR)/test_pwd_eval.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_eval.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_pipe_eval.c \
+			 $(TEST_EVAL_DIR)/test_redir_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval.c \
-			 $(TEST_EVAL_DIR)/test_eval_pipe.c
+			 $(TEST_EVAL_DIR)/test_eval_pipe.c \
+			 $(TEST_EVAL_DIR)/test_eval_redir.c
 
 TEST_OBJ = $(TEST_FILES:%.c=$(TEST_OBJ_DIR)/%.o)
 TEST_BIN = run_tests
@@ -54,7 +56,7 @@ RESET = \033[0m
 all: $(TEST_BIN)
 
 $(LIBFT_LIB):
-	@make -C $(LIBFT_PATH)
+	@make -C $(LIBFT_PATH) DEBUG=1
 
 $(CMOCKA_LIB):
 	@if [ -f "$(CMOCKA_LIB)" ]; then \

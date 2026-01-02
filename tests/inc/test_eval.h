@@ -30,4 +30,8 @@ int			teardown_free_cmd_ast(void **state);
 
 t_ast		*create_pipeline_ast(t_ast **cmds, int count);
 int			teardown_free_pipe_ast(void **state);
+
+t_ast		*create_redirection_ast(t_ast **cmds, int count);
+t_ast		*create_io_file_node(t_token_type type, char *filename);
+int			teardown_free_redir_ast(void **state);
 #endif
