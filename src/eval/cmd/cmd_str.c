@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:47:15 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/07 08:56:01 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/23 18:21:32 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,24 +75,14 @@ static char	**build_cmd_str(char *cmd_name, t_ast *cmd_suffix, char *bin_path)
 	return (cmd_str);
 }
 
-static char	**create_fallback_cmd(char *cmd_name)
-{
-	char	**cmd_str;
-
-	cmd_str = ft_calloc(2, sizeof(char *));
-	if (!cmd_str)
-		return (NULL);
-	cmd_str[0] = ft_strdup(cmd_name);
-	cmd_str[1] = NULL;
-	return (cmd_str);
-}
-
 char	**get_cmd_str(char *cmd_name, t_ast *cmd_suffix, char *envp[])
 {
 	char	**cmd_str;
 	char	**bin_paths;
 	int		i;
 
+	if (ft_strchr(cmd_name, '/'))
+		return (build_cmd_str(cmd_name, cmd_suffix, ""));
 	if (check_builtin(cmd_name))
 		return (build_cmd_str(cmd_name, cmd_suffix, ""));
 	bin_paths = get_bin_paths(envp);
@@ -108,5 +98,5 @@ char	**get_cmd_str(char *cmd_name, t_ast *cmd_suffix, char *envp[])
 		i++;
 	}
 	free_cmd_str(bin_paths);
-	return (create_fallback_cmd(cmd_name));
+	return (build_cmd_str(cmd_name, cmd_suffix, ""));
 }

@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:42:59 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/03 11:43:24 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/29 17:03:46 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,11 @@ char	*unset_args(char **cmd_str, t_shell_env *env)
 }
 
 t_cmd_response	*func_built_in_unset(t_ast *shell_ast, char **cmd_str,
-		t_shell_env *env, char *envp[])
+		t_shell_env *env)
 {
 	t_cmd_response	*res;
 
 	(void)shell_ast;
-	(void)cmd_str;
-	(void)env;
-	(void)envp;
 	res = ft_calloc(1, sizeof(t_cmd_response));
 	if (!res)
 		return (NULL);

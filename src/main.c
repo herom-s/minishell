@@ -16,6 +16,7 @@
 #include "minishell.h"
 #include "parser.h"
 #include "print.h"
+#include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdlib.h>

@@ -6,12 +6,11 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:08:12 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/22 09:00:49 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/23 18:16:41 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
-#include "eval.h"
 #include "test_eval.h"
 #include <stdlib.h>
 #include <string.h>
@@ -32,7 +31,7 @@ t_ast	*create_cmd_ast(char *cmd_name, char **args, int arg_count)
 		return (NULL);
 	simple->type = AST_SIMPLE_CMD;
 	simple->u_ast.s_simple_cmd.cmd_prefix = NULL;
-	simple->u_ast.s_simple_cmd.cmd_name = strdup(cmd_name);
+	simple->u_ast.s_simple_cmd.cmd_name = cmd_name;
 	simple->u_ast.s_simple_cmd.cmd_suffix = NULL;
 	prev_suffix = NULL;
 	i = 0;
@@ -43,7 +42,7 @@ t_ast	*create_cmd_ast(char *cmd_name, char **args, int arg_count)
 			return (NULL);
 		suffix->type = AST_CMD_SUFFIX;
 		suffix->u_ast.s_cmd_suffix.io_file = NULL;
-		suffix->u_ast.s_cmd_suffix.word = strdup(args[i]);
+		suffix->u_ast.s_cmd_suffix.word = args[i];
 		suffix->u_ast.s_cmd_suffix.cmd_suffix = NULL;
 		if (prev_suffix)
 			prev_suffix->u_ast.s_cmd_suffix.cmd_suffix = suffix;
@@ -64,14 +63,10 @@ void	free_cmd_ast(t_ast *ast)
 		return ;
 	if (ast->type == AST_SIMPLE_CMD)
 	{
-		if (ast->u_ast.s_simple_cmd.cmd_name)
-			free(ast->u_ast.s_simple_cmd.cmd_name);
 		suf = ast->u_ast.s_simple_cmd.cmd_suffix;
 		while (suf)
 		{
 			next = suf->u_ast.s_cmd_suffix.cmd_suffix;
-			if (suf->u_ast.s_cmd_suffix.word)
-				free((void *)suf->u_ast.s_cmd_suffix.word);
 			free(suf);
 			suf = next;
 		}
@@ -93,14 +88,10 @@ int	teardown_free_cmd_ast(void **state)
 	ast = (t_ast *)(*state);
 	if (ast->type == AST_SIMPLE_CMD)
 	{
-		if (ast->u_ast.s_simple_cmd.cmd_name)
-			free(ast->u_ast.s_simple_cmd.cmd_name);
 		suf = ast->u_ast.s_simple_cmd.cmd_suffix;
 		while (suf)
 		{
 			next = suf->u_ast.s_cmd_suffix.cmd_suffix;
-			if (suf->u_ast.s_cmd_suffix.word)
-				free((void *)suf->u_ast.s_cmd_suffix.word);
 			free(suf);
 			suf = next;
 		}

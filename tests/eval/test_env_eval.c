@@ -71,7 +71,7 @@ void	test_eval_built_in_env_no_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_non_null(res->output);
 	i = 0;
@@ -100,7 +100,7 @@ void	test_eval_built_in_env_not_empty(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_non_null(res->output);
 	assert_true(strlen(res->output) > 0);
@@ -124,7 +124,7 @@ void	test_eval_built_in_env_contains_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env, environ);
+	res = eval_ast(ast, env);
 	assert_non_null(res);
 	assert_non_null(res->output);
 	assert_non_null(strstr(res->output, "PATH="));

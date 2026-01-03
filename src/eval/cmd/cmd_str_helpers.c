@@ -48,19 +48,3 @@ int	check_path(char *path, char *argv)
 	free(full_path);
 	return (result == 0);
 }
-
-int	check_builtin(char *cmd_name)
-{
-	const char	*built_in_names[7] = {"cd", "pwd", "env", "export", "unset",
-		"echo", "exit"};
-	int			i;
-
-	i = 0;
-	while (i < 7)
-	{
-		if (ft_strcmp(cmd_name, built_in_names[i]) == 0)
-			return (1);
-		i++;
-	}
-	return (0);
-}

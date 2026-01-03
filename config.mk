@@ -26,7 +26,11 @@ SRC_FILES = main.c \
 			$(AST_DIR)/parse_ast_rules.c \
 			$(AST_DIR)/parse_cmd_rules.c \
 			$(EVAL_DIR)/eval.c \
+			$(EVAL_DIR)/eval_util.c \
+			$(EVAL_DIR)/cmd_res.c \
 			$(EVAL_DIR)/util.c \
+			$(EVAL_DIR)/pipe/child_parent.c \
+			$(EVAL_DIR)/pipe/pipe.c \
 			$(EVAL_DIR)/cmd/cmd.c \
 			$(EVAL_DIR)/cmd/cmd_str.c \
 			$(EVAL_DIR)/cmd/cmd_str_helpers.c \
