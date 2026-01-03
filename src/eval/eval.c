@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:50:32 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/09 21:02:57 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/20 09:35:14 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ t_cmd_func_call	*check_cmd(t_ast *shell_ast, t_shell_env *env,
 	if (!call)
 		return (NULL);
 	call->env = env;
-	call->cmd_str = get_cmd_str(shell_ast->s_simple_cmd.cmd_name,
-			shell_ast->s_simple_cmd.cmd_suffix, envp);
+	call->cmd_str = get_cmd_str(shell_ast->u_ast.s_simple_cmd.cmd_name,
+			shell_ast->u_ast.s_simple_cmd.cmd_suffix, envp);
 	call->envp = envp;
-	call->cmd_func = get_cmd_func(shell_ast->s_simple_cmd.cmd_name);
+	call->cmd_func = get_cmd_func(shell_ast->u_ast.s_simple_cmd.cmd_name);
 	return (call);
 }
 

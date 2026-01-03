@@ -6,7 +6,7 @@
 /*   By: thaperei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 14:46:31 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/29 14:46:34 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 10:39:00 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,5 @@ typedef struct s_token
 }	t_token;
 
 t_token	*create_token(t_token token);
+void	free_token(void *node);
 #endif

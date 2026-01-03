@@ -1,38 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parser_helpers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 14:51:10 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/22 08:34:14 by thaperei         ###   ########.fr       */
+/*   Created: 2025/12/01 05:44:00 by thaperei          #+#    #+#             */
+/*   Updated: 2025/12/23 16:50:50 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
-#include "eval.h"
 #include "parser.h"
 #include "libft.h"
-#include <stdlib.h>
 
-void	next_token(t_parser *parser)
+int	cur_token_is(t_token *token, t_token_type expected)
 {
-	parser->cur_token = parser->peek_token;
-	parser->peek_token = get_next_token(parser->lexer);
+	return ((1 << token->type) & expected);
 }
 
-t_parser	*create_parser(t_lexer *lexer)
+int	peek_token_is(t_token *token, t_token_type expected)
 {
-	t_parser	*parser;
+	return ((1 << token->type) & expected);
+}
 
-	if (lexer == NULL)
-		return (NULL);
-	parser = ft_calloc(sizeof(t_parser), 1);
-	if (parser == NULL)
-		return (NULL);
-	*parser = (t_parser){lexer, NULL, NULL, 0};
-	next_token(parser);
-	next_token(parser);
-	return (parser);
+void	*parser_error(t_parser *parser)
+{
+	parser->has_error = 1;
+	ft_dprintf(2, "Minishell: Syntax error near unexpected token '%s'\n",
+		parser->cur_token->literal);
+	return (NULL);
 }

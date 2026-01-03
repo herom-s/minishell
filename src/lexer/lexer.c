@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 09:43:21 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/29 13:00:40 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/17 18:29:50 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,13 @@ t_token	*get_next_token(t_lexer *lexer)
 	if (token.literal == NULL)
 	{
 		read_word(lexer, &token);
-		return (create_token(token));
+		new_token = create_token(token);
+		ft_lstadd_back(&(lexer->tokens), ft_lstnew(new_token));
+		return (new_token);
 	}
 	next_char(lexer);
 	new_token = create_token(token);
+	ft_lstadd_back(&(lexer->tokens), ft_lstnew(new_token));
 	return (new_token);
 }
 
@@ -85,9 +88,4 @@ t_lexer	*create_lexer(char *input)
 		.position = 0, .read_position = 0, .ch = '\0', .tokens = NULL};
 	next_char(lexer);
 	return (lexer);
-}
-
-void	free_lexer(t_lexer *lexer)
-{
-	free(lexer);
 }

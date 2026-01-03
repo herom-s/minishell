@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:47:15 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/03 12:00:29 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/12/07 08:56:01 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static char	**allocate_cmd_str(t_ast *cmd_suffix, int *count)
 	while (node)
 	{
 		(*count)++;
-		node = node->s_cmd_suffix.cmd_suffix;
+		node = node->u_ast.s_cmd_suffix.cmd_suffix;
 	}
 	cmd_str = ft_calloc(*count + 1, sizeof(char *));
 	return (cmd_str);
@@ -67,9 +67,9 @@ static char	**build_cmd_str(char *cmd_name, t_ast *cmd_suffix, char *bin_path)
 	node = cmd_suffix;
 	while (node)
 	{
-		if (node->s_cmd_suffix.word)
-			cmd_str[i++] = ft_strdup(node->s_cmd_suffix.word);
-		node = node->s_cmd_suffix.cmd_suffix;
+		if (node->u_ast.s_cmd_suffix.word)
+			cmd_str[i++] = ft_strdup(node->u_ast.s_cmd_suffix.word);
+		node = node->u_ast.s_cmd_suffix.cmd_suffix;
 	}
 	cmd_str[i] = NULL;
 	return (cmd_str);

@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:13:51 by thaperei          #+#    #+#             */
-/*   Updated: 2025/11/28 22:13:54 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/22 08:35:30 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	check_duplicate_operators(t_lexer *lexer, t_token *token)
 	int					i;
 	int					size;
 	const t_hash_item	operators[] = {{"|", PIPE}, {"&", AMPERSAND},
-	{"<", LESS}, {">", GREAT}};
+	{"<", LESS}, {">", GREAT}, {";", ILLEGAL}};
 
 	i = 0;
 	size = sizeof(operators) / sizeof(t_hash_item);
@@ -84,4 +84,13 @@ t_token	*create_token(t_token token)
 	new_token->literal = ft_substr(token.literal, 0, token.len);
 	new_token->len = token.len;
 	return (new_token);
+}
+
+void	free_token(void *node)
+{
+	t_token	*token;
+
+	token = (t_token *)node;
+	free(token->literal);
+	free(token);
 }
