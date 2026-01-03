@@ -1,0 +1,57 @@
+list             : list and_or
+                 | and_or
+                 ;
+                 
+and_or           :                         pipeline
+                 | and_or AND_IF linebreak pipeline
+                 | and_or OR_IF  linebreak pipeline
+                 ;
+                 
+pipeline         : pipe_sequence
+           
+                 
+pipe_sequence    :                             simple_command
+                 | pipe_sequence '|' linebreak simple_command
+                
+subshell         : '(' and_or ')'
+
+compound_list    :              term
+                 | NEWLINE term
+                 |              term separator
+                 | NEWLINE term separator
+                 
+
+simple_command   : cmd_prefix cmd_word cmd_suffix
+                 | cmd_prefix cmd_word
+                 | cmd_prefix
+                 | cmd_name cmd_suffix
+                 | cmd_name               
+
+cmd_prefix       :            io_redirect
+                 | cmd_prefix io_redirect
+                 |            ASSIGNMENT_WORD
+                 | cmd_prefix ASSIGNMENT_WORD
+                 ;
+                 VAR=123 < input.txt 
+cmd_suffix       :            io_redirect
+                 | cmd_suffix io_redirect
+                 |            WORD
+                 | cmd_suffix WORD
+                 ;
+                 
+redirect_list    :               io_redirect
+                 | redirect_list io_redirect
+                 ;
+                 
+io_redirect      :           io_file
+                 |           io_here
+                 
+io_file          : '<'       filename
+                 | '>'       filename
+                 | DGREAT    filename
+                 ;
+
+filename         : WORD 
+
+io_here          : DLESS     WORD
+

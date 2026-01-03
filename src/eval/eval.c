@@ -24,18 +24,15 @@ static void	exec_child_cmd(t_ast *ast, t_cmd_func_call *call, int fds[2][2])
 	t_shell_env		*env;
 	int				code;
 
-	create_child_fds(fds[PIPE_OUT], fds[PIPE_ERR]);
-	cmd_res = call->cmd_func(ast, call->cmd_str, call->env);
-	code = 1;
-	if (cmd_res)
-	{
-		code = cmd_res->exit_code;
-		destroy_cmd_res(cmd_res);
-	}
-	env = call->env;
-	free_cmd_str(call->cmd_str);
-	free(call);
-	child_exit(env, ast, code);
+	call = ft_calloc(1, sizeof(t_cmd_func_call));
+	if (!call)
+		return (NULL);
+	call->env = env;
+	call->cmd_str = get_cmd_str(shell_ast->u_ast.s_simple_cmd.cmd_name,
+			shell_ast->u_ast.s_simple_cmd.cmd_suffix, envp);
+	call->envp = envp;
+	call->cmd_func = get_cmd_func(shell_ast->u_ast.s_simple_cmd.cmd_name);
+	return (call);
 }
 
 t_cmd_response	*eval_external_cmd(t_ast *shell_ast, t_cmd_func_call *call)

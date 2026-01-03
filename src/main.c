@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/22 14:32:17 by thaperei         ###   ########.fr       */
+/*   Updated: 2025/12/20 15:41:43 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,31 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
-void	parse_input(char *input)
+void	parse_input(char *input, char *envp[])
 {
-	t_lexer	*lexer;
-	t_token	*token;
+	t_lexer		*lexer;
+	t_parser	*parser;
+	t_ast		*ast;
 
+	(void)envp;
 	lexer = create_lexer(input);
-	while (1)
+	if (lexer == NULL)
 	{
-		token = get_next_token(lexer);
-		if (token->type == END)
-			break ;
-		printf("%s - %d\n", token->literal, token->type);
-		free(token->literal);
-		free(token);
+		ft_printf("Failed to create lexer\n");
+		return ;
 	}
+	parser = create_parser(lexer);
+	if (parser == NULL)
+	{
+		ft_printf("Failed to create parser\n");
+		return (free(lexer));
+	}
+	ast = init_ast(parser);
+	if (ast)
+		free_ast(ast);
+	free(parser);
+	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);
-	free(input);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -50,7 +58,9 @@ int	main(int argc, char *argv[], char *envp[])
 	while (1)
 	{
 		shell.input = readline("minishell> ");
-		parse_input(shell.input);
+		if (ft_strncmp(shell.input, "exit", 4) == 0)
+			break ;
+		parse_input(shell.input, envp);
 		add_history(shell.input);
 	}
 	return (EXIT_SUCCESS);
