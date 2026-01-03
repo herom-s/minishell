@@ -30,8 +30,8 @@ t_cmd_response	*create_cmd_res(void)
 	res->erro_msg = ft_strdup("");
 	if (!res->erro_msg)
 	{
-		free(res);
 		free(res->output);
+		free(res);
 		return (NULL);
 	}
 	return (res);
