@@ -125,6 +125,10 @@ void					*closes_pipes(int *fd_out, int *fd_err);
 void					eval_pipe_recursive(t_ast *shell_ast, t_shell_env *env,
 							int pipefd[2]);
 
+int						has_redirections(t_ast *shell_ast);
+
+int						eval_redir(t_ast *shell_ast);
+
 char					*get_curdir(void);
 t_cmd_func				get_cmd_func(char *cmd_name);
 t_cmd_func_call			*check_cmd(t_ast *shell_ast, t_shell_env *env);

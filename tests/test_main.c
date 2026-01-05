@@ -324,37 +324,53 @@ static int	run_redir_tests(void)
 {
 	const struct CMUnitTest tests[] = {
 		cmocka_unit_test_setup_teardown(test_eval_redir_output_create,
-			setup_redir_output_create, teardown_free_cmd_ast),
+			setup_redir_output_create, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_output_content,
-			setup_redir_output_content, teardown_free_cmd_ast),
+			setup_redir_output_content, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_output_truncate,
-			setup_redir_output_truncate, teardown_free_cmd_ast),
+			setup_redir_output_truncate, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_append_create,
-			setup_redir_append_create, teardown_free_cmd_ast),
+			setup_redir_append_create, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_append_content,
-			setup_redir_append_content, teardown_free_cmd_ast),
+			setup_redir_append_content, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_input_read,
-			setup_redir_input_read, teardown_free_cmd_ast),
+			setup_redir_input_read, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_input_nonexistent,
-			setup_redir_input_nonexistent, teardown_free_cmd_ast),
+			setup_redir_input_nonexistent, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_input_output,
-			setup_redir_input_output, teardown_free_cmd_ast),
+			setup_redir_input_output, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_multiple_output,
-			setup_redir_multiple_output, teardown_free_cmd_ast),
+			setup_redir_multiple_output, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_output_invalid_path,
-			setup_redir_output_invalid_path, teardown_free_cmd_ast),
+			setup_redir_output_invalid_path, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_builtin_output,
-			setup_redir_builtin_output, teardown_free_cmd_ast),
+			setup_redir_builtin_output, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_env_output,
-			setup_redir_env_output, teardown_free_cmd_ast),
+			setup_redir_env_output, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_external_input,
-			setup_redir_external_input, teardown_free_cmd_ast),
+			setup_redir_external_input, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_external_both,
-			setup_redir_external_both, teardown_free_cmd_ast),
+			setup_redir_external_both, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_append_no_newline,
-			setup_redir_append_no_newline, teardown_free_cmd_ast),
+			setup_redir_append_no_newline, teardown_free_redir_ast),
 	};
 	printf("\n--- redirection Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
+static int	run_pipe_redir_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_input_to_wc,
+			setup_pipe_redir_input_to_wc, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_output,
+			setup_pipe_redir_output, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_in_out,
+			setup_pipe_redir_in_out, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_append,
+			setup_pipe_redir_append, teardown_free_pipe_redir_ast),
+	};
+	printf("\n--- pipe with redirection Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
@@ -374,6 +390,7 @@ static void	print_usage(void)
 	printf("  external     Run external commands tests only\n");
 	printf("  pipe         Run pipe tests only\n");
 	printf("  redir        Run redirection tests only\n");
+	printf("  predir       Run pipe with redirection tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -448,6 +465,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running Redirection Tests ===\n");
 			return (run_redir_tests());
 		}
+		if (strcmp(argv[1], "piredi") == 0)
+		{
+			printf("\n=== Running Pipe with Redirection Tests ===\n");
+			return (run_redir_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -488,6 +510,9 @@ int	main(int argc, char *argv[])
 	if (result != 0)
 		failed += result;
 	result = run_redir_tests();
+	if (result != 0)
+		failed += result;
+	result = run_pipe_redir_tests();
 	if (result != 0)
 		failed += result;
 	printf("\n=== Test Suite Complete ===\n");

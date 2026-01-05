@@ -58,20 +58,36 @@ t_ast	*create_redirection_ast(t_ast **cmds, int count)
 t_ast	*create_io_file_node(t_token_type type, char *filename)
 {
 	t_ast	*node;
+	t_token	*token;
 
 	node = calloc(1, sizeof(t_ast));
 	if (!node)
 		return (NULL);
-	node->type = AST_IO_FILE;
-	node->u_ast.s_io_file.op = calloc(1, sizeof(t_token));
-	if (!node->u_ast.s_io_file.op)
+	token = calloc(1, sizeof(t_token));
+	if (!token)
 	{
 		free(node);
 		return (NULL);
 	}
-	node->u_ast.s_io_file.op->type = type;
-	node->u_ast.s_io_file.filename = strdup(filename);
+	token->type = type;
+	token->literal = NULL;
+	token->len = 0;
+	node->type = AST_IO_FILE;
+	node->u_ast.s_io_file.op = token;
+	node->u_ast.s_io_file.filename = filename;
 	return (node);
+}
+
+/*
+ *   helper: free a single io_file node completely
+ */
+static void	free_io_file_node(t_ast *io_file)
+{
+	if (!io_file)
+		return ;
+	if (io_file->u_ast.s_io_file.op)
+		free_token(io_file->u_ast.s_io_file.op);
+	free(io_file);
 }
 
 /*
@@ -80,11 +96,24 @@ t_ast	*create_io_file_node(t_token_type type, char *filename)
 int	teardown_free_redir_ast(void **state)
 {
 	t_ast	*ast;
+	t_ast	*suf;
+	t_ast	*next;
 
 	if (!state || !*state)
 		return (0);
 	ast = (t_ast *)(*state);
-	free_ast(ast);
+	if (ast->type == AST_SIMPLE_CMD)
+	{
+		suf = ast->u_ast.s_simple_cmd.cmd_suffix;
+		while (suf)
+		{
+			next = suf->u_ast.s_cmd_suffix.cmd_suffix;
+			free_io_file_node(suf->u_ast.s_cmd_suffix.io_file);
+			free(suf);
+			suf = next;
+		}
+	}
+	free(ast);
 	*state = NULL;
 	return (0);
 }

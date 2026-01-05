@@ -13,26 +13,34 @@
 #include "ast.h"
 #include "eval.h"
 #include "libft.h"
+#include <fcntl.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-static void	exec_child_cmd(t_ast *ast, t_cmd_func_call *call, int fds[2][2])
+void	exec_child_cmd(t_ast *ast, t_cmd_func_call *call, int fds[2][2])
 {
 	t_cmd_response	*cmd_res;
 	t_shell_env		*env;
 	int				code;
 
-	create_child_fds(fds[PIPE_OUT], fds[PIPE_ERR]);
-	cmd_res = call->cmd_func(ast, call->cmd_str, call->env);
 	code = 1;
-	if (cmd_res)
-	{
-		code = cmd_res->exit_code;
-		destroy_cmd_res(cmd_res);
-	}
 	env = call->env;
+	create_child_fds(fds[PIPE_OUT], fds[PIPE_ERR]);
+	if (eval_redir(ast) > 0)
+	{
+		cmd_res = call->cmd_func(ast, call->cmd_str, call->env);
+		if (cmd_res)
+		{
+			code = cmd_res->exit_code;
+			if (cmd_res->output)
+				ft_putstr_fd(cmd_res->output, STDOUT_FILENO);
+			if (cmd_res->erro_msg)
+				ft_putstr_fd(cmd_res->erro_msg, STDERR_FILENO);
+			destroy_cmd_res(cmd_res);
+		}
+	}
 	free_cmd_str(call->cmd_str);
 	free(call);
 	child_exit(env, ast, code);
@@ -60,7 +68,7 @@ t_cmd_response	*eval_cmd(t_ast *shell_ast, t_shell_env *env)
 	call = check_cmd(shell_ast, env);
 	if (!call)
 		return (NULL);
-	if (call->is_builtin)
+	if (call->is_builtin && !has_redirections(shell_ast))
 		cmd_res = call->cmd_func(shell_ast, call->cmd_str, call->env);
 	else
 		cmd_res = eval_external_cmd(shell_ast, call);
@@ -101,11 +109,6 @@ t_shell_response	*eval_ast(t_ast *shell_ast, t_shell_env *env)
 		cmd_res = eval_cmd(shell_ast, env);
 	else if (shell_ast->type == AST_PIPE_SEQ)
 		cmd_res = eval_pipe(shell_ast, env);
-	else if (shell_ast->type == AST_IO_FILE)
-	{
-		print_ast(shell_ast, 0);
-		//cmd_res = eval_io_file(shell_ast, env);
-	}
 	if (!cmd_res)
 		return (NULL);
 	res = ft_calloc(1, sizeof(t_shell_response));

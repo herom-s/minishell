@@ -219,4 +219,16 @@ void	test_eval_redir_env_output(void **state);
 void	test_eval_redir_external_input(void **state);
 void	test_eval_redir_external_both(void **state);
 void	test_eval_redir_append_no_newline(void **state);
+
+// setup for redir pipe eval
+int		setup_pipe_redir_input_to_wc(void **state);
+int		setup_pipe_redir_output(void **state);
+int		setup_pipe_redir_in_out(void **state);
+int		setup_pipe_redir_append(void **state);
+
+// setup for redir pipe eval
+void	test_eval_pipe_redir_input_to_wc(void **state);
+void	test_eval_pipe_redir_output(void **state);
+void	test_eval_pipe_redir_in_out(void **state);
+void	test_eval_pipe_redir_append(void **state);
 #endif

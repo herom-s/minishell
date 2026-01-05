@@ -34,4 +34,8 @@ int			teardown_free_pipe_ast(void **state);
 t_ast		*create_redirection_ast(t_ast **cmds, int count);
 t_ast		*create_io_file_node(t_token_type type, char *filename);
 int			teardown_free_redir_ast(void **state);
+
+t_ast		*create_pipe_with_redir(t_ast *left, t_ast *right);
+void		attach_redir_to_cmd(t_ast *cmd, t_ast *redir);
+int			teardown_free_pipe_redir_ast(void **state);
 #endif

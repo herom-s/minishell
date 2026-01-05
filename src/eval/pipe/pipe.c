@@ -15,11 +15,29 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+static int	execute_child_cmd_pipe(t_cmd_func_call *call, t_ast *ast)
+{
+	t_cmd_response	*res;
+	int				code;
+
+	code = 1;
+	res = call->cmd_func(ast, call->cmd_str, call->env);
+	if (res)
+	{
+		code = res->exit_code;
+		if (res->output)
+			ft_putstr_fd(res->output, STDOUT_FILENO);
+		if (res->erro_msg)
+			ft_putstr_fd(res->erro_msg, STDERR_FILENO);
+		destroy_cmd_res(res);
+	}
+	return (code);
+}
+
 void	func_exec_cmd_pipe(t_ast *shell_ast, t_shell_env *env)
 {
 	int				exit_code;
 	t_cmd_func_call	*call;
-	t_cmd_response	*cmd_res;
 
 	exit_code = 1;
 	if (shell_ast->type != AST_SIMPLE_CMD)
@@ -27,16 +45,8 @@ void	func_exec_cmd_pipe(t_ast *shell_ast, t_shell_env *env)
 	call = check_cmd(shell_ast, env);
 	if (!call)
 		child_exit(env, shell_ast, 1);
-	cmd_res = call->cmd_func(shell_ast, call->cmd_str, call->env);
-	if (cmd_res)
-	{
-		exit_code = cmd_res->exit_code;
-		if (cmd_res->output)
-			ft_putstr_fd(cmd_res->output, STDOUT_FILENO);
-		if (cmd_res->erro_msg)
-			ft_putstr_fd(cmd_res->erro_msg, STDERR_FILENO);
-		destroy_cmd_res(cmd_res);
-	}
+	if (eval_redir(shell_ast) > 0)
+		exit_code = execute_child_cmd_pipe(call, shell_ast);
 	free_cmd_str(call->cmd_str);
 	free(call);
 	child_exit(env, shell_ast, exit_code);
