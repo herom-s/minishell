@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 14:14:46 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/22 10:18:51 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:05:09 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,6 +353,34 @@ static int	run_redir_tests(void)
 			setup_redir_external_both, teardown_free_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_redir_append_no_newline,
 			setup_redir_append_no_newline, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_output,
+			setup_redir_prefix_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_input,
+			setup_redir_prefix_input, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_complex,
+			setup_redir_prefix_complex, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_append,
+			setup_redir_prefix_append, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_output_append,
+			setup_redir_prefix_output_append, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_multiple_output,
+			setup_redir_prefix_multiple_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_multiple_input,
+			setup_redir_prefix_multiple_input, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_builtin,
+			setup_redir_prefix_builtin, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_builtin_pwd,
+			setup_redir_prefix_builtin_pwd, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_external,
+			setup_redir_prefix_external, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_suffix_mixed,
+			setup_redir_prefix_suffix_mixed, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_invalid_path,
+			setup_redir_prefix_invalid_path, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_input_nonexistent,
+			setup_redir_prefix_input_nonexistent, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_multiple_append,
+			setup_redir_prefix_multiple_append, teardown_free_redir_ast),
 	};
 	printf("\n--- redirection Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
@@ -369,6 +397,22 @@ static int	run_pipe_redir_tests(void)
 			setup_pipe_redir_in_out, teardown_free_pipe_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_append,
 			setup_pipe_redir_append, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_to_wc,
+            setup_pipe_redir_prefix_input_to_wc, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_output,
+            setup_pipe_redir_prefix_output, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_in_out,
+            setup_pipe_redir_prefix_in_out, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_append,
+            setup_pipe_redir_prefix_append, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
+            setup_pipe_redir_prefix_complex, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
+            setup_pipe_redir_prefix_override_pipe, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_suffix_mixed,
+            setup_pipe_redir_prefix_suffix_mixed, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_nonexistent,
+            setup_pipe_redir_prefix_input_nonexistent, teardown_free_pipe_redir_ast),
 	};
 	printf("\n--- pipe with redirection Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
@@ -390,7 +434,7 @@ static void	print_usage(void)
 	printf("  external     Run external commands tests only\n");
 	printf("  pipe         Run pipe tests only\n");
 	printf("  redir        Run redirection tests only\n");
-	printf("  predir       Run pipe with redirection tests only\n");
+	printf("  piredir       Run pipe with redirection tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -468,7 +512,7 @@ int	main(int argc, char *argv[])
 		if (strcmp(argv[1], "piredi") == 0)
 		{
 			printf("\n=== Running Pipe with Redirection Tests ===\n");
-			return (run_redir_tests());
+			return (run_pipe_redir_tests());
 		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();

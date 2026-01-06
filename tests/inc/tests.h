@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 11:57:12 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/11 17:27:59 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:01:57 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,6 +202,20 @@ int		setup_redir_env_output(void **state);
 int		setup_redir_external_input(void **state);
 int		setup_redir_external_both(void **state);
 int		setup_redir_append_no_newline(void **state);
+int		setup_redir_prefix_output(void **state);
+int		setup_redir_prefix_input(void **state);
+int		setup_redir_prefix_complex(void **state);
+int     setup_redir_prefix_output_append(void **state);
+int     setup_redir_prefix_append(void **state);
+int     setup_redir_prefix_multiple_output(void **state);
+int     setup_redir_prefix_multiple_input(void **state);
+int     setup_redir_prefix_builtin(void **state);
+int     setup_redir_prefix_builtin_pwd(void **state);
+int     setup_redir_prefix_external(void **state);
+int     setup_redir_prefix_suffix_mixed(void **state);
+int     setup_redir_prefix_invalid_path(void **state);
+int     setup_redir_prefix_input_nonexistent(void **state);
+int     setup_redir_prefix_multiple_append(void **state);
 
 // tests for redir eval
 void	test_eval_redir_output_create(void **state);
@@ -219,16 +233,46 @@ void	test_eval_redir_env_output(void **state);
 void	test_eval_redir_external_input(void **state);
 void	test_eval_redir_external_both(void **state);
 void	test_eval_redir_append_no_newline(void **state);
+void	test_eval_redir_prefix_output(void **state);
+void	test_eval_redir_prefix_input(void **state);
+void	test_eval_redir_prefix_complex(void **state);
+void    test_eval_redir_prefix_output_append(void **state);
+void    test_eval_redir_prefix_append(void **state);
+void    test_eval_redir_prefix_multiple_output(void **state);
+void    test_eval_redir_prefix_multiple_input(void **state);
+void    test_eval_redir_prefix_builtin(void **state);
+void    test_eval_redir_prefix_builtin_pwd(void **state);
+void    test_eval_redir_prefix_external(void **state);
+void    test_eval_redir_prefix_suffix_mixed(void **state);
+void    test_eval_redir_prefix_invalid_path(void **state);
+void    test_eval_redir_prefix_input_nonexistent(void **state);
+void    test_eval_redir_prefix_multiple_append(void **state);
 
 // setup for redir pipe eval
 int		setup_pipe_redir_input_to_wc(void **state);
 int		setup_pipe_redir_output(void **state);
 int		setup_pipe_redir_in_out(void **state);
 int		setup_pipe_redir_append(void **state);
+int     setup_pipe_redir_prefix_input_to_wc(void **state);
+int     setup_pipe_redir_prefix_output(void **state);
+int     setup_pipe_redir_prefix_in_out(void **state);
+int     setup_pipe_redir_prefix_append(void **state);
+int     setup_pipe_redir_prefix_complex(void **state);
+int     setup_pipe_redir_prefix_override_pipe(void **state);
+int     setup_pipe_redir_prefix_suffix_mixed(void **state);
+int     setup_pipe_redir_prefix_input_nonexistent(void **state);
 
 // setup for redir pipe eval
 void	test_eval_pipe_redir_input_to_wc(void **state);
 void	test_eval_pipe_redir_output(void **state);
 void	test_eval_pipe_redir_in_out(void **state);
 void	test_eval_pipe_redir_append(void **state);
+void    test_eval_pipe_redir_prefix_input_to_wc(void **state);
+void    test_eval_pipe_redir_prefix_output(void **state);
+void    test_eval_pipe_redir_prefix_in_out(void **state);
+void    test_eval_pipe_redir_prefix_append(void **state);
+void    test_eval_pipe_redir_prefix_complex(void **state);
+void    test_eval_pipe_redir_prefix_override_pipe(void **state);
+void    test_eval_pipe_redir_prefix_suffix_mixed(void **state);
+void    test_eval_pipe_redir_prefix_input_nonexistent(void **state);
 #endif

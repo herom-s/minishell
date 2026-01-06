@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:07:16 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/04 12:12:42 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:01:10 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,6 @@ int			teardown_free_redir_ast(void **state);
 
 t_ast		*create_pipe_with_redir(t_ast *left, t_ast *right);
 void		attach_redir_to_cmd(t_ast *cmd, t_ast *redir);
+void		attach_redir_prefix(t_ast *cmd, t_ast *redir);
 int			teardown_free_pipe_redir_ast(void **state);
 #endif

@@ -34,9 +34,9 @@ t_ast	*create_pipe_with_redir(t_ast *left, t_ast *right)
 }
 
 /*
- * helper: attach a single redirection to a command
+ * helper: attach a single redirection to a command as suffix (after cmd)
  */
-void	attach_redir_to_cmd(t_ast *cmd, t_ast *redir)
+void	attach_redir_suffix(t_ast *cmd, t_ast *redir)
 {
 	t_ast	*suffix;
 	t_ast	*new_suffix;
@@ -59,11 +59,56 @@ void	attach_redir_to_cmd(t_ast *cmd, t_ast *redir)
 }
 
 /*
+ * helper: attach a single redirection to a command as prefix (before cmd)
+ */
+void	attach_redir_prefix(t_ast *cmd, t_ast *redir)
+{
+	t_ast	*prefix;
+	t_ast	*new_prefix;
+
+	new_prefix = calloc(1, sizeof(t_ast));
+	if (!new_prefix)
+		return ;
+	new_prefix->type = AST_CMD_PREFIX;
+	new_prefix->u_ast.s_cmd_prefix.io_file = redir;
+	new_prefix->u_ast.s_cmd_prefix.cmd_prefix = NULL;
+	if (!cmd->u_ast.s_simple_cmd.cmd_prefix)
+	{
+		cmd->u_ast.s_simple_cmd.cmd_prefix = new_prefix;
+		return ;
+	}
+	prefix = cmd->u_ast.s_simple_cmd.cmd_prefix;
+	while (prefix->u_ast.s_cmd_prefix.cmd_prefix)
+		prefix = prefix->u_ast.s_cmd_prefix.cmd_prefix;
+	prefix->u_ast.s_cmd_prefix.cmd_prefix = new_prefix;
+}
+
+/*
+ * helper: attach a single redirection to a command (alias for suffix)
+ */
+void	attach_redir_to_cmd(t_ast *cmd, t_ast *redir)
+{
+	attach_redir_suffix(cmd, redir);
+}
+
+/*
+ * helper: free io_file node
+ */
+static void	free_io_file(t_ast *io_file)
+{
+	if (!io_file)
+		return ;
+	if (io_file->u_ast.s_io_file.op)
+		free(io_file->u_ast.s_io_file.op);
+	free(io_file);
+}
+
+/*
  * helper: free pipe AST with redirections recursively
  */
 void	free_pipe_redir_ast_recursive(t_ast *ast)
 {
-	t_ast	*suf;
+	t_ast	*node;
 	t_ast	*next;
 
 	if (!ast)
@@ -77,18 +122,21 @@ void	free_pipe_redir_ast_recursive(t_ast *ast)
 	}
 	if (ast->type == AST_SIMPLE_CMD)
 	{
-		suf = ast->u_ast.s_simple_cmd.cmd_suffix;
-		while (suf)
+		node = ast->u_ast.s_simple_cmd.cmd_prefix;
+		while (node)
 		{
-			next = suf->u_ast.s_cmd_suffix.cmd_suffix;
-			if (suf->u_ast.s_cmd_suffix.io_file)
-			{
-				if (suf->u_ast.s_cmd_suffix.io_file->u_ast.s_io_file.op)
-					free(suf->u_ast.s_cmd_suffix.io_file->u_ast.s_io_file.op);
-				free(suf->u_ast.s_cmd_suffix.io_file);
-			}
-			free(suf);
-			suf = next;
+			next = node->u_ast.s_cmd_prefix.cmd_prefix;
+			free_io_file(node->u_ast.s_cmd_prefix.io_file);
+			free(node);
+			node = next;
+		}
+		node = ast->u_ast.s_simple_cmd.cmd_suffix;
+		while (node)
+		{
+			next = node->u_ast.s_cmd_suffix.cmd_suffix;
+			free_io_file(node->u_ast.s_cmd_suffix.io_file);
+			free(node);
+			node = next;
 		}
 	}
 	free(ast);

@@ -13,6 +13,7 @@
 #include "ast.h"
 #include "eval.h"
 #include <stdlib.h>
+#include <signal.h>
 #include <unistd.h>
 
 static int	execute_child_cmd_pipe(t_cmd_func_call *call, t_ast *ast)
@@ -25,6 +26,8 @@ static int	execute_child_cmd_pipe(t_cmd_func_call *call, t_ast *ast)
 	if (res)
 	{
 		code = res->exit_code;
+		if (call->is_builtin)
+			signal(SIGPIPE, SIG_IGN);
 		if (res->output)
 			ft_putstr_fd(res->output, STDOUT_FILENO);
 		if (res->erro_msg)
