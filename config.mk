@@ -12,6 +12,7 @@ INCLUDES = -I./$(INC_DIR) -I$(LIBFT_DIR)/inc
 LEX_DIR = lexer
 PARSER_DIR = parser
 AST_DIR = ast
+SIG_DIR = signal
 EVAL_DIR = eval
 HASHTABLE_DIR = hashtable
 SRC_FILES = main.c \
@@ -48,7 +49,8 @@ SRC_FILES = main.c \
 			$(HASHTABLE_DIR)/hashtable.c \
 			$(HASHTABLE_DIR)/hashtable_item.c \
 			$(HASHTABLE_DIR)/hashtable_iterator.c \
-			$(HASHTABLE_DIR)/hashtable_util.c
+			$(HASHTABLE_DIR)/hashtable_util.c \
+			$(SIG_DIR)/signal.c 
 
 BONUS_DIR = bonus
 BONUS_OBJ_DIR = obj_bonus

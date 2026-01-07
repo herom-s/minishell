@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/20 15:41:43 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/07 08:53:29 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "minishell.h"
 #include "parser.h"
 #include "print.h"
+#include "minishell_signal.h"
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
@@ -56,10 +57,12 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	(void)envp;
 	ft_memset(&shell, 0, sizeof(t_minishell));
+	if (setup_signal() < 0)
+		return (1);
 	while (1)
 	{
 		shell.input = readline("minishell> ");
-		if (ft_strncmp(shell.input, "exit", 4) == 0)
+		if (shell.input == NULL)
 			break ;
 		parse_input(shell.input, envp);
 		add_history(shell.input);
