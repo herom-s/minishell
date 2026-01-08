@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/07 08:53:29 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/07 21:07:07 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,10 @@ int	main(int argc, char *argv[], char *envp[])
 	{
 		shell.input = readline("minishell> ");
 		if (shell.input == NULL)
+		{
+			ft_putstr_fd("exit\n", 1);
 			break ;
+		}
 		parse_input(shell.input, envp);
 		add_history(shell.input);
 	}
