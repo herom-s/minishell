@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/29 17:13:40 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:19:15 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,13 +117,27 @@ void					*destroy_cmd_res(t_cmd_response *cmd_res);
 void					create_child_fds(int *fd_out, int *fd_err);
 void					child_exit(t_shell_env *env, t_ast *local_ast,
 							int code);
+
+typedef struct s_pipe_context
+{
+	int	*writer;
+	int	*reader;
+	int	prev_pipe_fd_read_end;
+}						t_pipe_context;
+
 t_cmd_response			*handle_parent(pid_t pid, int *fd_out, int *fd_err);
 
 void					create_pipes_or_fail(int *fd_out, int *fd_err);
 void					*closes_pipes(int *fd_out, int *fd_err);
 
+void					func_exec_cmd_pipe(t_ast *ast, t_shell_env *env,
+							int *pipe_fd, int prev_pipe_read_fd);
 void					eval_pipe_recursive(t_ast *shell_ast, t_shell_env *env,
-							int pipefd[2]);
+							int *pipefd, int prev_read_end);
+
+int						has_redirections(t_ast *shell_ast);
+
+int						eval_redir(t_ast *shell_ast);
 
 char					*get_curdir(void);
 t_cmd_func				get_cmd_func(char *cmd_name);

@@ -33,5 +33,7 @@ t_cmd_response	*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
 		res->exit_code = 1;
 		return (res);
 	}
+	res->output = ft_strdup("exit");
+	res->exit_code = 0;
 	return (res);
 }

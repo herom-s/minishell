@@ -38,8 +38,13 @@ TEST_FILES = test_main.c \
 			 $(TEST_EVAL_DIR)/test_pwd_eval.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_eval.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_pipe_eval.c \
+			 $(TEST_EVAL_DIR)/test_redir_eval.c \
+			$(TEST_EVAL_DIR)/test_pipe_redir_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval.c \
-			 $(TEST_EVAL_DIR)/test_eval_pipe.c
+			 $(TEST_EVAL_DIR)/test_eval_pipe.c \
+			 $(TEST_EVAL_DIR)/test_eval_redir.c \
+			 $(TEST_EVAL_DIR)/test_eval_pipe_redir.c
+
 
 TEST_OBJ = $(TEST_FILES:%.c=$(TEST_OBJ_DIR)/%.o)
 TEST_BIN = run_tests
@@ -56,7 +61,7 @@ RESET = \033[0m
 all: $(TEST_BIN)
 
 $(LIBFT_LIB):
-	@make -C $(LIBFT_PATH)
+	@make -C $(LIBFT_PATH) DEBUG=1
 
 $(CMOCKA_LIB):
 	@if [ -f "$(CMOCKA_LIB)" ]; then \
@@ -101,7 +106,7 @@ valgrind-single: $(TEST_BIN)
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TEST_BIN) $(TEST)
 
 valgrind-ci: $(TEST_BIN)
-	@valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
+	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
 
 filter: $(TEST_BIN)
 	@CMOCKA_TEST_FILTER="$(FILTER)" ./$(TEST_BIN)
