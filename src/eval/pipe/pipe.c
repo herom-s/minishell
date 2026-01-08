@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:45:38 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/08 16:07:17 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:19:32 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	run_pipe_child(t_ast *ast, t_shell_env *env, t_pipe_context *ctx)
 		setup_pipe_fds(ctx->writer[OUTPUT_END], STDOUT_FILENO,
 			ctx->writer[OUTPUT_END]);
 		eval_pipe_recursive(ast->u_ast.s_pipe_seq.left, env, ctx->writer,
-			ctx->prev_pipe_read_fd_read_end);
+			ctx->prev_pipe_fd_read_end);
 	}
 	else
 	{
@@ -39,7 +39,7 @@ void	run_pipe_child(t_ast *ast, t_shell_env *env, t_pipe_context *ctx)
 		setup_pipe_fds(ctx->reader[INPUT_END], STDIN_FILENO,
 			ctx->reader[INPUT_END]);
 		eval_pipe_recursive(ast->u_ast.s_pipe_seq.right, env, NULL,
-			ctx->prev_pipe_read_fd_read_end);
+			ctx->prev_pipe_fd_read_end);
 	}
 }
 

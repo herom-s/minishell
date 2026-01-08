@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/08 16:11:28 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:19:15 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ typedef struct s_pipe_context
 {
 	int	*writer;
 	int	*reader;
-	int	prev_pipe_read_fd_read_end;
+	int	prev_pipe_fd_read_end;
 }						t_pipe_context;
 
 t_cmd_response			*handle_parent(pid_t pid, int *fd_out, int *fd_err);
