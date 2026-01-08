@@ -6,13 +6,14 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 14:14:46 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/22 10:18:51 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/08 07:30:04 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test_eval.h"
 #include "test_lexer.h"
 #include "test_parser.h"
+#include "test_signal.h"
 #include "tests.h"
 #include <setjmp.h>
 #include <stdarg.h>
@@ -21,6 +22,73 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cmocka.h>
+
+static int	run_signal_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		// Signal setup tests
+		cmocka_unit_test_setup_teardown(test_setup_signal_success,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_setup_signal_configures_sigint,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_setup_signal_ignores_sigquit,
+			setup_signal_test, teardown_signal_test),
+
+		// SIGINT handler tests
+		cmocka_unit_test_setup_teardown(test_sigint_sets_global_flag,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_sigint_multiple_times,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_sigint_does_not_terminate_process,
+			setup_signal_test, teardown_signal_test),
+
+		// SIGQUIT handler tests
+		cmocka_unit_test_setup_teardown(test_sigquit_is_ignored,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_sigquit_multiple_times_ignored,
+			setup_signal_test, teardown_signal_test),
+
+		// Child process tests
+		cmocka_unit_test_setup_teardown(test_sigint_in_child_process,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_child_inherits_signal_handlers,
+			setup_signal_test, teardown_signal_test),
+
+		// Signal restoration tests
+		cmocka_unit_test_setup_teardown(test_signal_can_be_restored_to_default,
+			setup_signal_test, teardown_signal_test),
+
+		// Flag reset tests
+		cmocka_unit_test_setup_teardown(test_global_flag_can_be_reset,
+			setup_signal_test, teardown_signal_test),
+
+		// Concurrent signal tests
+		cmocka_unit_test_setup_teardown(test_sigint_and_sigquit_together,
+			setup_signal_test, teardown_signal_test),
+
+		// Edge case tests
+		cmocka_unit_test_setup_teardown(test_setup_signal_called_twice,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_sigint_with_zero_flag,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_rapid_signal_delivery,
+			setup_signal_test, teardown_signal_test),
+
+		// Sigaction tests
+		cmocka_unit_test_setup_teardown(test_sigaction_flags_are_correct,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_signal_mask_is_empty,
+			setup_signal_test, teardown_signal_test),
+
+		// Integration tests
+		cmocka_unit_test_setup_teardown(test_signal_handler_survives_child_exit,
+			setup_signal_test, teardown_signal_test),
+		cmocka_unit_test_setup_teardown(test_multiple_children_with_signals,
+			setup_signal_test, teardown_signal_test),
+	};
+	printf("\n--- signal Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
 
 static int	run_parser_tests(void)
 {
@@ -362,6 +430,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running parser Tests ===\n");
 			return (run_parser_tests());
 		}
+		if (strcmp(argv[1], "signal") == 0)
+		{
+			printf("\n=== Running signal Tests ===\n");
+			return (run_signal_tests());
+		}
 		if (strcmp(argv[1], "echo") == 0)
 		{
 			printf("\n=== Running echo Builtin Tests ===\n");
@@ -412,6 +485,9 @@ int	main(int argc, char *argv[])
 	if (result != 0)
 		failed += result;
 	result = run_parser_tests();
+	if (result != 0)
+		failed += result;
+	result = run_signal_tests();
 	if (result != 0)
 		failed += result;
 	result = run_cd_builtin_tests();
