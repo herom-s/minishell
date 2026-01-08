@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/08 16:09:08 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:11:28 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void					*closes_pipes(int *fd_out, int *fd_err);
 void					func_exec_cmd_pipe(t_ast *ast, t_shell_env *env,
 							int *pipe_fd, int prev_pipe_read_fd);
 void					eval_pipe_recursive(t_ast *shell_ast, t_shell_env *env,
-							int pipefd[2], int prev_read_end);
+							int *pipefd, int prev_read_end);
 
 int						has_redirections(t_ast *shell_ast);
 
