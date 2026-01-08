@@ -91,7 +91,7 @@ t_cmd_response	*eval_pipe(t_ast *shell_ast, t_shell_env *env)
 	if (root_pid == 0)
 	{
 		create_child_fds(fds[PIPE_OUT], fds[PIPE_ERR]);
-		eval_pipe_recursive(shell_ast, env, NULL);
+		eval_pipe_recursive(shell_ast, env, NULL, -1);
 		child_exit(env, shell_ast, 1);
 	}
 	return (handle_parent(root_pid, fds[PIPE_OUT], fds[PIPE_ERR]));

@@ -104,7 +104,7 @@ valgrind-single: $(TEST_BIN)
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TEST_BIN) $(TEST)
 
 valgrind-ci: $(TEST_BIN)
-	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
+	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
 
 filter: $(TEST_BIN)
 	@CMOCKA_TEST_FILTER="$(FILTER)" ./$(TEST_BIN)

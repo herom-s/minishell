@@ -509,7 +509,7 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running Redirection Tests ===\n");
 			return (run_redir_tests());
 		}
-		if (strcmp(argv[1], "piredi") == 0)
+		if (strcmp(argv[1], "piredir") == 0)
 		{
 			printf("\n=== Running Pipe with Redirection Tests ===\n");
 			return (run_pipe_redir_tests());
