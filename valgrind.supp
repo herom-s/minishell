@@ -1,22 +1,36 @@
+# Readline leaks
 {
-   readline_leak
-   Memcheck:Leak
-   ...
-   fun:readline
-}
-{
-   add_history_leak
+   readline_add_history
    Memcheck:Leak
    ...
    fun:add_history
+   ...
 }
 {
-   ignore_cmocka_internal_child_leak
+   readline_internal
+   Memcheck:Leak
+   ...
+   fun:readline
+   ...
+}
+
+# cmocka internal allocations
+{
+   cmocka_internal_calloc
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:calloc
    fun:libc_calloc
    fun:_cmocka_run_group_tests
-   fun:run_external_tests
-   fun:main
+   ...
+}
+
+# tester token creation
+{
+   test_io_file_token_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   fun:create_io_file_node
+   ...
 }

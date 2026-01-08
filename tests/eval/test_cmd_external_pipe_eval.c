@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_pipe_eval.c                                   :+:      :+:    :+:   */
+/*   test_cmd_external_pipe_eval.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 16:39:11 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/23 16:39:13 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/08 14:07:00 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -556,6 +556,7 @@ void	test_eval_pipe_sigpipe(void **state)
 	assert_non_null(env);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
+	assert_string_equal(res->output, "y\ny\ny\ny\ny\n");
 	assert_int_equal(res->exit_code, 0);
 	free(res->output);
 	free(res->erro_msg);
@@ -676,6 +677,7 @@ void	test_eval_pipe_exit_in_middle(void **state)
 	assert_non_null(env);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
+	assert_string_equal(res->output, "0\n");
 	free(res->output);
 	free(res->erro_msg);
 	free(res);

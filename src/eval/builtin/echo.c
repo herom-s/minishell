@@ -39,10 +39,13 @@ static char	*build_output(t_ast *node, int *newline_flag)
 	output = NULL;
 	while (node)
 	{
-		if (ft_strcmp(node->u_ast.s_cmd_suffix.word, "-n") == 0)
-			*newline_flag = 0;
-		else
-			output = append_word(output, node->u_ast.s_cmd_suffix.word);
+		if (node->u_ast.s_cmd_suffix.word)
+		{
+			if (ft_strcmp(node->u_ast.s_cmd_suffix.word, "-n") == 0)
+				*newline_flag = 0;
+			else
+				output = append_word(output, node->u_ast.s_cmd_suffix.word);
+		}
 		node = node->u_ast.s_cmd_suffix.cmd_suffix;
 	}
 	if (!output)

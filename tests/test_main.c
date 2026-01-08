@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 14:14:46 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/22 10:18:51 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:05:09 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,36 +30,30 @@ static int	run_parser_tests(void)
 		cmocka_unit_test(test_parser_simple_command_with_args),
 		cmocka_unit_test(test_parser_simple_command_with_path),
 		cmocka_unit_test(test_parser_command_multiple_args),
-
 		// Pipeline tests
 		cmocka_unit_test(test_parser_simple_pipe),
 		cmocka_unit_test(test_parser_multiple_pipes),
-
 		// Redirection tests
 		cmocka_unit_test(test_parser_output_redirect),
 		cmocka_unit_test(test_parser_input_redirect),
 		cmocka_unit_test(test_parser_append_redirect),
 		cmocka_unit_test(test_parser_heredoc),
 		cmocka_unit_test(test_parser_multiple_redirects),
-
 		// Logical operator tests
 		cmocka_unit_test(test_parser_and_operator),
 		cmocka_unit_test(test_parser_or_operator),
 		cmocka_unit_test(test_parser_mixed_logical_operators),
 		cmocka_unit_test(test_parser_precedence_and_vs_pipe),
-
 		// Subshell tests (bonus)
 		cmocka_unit_test(test_parser_simple_subshell),
 		cmocka_unit_test(test_parser_subshell_with_pipe),
 		cmocka_unit_test(test_parser_nested_subshells),
 		cmocka_unit_test(test_parser_subshell_with_logical_ops),
-
 		// Complex combinations
 		cmocka_unit_test(test_parser_pipe_with_redirects),
 		cmocka_unit_test(test_parser_logical_with_pipes),
 		cmocka_unit_test(test_parser_subshell_in_pipeline),
 		cmocka_unit_test(test_parser_subshell_and_logical),
-
 		// Edge cases and errors
 		cmocka_unit_test(test_parser_empty_input),
 		cmocka_unit_test(test_parser_only_pipe),
@@ -69,7 +63,6 @@ static int	run_parser_tests(void)
 		cmocka_unit_test(test_parser_unopened_subshell),
 		cmocka_unit_test(test_parser_double_pipe),
 		cmocka_unit_test(test_parser_double_redirect),
-
 		// Quote handling
 		cmocka_unit_test(test_parser_command_with_quoted_args),
 		cmocka_unit_test(test_parser_redirect_with_quoted_filename),
@@ -87,7 +80,6 @@ static int	run_lexer_tests(void)
 		cmocka_unit_test(test_multiple_words),
 		cmocka_unit_test(test_empty_input),
 		cmocka_unit_test(test_whitespace_only),
-
 		// Operator tests
 		cmocka_unit_test(test_pipe_operator),
 		cmocka_unit_test(test_redirect_input),
@@ -96,24 +88,20 @@ static int	run_lexer_tests(void)
 		cmocka_unit_test(test_heredoc),
 		cmocka_unit_test(test_and_operator),
 		cmocka_unit_test(test_or_operator),
-
 		// Bonus: Parentheses
 		cmocka_unit_test(test_parentheses),
 		cmocka_unit_test(test_nested_parentheses),
-
 		// Quoting tests
 		cmocka_unit_test(test_single_quotes),
 		cmocka_unit_test(test_double_quotes),
 		cmocka_unit_test(test_quotes_with_metacharacters),
 		cmocka_unit_test(test_mixed_quotes),
 		cmocka_unit_test(test_empty_quotes),
-
 		// Complex commands
 		cmocka_unit_test(test_complex_pipeline),
 		cmocka_unit_test(test_multiple_redirects),
 		cmocka_unit_test(test_operators_without_spaces),
 		cmocka_unit_test(test_subshell_with_pipeline),
-
 		// Edge cases
 		cmocka_unit_test(test_multiple_pipes),
 		cmocka_unit_test(test_word_with_numbers),
@@ -243,6 +231,14 @@ static int	run_external_tests(void)
 			setup_external_false_abs_ast, teardown_free_cmd_ast),
 		cmocka_unit_test_setup_teardown(test_eval_external_ls_abs,
 			setup_external_ls_abs_ast, teardown_free_cmd_ast),
+	};
+	printf("\n--- external commands Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
+static int	run_pipe_tests(void)
+{
+	const struct CMUnitTest tests[] = {
 		cmocka_unit_test_setup_teardown(test_eval_pipe_two_stage,
 			setup_pipe_two_stage, teardown_free_pipe_ast),
 		cmocka_unit_test_setup_teardown(test_eval_pipe_file_cat_wc,
@@ -303,12 +299,12 @@ static int	run_external_tests(void)
 			setup_pipe_awk_field, teardown_free_pipe_ast),
 		cmocka_unit_test_setup_teardown(test_eval_pipe_sed_substitute,
 			setup_pipe_sed_substitute, teardown_free_pipe_ast),
-		cmocka_unit_test_setup_teardown(test_eval_pipe_xargs,
-			setup_pipe_xargs, teardown_free_pipe_ast),
-		cmocka_unit_test_setup_teardown(test_eval_pipe_tee,
-			setup_pipe_tee, teardown_free_pipe_ast),
-		cmocka_unit_test_setup_teardown(test_eval_pipe_rev,
-			setup_pipe_rev, teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_xargs, setup_pipe_xargs,
+			teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_tee, setup_pipe_tee,
+			teardown_free_pipe_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_rev, setup_pipe_rev,
+			teardown_free_pipe_ast),
 		cmocka_unit_test_setup_teardown(test_eval_pipe_wc_words,
 			setup_pipe_wc_words, teardown_free_pipe_ast),
 		cmocka_unit_test_setup_teardown(test_eval_pipe_ls_grep,
@@ -320,7 +316,105 @@ static int	run_external_tests(void)
 		cmocka_unit_test_setup_teardown(test_eval_pipe_printf,
 			setup_pipe_printf, teardown_free_pipe_ast),
 	};
-	printf("\n--- external commands Tests ---\n");
+	printf("\n--- pipe Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
+static int	run_redir_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_redir_output_create,
+			setup_redir_output_create, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_output_content,
+			setup_redir_output_content, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_output_truncate,
+			setup_redir_output_truncate, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_append_create,
+			setup_redir_append_create, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_append_content,
+			setup_redir_append_content, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_input_read,
+			setup_redir_input_read, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_input_nonexistent,
+			setup_redir_input_nonexistent, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_input_output,
+			setup_redir_input_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_multiple_output,
+			setup_redir_multiple_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_output_invalid_path,
+			setup_redir_output_invalid_path, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_builtin_output,
+			setup_redir_builtin_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_env_output,
+			setup_redir_env_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_external_input,
+			setup_redir_external_input, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_external_both,
+			setup_redir_external_both, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_append_no_newline,
+			setup_redir_append_no_newline, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_output,
+			setup_redir_prefix_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_input,
+			setup_redir_prefix_input, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_complex,
+			setup_redir_prefix_complex, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_append,
+			setup_redir_prefix_append, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_output_append,
+			setup_redir_prefix_output_append, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_multiple_output,
+			setup_redir_prefix_multiple_output, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_multiple_input,
+			setup_redir_prefix_multiple_input, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_builtin,
+			setup_redir_prefix_builtin, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_builtin_pwd,
+			setup_redir_prefix_builtin_pwd, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_external,
+			setup_redir_prefix_external, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_suffix_mixed,
+			setup_redir_prefix_suffix_mixed, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_invalid_path,
+			setup_redir_prefix_invalid_path, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_input_nonexistent,
+			setup_redir_prefix_input_nonexistent, teardown_free_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_redir_prefix_multiple_append,
+			setup_redir_prefix_multiple_append, teardown_free_redir_ast),
+	};
+	printf("\n--- redirection Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
+static int	run_pipe_redir_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_input_to_wc,
+			setup_pipe_redir_input_to_wc, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_output,
+			setup_pipe_redir_output, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_in_out,
+			setup_pipe_redir_in_out, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_append,
+			setup_pipe_redir_append, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_to_wc,
+            setup_pipe_redir_prefix_input_to_wc, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_output,
+            setup_pipe_redir_prefix_output, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_in_out,
+            setup_pipe_redir_prefix_in_out, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_append,
+            setup_pipe_redir_prefix_append, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
+            setup_pipe_redir_prefix_complex, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
+            setup_pipe_redir_prefix_override_pipe, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_suffix_mixed,
+            setup_pipe_redir_prefix_suffix_mixed, teardown_free_pipe_redir_ast),
+        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_nonexistent,
+            setup_pipe_redir_prefix_input_nonexistent, teardown_free_pipe_redir_ast),
+	};
+	printf("\n--- pipe with redirection Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
@@ -338,6 +432,9 @@ static void	print_usage(void)
 	printf("  pwd          Run pwd builtin tests only\n");
 	printf("  unset        Run unset builtin tests only\n");
 	printf("  external     Run external commands tests only\n");
+	printf("  pipe         Run pipe tests only\n");
+	printf("  redir        Run redirection tests only\n");
+	printf("  piredir       Run pipe with redirection tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -402,6 +499,21 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running External Tests ===\n");
 			return (run_external_tests());
 		}
+		if (strcmp(argv[1], "pipe") == 0)
+		{
+			printf("\n=== Running Pipe Tests ===\n");
+			return (run_pipe_tests());
+		}
+		if (strcmp(argv[1], "redir") == 0)
+		{
+			printf("\n=== Running Redirection Tests ===\n");
+			return (run_redir_tests());
+		}
+		if (strcmp(argv[1], "piredir") == 0)
+		{
+			printf("\n=== Running Pipe with Redirection Tests ===\n");
+			return (run_pipe_redir_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -436,6 +548,15 @@ int	main(int argc, char *argv[])
 	if (result != 0)
 		failed += result;
 	result = run_external_tests();
+	if (result != 0)
+		failed += result;
+	result = run_pipe_tests();
+	if (result != 0)
+		failed += result;
+	result = run_redir_tests();
+	if (result != 0)
+		failed += result;
+	result = run_pipe_redir_tests();
 	if (result != 0)
 		failed += result;
 	printf("\n=== Test Suite Complete ===\n");
