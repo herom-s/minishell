@@ -275,4 +275,39 @@ void    test_eval_pipe_redir_prefix_complex(void **state);
 void    test_eval_pipe_redir_prefix_override_pipe(void **state);
 void    test_eval_pipe_redir_prefix_suffix_mixed(void **state);
 void    test_eval_pipe_redir_prefix_input_nonexistent(void **state);
+
+// setup for heredoc eval
+int		setup_heredoc_basic(void **state);
+int		setup_heredoc_with_args(void **state);
+int		setup_heredoc_external_cmd(void **state);
+int		setup_heredoc_prefix(void **state);
+int		setup_heredoc_multiple(void **state);
+int		setup_heredoc_with_output_redir(void **state);
+int		setup_heredoc_quoted_limiter(void **state);
+int		setup_heredoc_in_pipeline(void **state);
+int		setup_heredoc_special_limiter(void **state);
+int		setup_heredoc_exec_cat_basic(void **state);
+int		setup_heredoc_exec_with_output(void **state);
+int		setup_heredoc_exec_wc(void **state);
+int		setup_heredoc_exec_grep(void **state);
+int		setup_heredoc_exec_prefix(void **state);
+int		setup_heredoc_exec_empty(void **state);
+
+// tests for heredoc eval
+void	test_eval_heredoc_basic_structure(void **state);
+void	test_eval_heredoc_with_args(void **state);
+void	test_eval_heredoc_external_cmd(void **state);
+void	test_eval_heredoc_prefix(void **state);
+void	test_eval_heredoc_multiple(void **state);
+void	test_eval_heredoc_with_output_redir(void **state);
+void	test_eval_heredoc_quoted_limiter(void **state);
+void	test_eval_heredoc_in_pipeline(void **state);
+void	test_eval_heredoc_special_limiter(void **state);
+void	test_eval_heredoc_exec_cat_basic(void **state);
+void	test_eval_heredoc_exec_with_output(void **state);
+void	test_eval_heredoc_exec_wc(void **state);
+void	test_eval_heredoc_exec_grep(void **state);
+void	test_eval_heredoc_exec_prefix(void **state);
+void	test_eval_heredoc_exec_empty(void **state);
+int		teardown_free_heredoc_ast(void **state);
 #endif

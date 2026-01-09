@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/08 16:19:15 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/09 14:00:39 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,10 @@ void					func_exec_cmd_pipe(t_ast *ast, t_shell_env *env,
 void					eval_pipe_recursive(t_ast *shell_ast, t_shell_env *env,
 							int *pipefd, int prev_read_end);
 
-int						has_redirections(t_ast *shell_ast);
 
+int						handle_here_doc(char *limiter, int *heredoc_fd);
+
+int						has_redirections(t_ast *shell_ast);
 int						eval_redir(t_ast *shell_ast);
 
 char					*get_curdir(void);

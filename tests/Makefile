@@ -40,6 +40,7 @@ TEST_FILES = test_main.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_pipe_eval.c \
 			 $(TEST_EVAL_DIR)/test_redir_eval.c \
 			$(TEST_EVAL_DIR)/test_pipe_redir_eval.c \
+			 $(TEST_EVAL_DIR)/test_heredoc_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval_pipe.c \
 			 $(TEST_EVAL_DIR)/test_eval_redir.c \

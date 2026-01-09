@@ -486,6 +486,26 @@ static int	run_pipe_redir_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_heredoc_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_cat_basic,
+			setup_heredoc_exec_cat_basic, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_with_output,
+			setup_heredoc_exec_with_output, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_wc,
+			setup_heredoc_exec_wc, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_grep,
+			setup_heredoc_exec_grep, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_prefix,
+			setup_heredoc_exec_prefix, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_empty,
+			setup_heredoc_exec_empty, teardown_free_heredoc_ast),
+	};
+	printf("\n--- heredoc Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static void	print_usage(void)
 {
 	printf("Usage: ./run_tests [OPTIONS]\n");
@@ -503,6 +523,7 @@ static void	print_usage(void)
 	printf("  pipe         Run pipe tests only\n");
 	printf("  redir        Run redirection tests only\n");
 	printf("  piredir       Run pipe with redirection tests only\n");
+	printf("  heredoc      Run heredoc tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -587,6 +608,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running Pipe with Redirection Tests ===\n");
 			return (run_pipe_redir_tests());
 		}
+		if (strcmp(argv[1], "heredoc") == 0)
+		{
+			printf("\n=== Running Heredoc Tests ===\n");
+			return (run_heredoc_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -634,7 +660,10 @@ int	main(int argc, char *argv[])
 		failed += result;
 	result = run_pipe_redir_tests();
 	if (result != 0)
-		failed += result;
+		failed += result;	
+	result = run_heredoc_tests();
+	if (result != 0)
+		failed += result;	
 	printf("\n=== Test Suite Complete ===\n");
 	if (failed > 0)
 		printf("Total failures: %d\n", failed);

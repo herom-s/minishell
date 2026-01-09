@@ -6,12 +6,13 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 18:37:26 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/05 17:29:23 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/09 14:13:05 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "libft.h"
+#include "eval.h"
 #include "token.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -53,19 +54,35 @@ static int	get_fd_for_op(const char *filename, t_token_type op)
 	return (-1);
 }
 
-static int	open_dup2_io_file(const char *filename, t_token_type op)
+static int	process_io_file(t_ast *io_file, int *saved_stdin_fd)
 {
 	int	fd;
 	int	target;
 
-	fd = get_fd_for_op(filename, op);
+	if (!io_file)
+		return (-1);
+	if (io_file->u_ast.s_io_file.op->type == DLESS)
+	{
+		if (*saved_stdin_fd != -1)
+			close(*saved_stdin_fd);
+		return (handle_here_doc((char *)io_file->u_ast.s_io_file.filename, saved_stdin_fd));
+	}
+	
+	fd = get_fd_for_op(io_file->u_ast.s_io_file.filename, io_file->u_ast.s_io_file.op->type);
 	if (fd < 0)
 	{
-		ft_dprintf(STDERR_FILENO, "%s: %s\n", filename, strerror(errno));
+		ft_dprintf(STDERR_FILENO, "%s: %s\n", io_file->u_ast.s_io_file.filename, strerror(errno));
 		return (-1);
 	}
-	if (op == LESS || op == DLESS)
+	if (io_file->u_ast.s_io_file.op->type == LESS)
+	{
 		target = STDIN_FILENO;
+		if (*saved_stdin_fd != -1)
+		{
+			close(*saved_stdin_fd);
+			*saved_stdin_fd = -1;
+		}
+	}
 	else
 		target = STDOUT_FILENO;
 	if (dup2(fd, target) < 0)
@@ -74,35 +91,46 @@ static int	open_dup2_io_file(const char *filename, t_token_type op)
 		return (-1);
 	}
 	close(fd);
-	return (1);
-}
-
-static int	process_io_file(t_ast *io_file)
-{
-	if (!io_file)
-		return (1);
-	return (open_dup2_io_file(io_file->u_ast.s_io_file.filename,
-			io_file->u_ast.s_io_file.op->type));
+	return (0);
 }
 
 int	eval_redir(t_ast *shell_ast)
 {
 	t_ast	*suffix;
 	t_ast	*prefix;
+	int		saved_stdin_fd;
 
+	saved_stdin_fd = -1;
 	prefix = shell_ast->u_ast.s_simple_cmd.cmd_prefix;
 	while (prefix)
 	{
-		if (process_io_file(prefix->u_ast.s_cmd_prefix.io_file) < 0)
+		if (process_io_file(prefix->u_ast.s_cmd_prefix.io_file, &saved_stdin_fd) < 0)
+		{
+			if (saved_stdin_fd != -1)
+				close(saved_stdin_fd);
 			return (-1);
+		}
 		prefix = prefix->u_ast.s_cmd_prefix.cmd_prefix;
 	}
 	suffix = shell_ast->u_ast.s_simple_cmd.cmd_suffix;
 	while (suffix)
 	{
-		if (process_io_file(suffix->u_ast.s_cmd_suffix.io_file) < 0)
+		if (process_io_file(suffix->u_ast.s_cmd_suffix.io_file, &saved_stdin_fd) < 0)
+		{
+			if (saved_stdin_fd != -1)
+				close(saved_stdin_fd);
 			return (-1);
+		}
 		suffix = suffix->u_ast.s_cmd_suffix.cmd_suffix;
+	}
+	if (saved_stdin_fd != -1)
+	{
+		if (dup2(saved_stdin_fd, STDIN_FILENO) < 0)
+		{
+			close(saved_stdin_fd);
+			return (-1);
+		}
+		close(saved_stdin_fd);
 	}
 	return (1);
 }
