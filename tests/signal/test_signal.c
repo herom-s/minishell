@@ -7,10 +7,14 @@
 #include <signal.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #include "test_signal.h"
 #include "minishell_signal.h"
 #include "test_signal.h"
+#include <readline/history.h>
+#include <readline/readline.h>
 
 // External global variable from signal.c
 extern volatile sig_atomic_t g_is_sigint_received;
@@ -19,12 +23,34 @@ extern volatile sig_atomic_t g_is_sigint_received;
 // HELPER FUNCTIONS
 // ============================================================================
 
-// Reset signal state before each test
-int setup_signal_test(void **state)
+void	handle_ctrl_c_mock(int sig)
 {
-	(void)state;
+	(void)sig;
+	g_is_sigint_received = 1;
+	write(2, "\n", 1);
+}
+
+int	setup_signal_mock(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = &handle_ctrl_c_mock;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	if (sigaction(SIGINT, &sa, NULL) < 0)
+	{
+		perror(strerror(errno));
+		return (-1);
+	}
+	signal(SIGQUIT, SIG_IGN);
+	return (0);
+}
+
+// Reset signal state before each test
+int setup_signal_test(void)
+{
 	g_is_sigint_received = 0;
-	setup_signal();
+	setup_signal_mock();
 	return 0;
 }
 
@@ -53,7 +79,7 @@ void test_setup_signal_success(void **state)
 {
 	(void)state;
 
-	int result = setup_signal();
+	int result = setup_signal_test();
 	assert_int_equal(result, 0);
 }
 
@@ -63,7 +89,7 @@ void test_setup_signal_configures_sigint(void **state)
 
 	struct sigaction sa;
 
-	setup_signal();
+	setup_signal_test();
 
 	// Get current SIGINT handler
 	sigaction(SIGINT, NULL, &sa);
@@ -79,7 +105,7 @@ void test_setup_signal_ignores_sigquit(void **state)
 
 	void (*handler)(int);
 
-	setup_signal();
+	setup_signal_test();
 
 	// Get current SIGQUIT handler
 	handler = signal(SIGQUIT, SIG_IGN);
@@ -178,7 +204,7 @@ void test_sigint_in_child_process(void **state)
 	if (pid == 0)
 	{
 		// Child process
-		setup_signal();
+		setup_signal_test();
 		send_signal_and_wait(SIGINT);
 
 		// Check that flag was set
@@ -207,7 +233,7 @@ void test_child_inherits_signal_handlers(void **state)
 {
 	(void)state;
 
-	setup_signal();
+	setup_signal_test();
 
 	pid_t pid = fork();
 
@@ -245,7 +271,7 @@ void test_signal_can_be_restored_to_default(void **state)
 {
 	(void)state;
 
-	setup_signal();
+	setup_signal_test();
 
 	// Restore to default
 	signal(SIGINT, SIG_DFL);
@@ -307,8 +333,8 @@ void test_setup_signal_called_twice(void **state)
 {
 	(void)state;
 
-	int result1 = setup_signal();
-	int result2 = setup_signal();
+	int result1 = setup_signal_test();
+	int result2 = setup_signal_test();
 
 	assert_int_equal(result1, 0);
 	assert_int_equal(result2, 0);
@@ -360,7 +386,7 @@ void test_sigaction_flags_are_correct(void **state)
 
 	struct sigaction sa;
 
-	setup_signal();
+	setup_signal_test();
 	sigaction(SIGINT, NULL, &sa);
 
 	// Verify flags are set correctly (SA_RESTART should not be set)
@@ -373,7 +399,7 @@ void test_signal_mask_is_empty(void **state)
 
 	struct sigaction sa;
 
-	setup_signal();
+	setup_signal_test();
 	sigaction(SIGINT, NULL, &sa);
 
 	// Verify signal mask is empty
@@ -389,7 +415,7 @@ void test_signal_handler_survives_child_exit(void **state)
 {
 	(void)state;
 
-	setup_signal();
+	setup_signal_test();
 
 	pid_t pid = fork();
 
@@ -415,7 +441,7 @@ void test_multiple_children_with_signals(void **state)
 {
 	(void)state;
 
-	setup_signal();
+	setup_signal_test();
 
 	for (int i = 0; i < 3; i++)
 	{

@@ -2,7 +2,7 @@
 # define TEST_SIGNAL_H
 
 // Setup and teardown
-int setup_signal_test(void **state);
+int setup_signal_test(void);
 int teardown_signal_test(void **state);
 
 // Signal setup tests
