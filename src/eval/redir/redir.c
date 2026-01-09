@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "ast.h"
-#include "libft.h"
 #include "eval.h"
+#include "libft.h"
 #include "token.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -54,35 +54,38 @@ static int	get_fd_for_op(const char *filename, t_token_type op)
 	return (-1);
 }
 
-static int	process_io_file(t_ast *io_file, int *saved_stdin_fd)
+static int	process_io_file(t_ast *io_file, int saved_stdin)
 {
 	int	fd;
 	int	target;
+	int	heredoc_fd;
 
 	if (!io_file)
 		return (-1);
 	if (io_file->u_ast.s_io_file.op->type == DLESS)
 	{
-		if (*saved_stdin_fd != -1)
-			close(*saved_stdin_fd);
-		return (handle_here_doc((char *)io_file->u_ast.s_io_file.filename, saved_stdin_fd));
+		heredoc_fd = -1;
+		if (handle_here_doc((char *)io_file->u_ast.s_io_file.filename,
+				&heredoc_fd, saved_stdin) < 0)
+			return (-1);
+		if (dup2(heredoc_fd, STDIN_FILENO) < 0)
+		{
+			close(heredoc_fd);
+			return (-1);
+		}
+		close(heredoc_fd);
+		return (0);
 	}
-	
-	fd = get_fd_for_op(io_file->u_ast.s_io_file.filename, io_file->u_ast.s_io_file.op->type);
+	fd = get_fd_for_op(io_file->u_ast.s_io_file.filename,
+			io_file->u_ast.s_io_file.op->type);
 	if (fd < 0)
 	{
-		ft_dprintf(STDERR_FILENO, "%s: %s\n", io_file->u_ast.s_io_file.filename, strerror(errno));
+		ft_dprintf(STDERR_FILENO, "%s: %s\n", io_file->u_ast.s_io_file.filename,
+			strerror(errno));
 		return (-1);
 	}
 	if (io_file->u_ast.s_io_file.op->type == LESS)
-	{
 		target = STDIN_FILENO;
-		if (*saved_stdin_fd != -1)
-		{
-			close(*saved_stdin_fd);
-			*saved_stdin_fd = -1;
-		}
-	}
 	else
 		target = STDOUT_FILENO;
 	if (dup2(fd, target) < 0)
@@ -98,39 +101,39 @@ int	eval_redir(t_ast *shell_ast)
 {
 	t_ast	*suffix;
 	t_ast	*prefix;
-	int		saved_stdin_fd;
+	int		saved_stdin;
 
-	saved_stdin_fd = -1;
+	saved_stdin = dup(STDIN_FILENO);
+	if (saved_stdin < 0)
+		return (-1);
 	prefix = shell_ast->u_ast.s_simple_cmd.cmd_prefix;
 	while (prefix)
 	{
-		if (process_io_file(prefix->u_ast.s_cmd_prefix.io_file, &saved_stdin_fd) < 0)
+		if (prefix->u_ast.s_cmd_prefix.io_file)
 		{
-			if (saved_stdin_fd != -1)
-				close(saved_stdin_fd);
-			return (-1);
+			if (process_io_file(prefix->u_ast.s_cmd_prefix.io_file,
+					saved_stdin) < 0)
+			{
+				close(saved_stdin);
+				return (-1);
+			}
 		}
 		prefix = prefix->u_ast.s_cmd_prefix.cmd_prefix;
 	}
 	suffix = shell_ast->u_ast.s_simple_cmd.cmd_suffix;
 	while (suffix)
 	{
-		if (process_io_file(suffix->u_ast.s_cmd_suffix.io_file, &saved_stdin_fd) < 0)
+		if (suffix->u_ast.s_cmd_suffix.io_file)
 		{
-			if (saved_stdin_fd != -1)
-				close(saved_stdin_fd);
-			return (-1);
+			if (process_io_file(suffix->u_ast.s_cmd_suffix.io_file,
+					saved_stdin) < 0)
+			{
+				close(saved_stdin);
+				return (-1);
+			}
 		}
 		suffix = suffix->u_ast.s_cmd_suffix.cmd_suffix;
 	}
-	if (saved_stdin_fd != -1)
-	{
-		if (dup2(saved_stdin_fd, STDIN_FILENO) < 0)
-		{
-			close(saved_stdin_fd);
-			return (-1);
-		}
-		close(saved_stdin_fd);
-	}
+	close(saved_stdin);
 	return (1);
 }

@@ -136,7 +136,7 @@ void					eval_pipe_recursive(t_ast *shell_ast, t_shell_env *env,
 							int *pipefd, int prev_read_end);
 
 
-int						handle_here_doc(char *limiter, int *heredoc_fd);
+int						handle_here_doc(char *limiter, int *heredoc_fd, int read_fd);
 
 int						has_redirections(t_ast *shell_ast);
 int						eval_redir(t_ast *shell_ast);

@@ -501,6 +501,22 @@ static int	run_heredoc_tests(void)
 			setup_heredoc_exec_prefix, teardown_free_heredoc_ast),
 		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_empty,
 			setup_heredoc_exec_empty, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_grep,
+			setup_heredoc_pipe_grep, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_multi_pipe,
+			setup_heredoc_multi_pipe, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_redir_and_pipe,
+			setup_heredoc_redir_and_pipe, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_sort_uniq,
+			setup_heredoc_pipe_sort_uniq, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_head,
+			setup_heredoc_pipe_head, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_multiple,
+			setup_heredoc_multiple, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_with_input_redir,
+			setup_heredoc_with_input_redir, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_tr,
+			setup_heredoc_pipe_tr, teardown_free_heredoc_ast),
 	};
 	printf("\n--- heredoc Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));

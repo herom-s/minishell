@@ -10,10 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "eval.h"
-#include <unistd.h>
+#include "libft.h"
 #include <stdlib.h>
+#include <unistd.h>
 
 static int	is_limiter_match(char *line, char *limiter, int limiter_len)
 {
@@ -21,7 +21,40 @@ static int	is_limiter_match(char *line, char *limiter, int limiter_len)
 		&& line[limiter_len] == '\n');
 }
 
-int	handle_here_doc(char *limiter, int *heredoc_fd)
+static char	*read_line_from_fd(int fd)
+{
+	char	*line;
+	char	*tmp;
+	char	buf[2];
+	int		bytes;
+
+	line = ft_strdup("");
+	if (!line)
+		return (NULL);
+	buf[1] = '\0';
+	while (1)
+	{
+		bytes = read(fd, buf, 1);
+		if (bytes <= 0)
+		{
+			if (ft_strlen(line) == 0)
+			{
+				free(line);
+				return (NULL);
+			}
+			return (line);
+		}
+		tmp = ft_strjoin(line, buf);
+		free(line);
+		line = tmp;
+		if (!line)
+			return (NULL);
+		if (buf[0] == '\n')
+			return (line);
+	}
+}
+
+int	handle_here_doc(char *limiter, int *heredoc_fd, int read_fd)
 {
 	int		pipe_fd[2];
 	int		limiter_len;
@@ -32,13 +65,12 @@ int	handle_here_doc(char *limiter, int *heredoc_fd)
 	limiter_len = ft_strlen(limiter);
 	while (1)
 	{
-		line = get_next_line(STDIN_FILENO);
+		line = read_line_from_fd(read_fd);
 		if (!line)
 		{
 			close(pipe_fd[INPUT_END]);
 			close(pipe_fd[OUTPUT_END]);
-			get_next_line(-1);
-			break ;
+			return (-1);
 		}
 		if (is_limiter_match(line, limiter, limiter_len))
 		{
@@ -48,7 +80,6 @@ int	handle_here_doc(char *limiter, int *heredoc_fd)
 		write(pipe_fd[OUTPUT_END], line, ft_strlen(line));
 		free(line);
 	}
-	get_next_line(-1);
 	close(pipe_fd[OUTPUT_END]);
 	*heredoc_fd = pipe_fd[INPUT_END];
 	return (0);
