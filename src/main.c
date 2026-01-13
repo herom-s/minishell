@@ -24,9 +24,11 @@
 
 void	parse_input(char *input, char *envp[])
 {
-	t_lexer		*lexer;
-	t_parser	*parser;
-	t_ast		*ast;
+	t_shell_env			*env;
+	t_shell_response	*res;
+	t_lexer				*lexer;
+	t_parser			*parser;
+	t_ast				*ast;
 
 	(void)envp;
 	lexer = create_lexer(input);
@@ -41,9 +43,15 @@ void	parse_input(char *input, char *envp[])
 		ft_printf("Failed to create parser\n");
 		return (free(lexer));
 	}
+	env = create_shell_env(envp);
 	ast = init_ast(parser);
 	if (ast)
+	{
+		res = eval_ast(ast, env);
 		free_ast(ast);
+		print_shell_response(res);
+	}
+	destroy_shell_env(env);
 	free(parser);
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);

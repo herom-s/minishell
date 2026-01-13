@@ -11,9 +11,17 @@
 /* ************************************************************************** */
 
 #include "eval.h"
+#include "libft.h"
 #include "print.h"
 
 void	print_shell_response(t_shell_response *shell_response)
 {
-	(void)shell_response;
+	if (shell_response->output)
+	{
+		ft_printf("%s", shell_response->output);
+	}
+	if (shell_response->erro_msg)
+	{
+		ft_printf("%s", shell_response->erro_msg);
+	}
 }
