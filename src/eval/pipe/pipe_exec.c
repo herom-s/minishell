@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 16:01:12 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/08 16:05:39 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/13 19:20:11 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@ static int	execute_child_cmd_pipe(t_cmd_func_call *call, t_ast *ast)
 	if (res)
 	{
 		code = res->exit_code;
-		if (res->output)
-			ft_putstr_fd(res->output, STDOUT_FILENO);
-		if (res->erro_msg)
-			ft_putstr_fd(res->erro_msg, STDERR_FILENO);
 		destroy_cmd_res(res);
 	}
 	return (code);

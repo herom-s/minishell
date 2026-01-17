@@ -31,6 +31,17 @@ $(BONUS_OBJ_DIR)/%.o: $(BONUS_DIR)/%.c
 	@mkdir -p $(BONUS_OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+valgrind-run:
+	@valgrind -q\
+		--leak-check=full \
+		--show-leak-kinds=all \
+		--track-origins=yes \
+		--track-fds=yes \
+		--trace-children=yes \
+		--trace-children-skip='*/bin/*,*/sbin/*,/usr/bin/*' \
+		--suppressions=./valgrind.supp \
+		./$(NAME)
+
 clean:
 	@rm -rf $(OBJ_DIR)
 	@rm -rf $(BONUS_OBJ_DIR)

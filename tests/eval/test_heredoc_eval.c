@@ -105,23 +105,17 @@ void	test_eval_heredoc_exec_cat_basic(void **state)
 	// Setup heredoc input: "line1\nline2\nEOF\n"
 	original_stdin = setup_stdin_from_string("line1\nline2\nEOF\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	// Restore stdin before assertions
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	assert_string_equal(res->output, "line1\nline2\n");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    // Restore stdin before assertions
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 0);
+    assert_non_null(captured);
+    assert_string_equal(captured, "line1\nline2\n");
+    free(captured);
+    free(res);
 	destroy_shell_env(env);
 }
 
@@ -189,27 +183,22 @@ void	test_eval_heredoc_exec_with_output(void **state)
 	original_stdin = setup_stdin_from_string("test line 1\ntest line 2\nDELIMITER\n");
 	assert_true(original_stdin >= 0);
 	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	
-	// Verify output was written to file
-	fd = open("/tmp/heredoc_exec_out.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "test line 1\ntest line 2\n");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 0);
+
+    // Verify output was written to file
+    fd = open("/tmp/heredoc_exec_out.txt", O_RDONLY);
+    assert_true(fd >= 0);
+    memset(buffer, 0, sizeof(buffer));
+    read(fd, buffer, sizeof(buffer) - 1);
+    close(fd);
+    assert_string_equal(buffer, "test line 1\ntest line 2\n");
+    free(captured);
+    free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/heredoc_exec_out.txt");
 }
@@ -251,22 +240,17 @@ void	test_eval_heredoc_exec_wc(void **state)
 	original_stdin = setup_stdin_from_string("line1\nline2\nline3\nEND\n");
 	assert_true(original_stdin >= 0);
 	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	// wc -l should output "3"
-	assert_string_equal(res->output, "3\n");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 0);
+    // wc -l should output "3"
+    assert_string_equal(captured, "3\n");
+
+    free(captured);
+    free(res);
 	destroy_shell_env(env);
 }
 
@@ -306,24 +290,17 @@ void	test_eval_heredoc_exec_grep(void **state)
 	// Setup heredoc input with some lines containing "hello"
 	original_stdin = setup_stdin_from_string("hello world\ngoodbye\nhello again\nLIMITER\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	// grep should output lines containing "hello"
-	assert_string_equal(res->output, "hello world\nhello again\n");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
-	destroy_shell_env(env);
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 0);
+    // grep should output lines containing "hello"
+    assert_string_equal(captured, "hello world\nhello again\n");
+    free(captured);
+    free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -379,23 +356,17 @@ void	test_eval_heredoc_exec_prefix(void **state)
 	// Setup heredoc input
 	original_stdin = setup_stdin_from_string("prefix test\nanother line\nLIMITER\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	assert_string_equal(res->output, "prefix test\nanother line\n");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
-	destroy_shell_env(env);
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 0);
+    assert_string_equal(captured, "prefix test\nanother line\n");
+
+    free(captured);
+    free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -430,27 +401,20 @@ void	test_eval_heredoc_exec_empty(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	// Setup heredoc input with immediate limiter (empty heredoc)
 	original_stdin = setup_stdin_from_string("EOF\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	// Empty heredoc should produce empty output
-	assert_string_equal(res->output, "");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
-	destroy_shell_env(env);
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 0);
+    // Empty heredoc should produce empty output
+    assert_string_equal(captured, "");
+    free(captured);
+    free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -503,26 +467,18 @@ void	test_eval_heredoc_pipe_grep(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	original_stdin = setup_stdin_from_string("test line\nother line\ntest again\nEOF\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	assert_string_equal(res->output, "test line\ntest again\n");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
-	destroy_shell_env(env);
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 0);
+    assert_string_equal(captured, "test line\ntest again\n");
+    free(captured);
+    free(res);
+    destroy_shell_env(env);
 }
 
 /*
@@ -544,31 +500,25 @@ int	setup_heredoc_multi_pipe(void **state)
 	heredoc = create_io_file_node(DLESS, "EOF");
 	if (!cat_cmd || !heredoc)
 		return (-1);
-	
 	nodes[0] = cat_cmd;
 	nodes[1] = heredoc;
 	left_redir = create_redirection_ast(nodes, 2);
 	if (!left_redir)
 		return (-1);
-	
 	wc_cmd = create_cmd_ast("wc", (char *[]){"-l", NULL}, 1);
 	cat_cmd2 = create_cmd_ast("cat", NULL, 0);
 	if (!wc_cmd || !cat_cmd2)
 		return (-1);
-	
 	pipe1 = calloc(1, sizeof(t_ast));
 	pipe2 = calloc(1, sizeof(t_ast));
 	if (!pipe1 || !pipe2)
 		return (-1);
-	
 	pipe1->type = AST_PIPE_SEQ;
 	pipe1->u_ast.s_pipe_seq.left = left_redir;
 	pipe1->u_ast.s_pipe_seq.right = wc_cmd;
-	
 	pipe2->type = AST_PIPE_SEQ;
 	pipe2->u_ast.s_pipe_seq.left = pipe1;
 	pipe2->u_ast.s_pipe_seq.right = cat_cmd2;
-	
 	*state = pipe2;
 	return (0);
 }
@@ -583,24 +533,15 @@ void	test_eval_heredoc_multi_pipe(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	original_stdin = setup_stdin_from_string("line1\nline2\nline3\nline4\nEOF\n");
 	assert_true(original_stdin >= 0);
-	
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
+	char *captured = eval_and_capture(ast, env, &res);
 	restore_stdin(original_stdin);
-	
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	assert_string_equal(res->output, "4\n");
-	
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -620,14 +561,11 @@ int	setup_heredoc_redir_and_pipe(void **state)
 	t_ast	*pipe_node;
 
 	unlink("/tmp/out.txt");
-	
 	cat_cmd = create_cmd_ast("cat", NULL, 0);
 	heredoc = create_io_file_node(DLESS, "EOF");
 	out_redir = create_io_file_node(GREAT, "/tmp/out.txt");
-	
 	if (!cat_cmd || !heredoc || !out_redir)
 		return (-1);
-	
 	suffix1 = calloc(1, sizeof(t_ast));
 	if (!suffix1)
 		return (-1);
@@ -635,7 +573,6 @@ int	setup_heredoc_redir_and_pipe(void **state)
 	suffix1->u_ast.s_cmd_suffix.io_file = heredoc;
 	suffix1->u_ast.s_cmd_suffix.word = NULL;
 	suffix1->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-	
 	suffix2 = calloc(1, sizeof(t_ast));
 	if (!suffix2)
 	{
@@ -646,22 +583,17 @@ int	setup_heredoc_redir_and_pipe(void **state)
 	suffix2->u_ast.s_cmd_suffix.io_file = out_redir;
 	suffix2->u_ast.s_cmd_suffix.word = NULL;
 	suffix2->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-	
 	suffix1->u_ast.s_cmd_suffix.cmd_suffix = suffix2;
 	cat_cmd->u_ast.s_simple_cmd.cmd_suffix = suffix1;
-	
 	grep_cmd = create_cmd_ast("grep", (char *[]){"test", NULL}, 1);
 	if (!grep_cmd)
 		return (-1);
-	
 	pipe_node = calloc(1, sizeof(t_ast));
 	if (!pipe_node)
 		return (-1);
-	
 	pipe_node->type = AST_PIPE_SEQ;
 	pipe_node->u_ast.s_pipe_seq.left = cat_cmd;
 	pipe_node->u_ast.s_pipe_seq.right = grep_cmd;
-	
 	*state = pipe_node;
 	return (0);
 }
@@ -678,34 +610,25 @@ void	test_eval_heredoc_redir_and_pipe(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	original_stdin = setup_stdin_from_string("test line\nother line\ntest again\nEOF\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
-	restore_stdin(original_stdin);
-	
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 1);
-	
-	// Check file was written
+    env = create_shell_env(environ);
+    assert_non_null(env);
+    char *captured = eval_and_capture(ast, env, &res);
+    restore_stdin(original_stdin);
+    assert_non_null(res);
+    assert_int_equal(res->exit_code, 1);
+    // Check file was written
 	fd = open("/tmp/out.txt", O_RDONLY);
 	assert_true(fd >= 0);
 	memset(buffer, 0, sizeof(buffer));
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "test line\nother line\ntest again\n");
-	
-	// Pipe output should be empty since cat redirected to file
-	assert_string_equal(res->output, "");
-	
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+    // Pipe output should be empty since cat redirected to file
+    assert_string_equal(captured, "");
+    free(captured);
+    free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/out.txt");
 }
@@ -729,31 +652,25 @@ int	setup_heredoc_pipe_sort_uniq(void **state)
 	heredoc = create_io_file_node(DLESS, "EOF");
 	if (!cat_cmd || !heredoc)
 		return (-1);
-	
 	nodes[0] = cat_cmd;
 	nodes[1] = heredoc;
 	left_redir = create_redirection_ast(nodes, 2);
 	if (!left_redir)
 		return (-1);
-	
 	sort_cmd = create_cmd_ast("sort", NULL, 0);
 	uniq_cmd = create_cmd_ast("uniq", NULL, 0);
 	if (!sort_cmd || !uniq_cmd)
 		return (-1);
-	
 	pipe1 = calloc(1, sizeof(t_ast));
 	pipe2 = calloc(1, sizeof(t_ast));
 	if (!pipe1 || !pipe2)
 		return (-1);
-	
 	pipe1->type = AST_PIPE_SEQ;
 	pipe1->u_ast.s_pipe_seq.left = left_redir;
 	pipe1->u_ast.s_pipe_seq.right = sort_cmd;
-	
 	pipe2->type = AST_PIPE_SEQ;
 	pipe2->u_ast.s_pipe_seq.left = pipe1;
 	pipe2->u_ast.s_pipe_seq.right = uniq_cmd;
-	
 	*state = pipe2;
 	return (0);
 }
@@ -768,25 +685,17 @@ void	test_eval_heredoc_pipe_sort_uniq(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	original_stdin = setup_stdin_from_string("banana\napple\nbanana\napple\ncherry\nEOF\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
+    env = create_shell_env(environ);
+    assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
 	restore_stdin(original_stdin);
-	
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
 	// sort | uniq should output unique sorted lines
-	assert_string_equal(res->output, "apple\nbanana\ncherry\n");
-	
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "apple\nbanana\ncherry\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -808,25 +717,20 @@ int	setup_heredoc_pipe_head(void **state)
 	heredoc = create_io_file_node(DLESS, "END");
 	if (!cat_cmd || !heredoc)
 		return (-1);
-	
 	nodes[0] = cat_cmd;
 	nodes[1] = heredoc;
 	left_redir = create_redirection_ast(nodes, 2);
 	if (!left_redir)
 		return (-1);
-	
 	head_cmd = create_cmd_ast("head", (char *[]){"-n", "2", NULL}, 2);
 	if (!head_cmd)
 		return (-1);
-	
 	pipe_node = calloc(1, sizeof(t_ast));
 	if (!pipe_node)
 		return (-1);
-	
 	pipe_node->type = AST_PIPE_SEQ;
 	pipe_node->u_ast.s_pipe_seq.left = left_redir;
 	pipe_node->u_ast.s_pipe_seq.right = head_cmd;
-	
 	*state = pipe_node;
 	return (0);
 }
@@ -841,24 +745,16 @@ void	test_eval_heredoc_pipe_head(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	original_stdin = setup_stdin_from_string("first\nsecond\nthird\nfourth\nEND\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
+    env = create_shell_env(environ);
+    assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
 	restore_stdin(original_stdin);
-	
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	assert_string_equal(res->output, "first\nsecond\n");
-	
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "first\nsecond\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -877,10 +773,8 @@ int	setup_heredoc_multiple(void **state)
 	cmd = create_cmd_ast("cat", NULL, 0);
 	heredoc1 = create_io_file_node(DLESS, "EOF");
 	heredoc2 = create_io_file_node(DLESS, "EOF2");
-	
 	if (!cmd || !heredoc1 || !heredoc2)
 		return (-1);
-	
 	suffix1 = calloc(1, sizeof(t_ast));
 	if (!suffix1)
 		return (-1);
@@ -888,7 +782,6 @@ int	setup_heredoc_multiple(void **state)
 	suffix1->u_ast.s_cmd_suffix.io_file = heredoc1;
 	suffix1->u_ast.s_cmd_suffix.word = NULL;
 	suffix1->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-	
 	suffix2 = calloc(1, sizeof(t_ast));
 	if (!suffix2)
 	{
@@ -899,10 +792,8 @@ int	setup_heredoc_multiple(void **state)
 	suffix2->u_ast.s_cmd_suffix.io_file = heredoc2;
 	suffix2->u_ast.s_cmd_suffix.word = NULL;
 	suffix2->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-	
 	suffix1->u_ast.s_cmd_suffix.cmd_suffix = suffix2;
 	cmd->u_ast.s_simple_cmd.cmd_suffix = suffix1;
-	
 	*state = cmd;
 	return (0);
 }
@@ -917,26 +808,18 @@ void	test_eval_heredoc_multiple(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	// First heredoc content, then second heredoc content
 	original_stdin = setup_stdin_from_string("first heredoc\nEOF\nsecond heredoc\nEOF2\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
+    env = create_shell_env(environ);
+    assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
 	restore_stdin(original_stdin);
-	
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
 	// Last heredoc should be used
-	assert_string_equal(res->output, "second heredoc\n");
-	
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "second heredoc\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -955,10 +838,8 @@ int	setup_heredoc_with_input_redir(void **state)
 	cmd = create_cmd_ast("cat", NULL, 0);
 	heredoc = create_io_file_node(DLESS, "EOF");
 	input_redir = create_io_file_node(LESS, "/dev/null");
-	
 	if (!cmd || !heredoc || !input_redir)
 		return (-1);
-	
 	suffix1 = calloc(1, sizeof(t_ast));
 	if (!suffix1)
 		return (-1);
@@ -966,7 +847,6 @@ int	setup_heredoc_with_input_redir(void **state)
 	suffix1->u_ast.s_cmd_suffix.io_file = heredoc;
 	suffix1->u_ast.s_cmd_suffix.word = NULL;
 	suffix1->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-	
 	suffix2 = calloc(1, sizeof(t_ast));
 	if (!suffix2)
 	{
@@ -977,10 +857,8 @@ int	setup_heredoc_with_input_redir(void **state)
 	suffix2->u_ast.s_cmd_suffix.io_file = input_redir;
 	suffix2->u_ast.s_cmd_suffix.word = NULL;
 	suffix2->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-	
 	suffix1->u_ast.s_cmd_suffix.cmd_suffix = suffix2;
 	cmd->u_ast.s_simple_cmd.cmd_suffix = suffix1;
-	
 	*state = cmd;
 	return (0);
 }
@@ -995,24 +873,17 @@ void	test_eval_heredoc_with_input_redir(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	original_stdin = setup_stdin_from_string("heredoc content\nEOF\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
+    env = create_shell_env(environ);
+    assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
 	restore_stdin(original_stdin);
-	
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	// Last input redirection wins, so /dev/null should be used (empty)
-	assert_string_equal(res->output, "");
-	
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1048,39 +919,19 @@ void	test_eval_heredoc_pipe_tr(void **state)
 
 	ast = (t_ast *)(*state);
 	assert_non_null(ast);
-	
 	original_stdin = setup_stdin_from_string("hello world\ntest line\nEOF\n");
 	assert_true(original_stdin >= 0);
-	
-	env = create_shell_env(environ);
-	assert_non_null(env);
-	
-	res = eval_ast(ast, env);
-	
+    env = create_shell_env(environ);
+    assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
 	restore_stdin(original_stdin);
-	
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_non_null(res->output);
-	assert_string_equal(res->output, "HELLO WORLD\nTEST LINE\n");
-	
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "HELLO WORLD\nTEST LINE\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
-
-#include <stdarg.h>
-#include <stddef.h>
-#include <setjmp.h>
-#include <cmocka.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-// [Include your shell headers here, e.g., "shell.h", "ast.h"]
 
 /*
  * setup: cat << EOF (heredoc with special characters)
@@ -1111,25 +962,18 @@ void test_eval_heredoc_special_chars_content(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("$HOME | & ; < > * ? [ ]\n!@#%^&*()\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_non_null(res->output);
-    assert_string_equal(res->output, "$HOME | & ; < > * ? [ ]\n!@#%^&*()\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "$HOME | & ; < > * ? [ ]\n!@#%^&*()\n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1163,33 +1007,25 @@ void test_eval_heredoc_long_content(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     long_input = malloc(10000);
     assert_non_null(long_input);
     long_input[0] = '\0';
-    
     for (i = 0; i < 100; i++)
         sprintf(long_input + strlen(long_input), "Line number %zu\n", i);
     strcat(long_input, "EOF\n");
-    
     original_stdin = setup_stdin_from_string(long_input);
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_non_null(res->output);
-    
-    free(long_input);
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_non_null(captured);
+	free(long_input);
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1221,24 +1057,18 @@ void test_eval_heredoc_whitespace_lines(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("   \n\t\t\n     \nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
-    assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "   \n\t\t\n     \n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "   \n\t\t\n     \n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1270,24 +1100,18 @@ void test_eval_heredoc_limiter_in_content(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("ENDING\nENDless\nthe END is near\nEND\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
-    assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "ENDING\nENDless\nthe END is near\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "ENDING\nENDless\nthe END is near\n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1319,24 +1143,18 @@ void test_eval_heredoc_numeric_limiter(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("line 1\nline 2\n123\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "line 1\nline 2\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "line 1\nline 2\n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1368,24 +1186,18 @@ void test_eval_heredoc_single_char_limiter(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("test\nX\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "test\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "test\n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1417,25 +1229,19 @@ void test_eval_heredoc_with_env_vars(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("$USER\n$HOME\n$PATH\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
-    assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    // Heredoc should output literally (no expansion)
-    assert_string_equal(res->output, "$USER\n$HOME\n$PATH\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	assert_non_null(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	// Heredoc should output literally (no expansion)
+	assert_string_equal(captured, "$USER\n$HOME\n$PATH\n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1467,24 +1273,20 @@ void test_eval_heredoc_empty_lines(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("line1\n\n\nline2\n\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "line1\n\n\nline2\n\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "line1\n\n\nline2\n\n");
+
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1516,24 +1318,18 @@ void test_eval_heredoc_tabs_content(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("\ttab start\ntext\ttab middle\nEND\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "\ttab start\ntext\ttab middle\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "\ttab start\ntext\ttab middle\n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1565,24 +1361,18 @@ void test_eval_heredoc_unicode_content(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("Hello 世界\nÇ é ñ ü\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
-    restore_stdin(original_stdin);
-    
-    assert_non_null(res);
-    assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "Hello 世界\nÇ é ñ ü\n");
-    
-    free(res->output);
-    free(res->erro_msg);
-    free(res);
-    destroy_shell_env(env);
+	char *captured = eval_and_capture(ast, env, &res);
+	restore_stdin(original_stdin);
+	assert_non_null(res);
+	assert_int_equal(res->exit_code, 0);
+	assert_string_equal(captured, "Hello 世界\nÇ é ñ ü\n");
+	free(captured);
+	free(res);
+	destroy_shell_env(env);
 }
 
 /*
@@ -1600,36 +1390,29 @@ int setup_heredoc_triple_redirect(void **state)
 
     unlink("/tmp/heredoc_triple1.txt");
     unlink("/tmp/heredoc_triple2.txt");
-    
     cmd = create_cmd_ast("cat", NULL, 0);
     heredoc = create_io_file_node(DLESS, "EOF");
     out1 = create_io_file_node(GREAT, "/tmp/heredoc_triple1.txt");
     out2 = create_io_file_node(GREAT, "/tmp/heredoc_triple2.txt");
-    
     if (!cmd || !heredoc || !out1 || !out2)
         return (-1);
-    
     suffix1 = calloc(1, sizeof(t_ast));
     suffix2 = calloc(1, sizeof(t_ast));
     suffix3 = calloc(1, sizeof(t_ast));
     if (!suffix1 || !suffix2 || !suffix3)
         return (-1);
-    
     suffix1->type = AST_CMD_SUFFIX;
     suffix1->u_ast.s_cmd_suffix.io_file = heredoc;
     suffix1->u_ast.s_cmd_suffix.word = NULL;
     suffix1->u_ast.s_cmd_suffix.cmd_suffix = suffix2;
-    
     suffix2->type = AST_CMD_SUFFIX;
     suffix2->u_ast.s_cmd_suffix.io_file = out1;
     suffix2->u_ast.s_cmd_suffix.word = NULL;
     suffix2->u_ast.s_cmd_suffix.cmd_suffix = suffix3;
-    
     suffix3->type = AST_CMD_SUFFIX;
     suffix3->u_ast.s_cmd_suffix.io_file = out2;
     suffix3->u_ast.s_cmd_suffix.word = NULL;
     suffix3->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-    
     cmd->u_ast.s_simple_cmd.cmd_suffix = suffix1;
     *state = cmd;
     return (0);
@@ -1647,28 +1430,21 @@ void test_eval_heredoc_triple_redirect(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("test content\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    
     fd = open("/tmp/heredoc_triple2.txt", O_RDONLY);
     assert_true(fd >= 0);
     memset(buffer, 0, sizeof(buffer));
     read(fd, buffer, sizeof(buffer) - 1);
     close(fd);
     assert_string_equal(buffer, "test content\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    free(captured);
     free(res);
     destroy_shell_env(env);
     unlink("/tmp/heredoc_triple1.txt");
@@ -1688,36 +1464,29 @@ int setup_heredoc_after_append(void **state)
     int fd;
 
     unlink("/tmp/heredoc_append.txt");
-    
     fd = open("/tmp/heredoc_append.txt", O_WRONLY | O_CREAT, 0644);
     if (fd >= 0)
     {
         write(fd, "existing\n", 9);
         close(fd);
     }
-    
     cmd = create_cmd_ast("cat", NULL, 0);
     heredoc = create_io_file_node(DLESS, "EOF");
     append = create_io_file_node(DGREAT, "/tmp/heredoc_append.txt");
-    
     if (!cmd || !heredoc || !append)
         return (-1);
-    
     suffix1 = calloc(1, sizeof(t_ast));
     suffix2 = calloc(1, sizeof(t_ast));
     if (!suffix1 || !suffix2)
         return (-1);
-    
     suffix1->type = AST_CMD_SUFFIX;
     suffix1->u_ast.s_cmd_suffix.io_file = heredoc;
     suffix1->u_ast.s_cmd_suffix.word = NULL;
     suffix1->u_ast.s_cmd_suffix.cmd_suffix = suffix2;
-    
     suffix2->type = AST_CMD_SUFFIX;
     suffix2->u_ast.s_cmd_suffix.io_file = append;
     suffix2->u_ast.s_cmd_suffix.word = NULL;
     suffix2->u_ast.s_cmd_suffix.cmd_suffix = NULL;
-    
     cmd->u_ast.s_simple_cmd.cmd_suffix = suffix1;
     *state = cmd;
     return (0);
@@ -1735,28 +1504,21 @@ void test_eval_heredoc_after_append(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("appended\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    
     fd = open("/tmp/heredoc_append.txt", O_RDONLY);
     assert_true(fd >= 0);
     memset(buffer, 0, sizeof(buffer));
     read(fd, buffer, sizeof(buffer) - 1);
     close(fd);
     assert_string_equal(buffer, "existing\nappended\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    free(captured);
     free(res);
     destroy_shell_env(env);
     unlink("/tmp/heredoc_append.txt");
@@ -1791,22 +1553,16 @@ void test_eval_heredoc_sed_substitute(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("old text\nold value\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "new text\nnew value\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    assert_string_equal(captured, "new text\nnew value\n");
+    free(captured);
     free(res);
     destroy_shell_env(env);
 }
@@ -1840,22 +1596,16 @@ void test_eval_heredoc_awk_process(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("one two three\nfour five six\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "two\nfive\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    assert_string_equal(captured, "two\nfive\n");
+    free(captured);
     free(res);
     destroy_shell_env(env);
 }
@@ -1873,30 +1623,24 @@ int setup_heredoc_tee_redirect(void **state)
     t_ast *pipe_node;
 
     unlink("/tmp/heredoc_tee.txt");
-    
     cat_cmd = create_cmd_ast("cat", NULL, 0);
     heredoc = create_io_file_node(DLESS, "EOF");
     if (!cat_cmd || !heredoc)
         return (-1);
-    
     nodes[0] = cat_cmd;
     nodes[1] = heredoc;
     left_redir = create_redirection_ast(nodes, 2);
     if (!left_redir)
         return (-1);
-    
     tee_cmd = create_cmd_ast("tee", (char *[]){"/tmp/heredoc_tee.txt", NULL}, 1);
     if (!tee_cmd)
         return (-1);
-    
     pipe_node = calloc(1, sizeof(t_ast));
     if (!pipe_node)
         return (-1);
-    
     pipe_node->type = AST_PIPE_SEQ;
     pipe_node->u_ast.s_pipe_seq.left = left_redir;
     pipe_node->u_ast.s_pipe_seq.right = tee_cmd;
-    
     *state = pipe_node;
     return (0);
 }
@@ -1913,20 +1657,15 @@ void test_eval_heredoc_tee_redirect(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("tee test\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "tee test\n");
-    
+    assert_string_equal(captured, "tee test\n");
     // Check file was written
     fd = open("/tmp/heredoc_tee.txt", O_RDONLY);
     assert_true(fd >= 0);
@@ -1934,9 +1673,7 @@ void test_eval_heredoc_tee_redirect(void **state)
     read(fd, buffer, sizeof(buffer) - 1);
     close(fd);
     assert_string_equal(buffer, "tee test\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    free(captured);
     free(res);
     destroy_shell_env(env);
     unlink("/tmp/heredoc_tee.txt");
@@ -1960,31 +1697,25 @@ int setup_heredoc_nested_pipes(void **state)
     heredoc = create_io_file_node(DLESS, "EOF");
     if (!cat_cmd || !heredoc)
         return (-1);
-    
     nodes[0] = cat_cmd;
     nodes[1] = heredoc;
     left_redir = create_redirection_ast(nodes, 2);
     if (!left_redir)
         return (-1);
-    
     grep1_cmd = create_cmd_ast("grep", (char *[]){"a", NULL}, 1);
     grep2_cmd = create_cmd_ast("grep", (char *[]){"b", NULL}, 1);
     if (!grep1_cmd || !grep2_cmd)
         return (-1);
-    
     pipe1 = calloc(1, sizeof(t_ast));
     pipe2 = calloc(1, sizeof(t_ast));
     if (!pipe1 || !pipe2)
         return (-1);
-    
     pipe1->type = AST_PIPE_SEQ;
     pipe1->u_ast.s_pipe_seq.left = left_redir;
     pipe1->u_ast.s_pipe_seq.right = grep1_cmd;
-    
     pipe2->type = AST_PIPE_SEQ;
     pipe2->u_ast.s_pipe_seq.left = pipe1;
     pipe2->u_ast.s_pipe_seq.right = grep2_cmd;
-    
     *state = pipe2;
     return (0);
 }
@@ -1999,22 +1730,16 @@ void test_eval_heredoc_nested_pipes(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("apple\nbanana\ncherry\nabacus\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "banana\nabacus\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    assert_string_equal(captured, "banana\nabacus\n");
+    free(captured);
     free(res);
     destroy_shell_env(env);
 }
@@ -2048,22 +1773,16 @@ void test_eval_heredoc_parallel_commands(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("command1\ncommand2\ncommand3\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "command1\ncommand2\ncommand3\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    assert_string_equal(captured, "command1\ncommand2\ncommand3\n");
+    free(captured);
     free(res);
     destroy_shell_env(env);
 }
@@ -2086,31 +1805,25 @@ int setup_heredoc_error_in_pipe(void **state)
     heredoc = create_io_file_node(DLESS, "EOF");
     if (!cat_cmd || !heredoc)
         return (-1);
-    
     nodes[0] = cat_cmd;
     nodes[1] = heredoc;
     left_redir = create_redirection_ast(nodes, 2);
     if (!left_redir)
-        return (-1);
-    
-    false_cmd = create_cmd_ast("false", NULL, 0);
+		return (-1);
+	false_cmd = create_cmd_ast("false", NULL, 0);
     cat2_cmd = create_cmd_ast("cat", NULL, 0);
     if (!false_cmd || !cat2_cmd)
         return (-1);
-    
     pipe1 = calloc(1, sizeof(t_ast));
     pipe2 = calloc(1, sizeof(t_ast));
     if (!pipe1 || !pipe2)
         return (-1);
-    
     pipe1->type = AST_PIPE_SEQ;
     pipe1->u_ast.s_pipe_seq.left = left_redir;
     pipe1->u_ast.s_pipe_seq.right = false_cmd;
-    
     pipe2->type = AST_PIPE_SEQ;
     pipe2->u_ast.s_pipe_seq.left = pipe1;
     pipe2->u_ast.s_pipe_seq.right = cat2_cmd;
-    
     *state = pipe2;
     return (0);
 }
@@ -2125,22 +1838,16 @@ void test_eval_heredoc_error_in_pipe(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     original_stdin = setup_stdin_from_string("test\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     // Exit code depends on pipeline semantics - typically last command
     assert_int_equal(res->exit_code, 0);
-    
-    free(res->output);
-    free(res->erro_msg);
+    free(captured);
     free(res);
     destroy_shell_env(env);
 }
@@ -2174,23 +1881,17 @@ void test_eval_heredoc_partial_match_limiter(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     // "END" should NOT match "ENDER"
     original_stdin = setup_stdin_from_string("line1\nEND\nline2\nENDER\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "line1\nEND\nline2\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    assert_string_equal(captured, "line1\nEND\nline2\n");
+    free(captured);
     free(res);
     destroy_shell_env(env);
 }
@@ -2224,23 +1925,17 @@ void test_eval_heredoc_case_sensitive_limiter(void **state)
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
-    
     // "eof" and "Eof" should NOT match "EOF"
     original_stdin = setup_stdin_from_string("line1\neof\nline2\nEof\nline3\nEOF\n");
     assert_true(original_stdin >= 0);
-    
     env = create_shell_env(environ);
     assert_non_null(env);
-    
-    res = eval_ast(ast, env);
+    char *captured = eval_and_capture(ast, env, &res);
     restore_stdin(original_stdin);
-    
     assert_non_null(res);
     assert_int_equal(res->exit_code, 0);
-    assert_string_equal(res->output, "line1\neof\nline2\nEof\nline3\n");
-    
-    free(res->output);
-    free(res->erro_msg);
+    assert_string_equal(captured, "line1\neof\nline2\nEof\nline3\n");
+    free(captured);
     free(res);
     destroy_shell_env(env);
 }
@@ -2257,9 +1952,7 @@ int	teardown_free_heredoc_ast(void **state)
 
 	if (!state || !*state)
 		return (0);
-	
 	ast = (t_ast *)(*state);
-	
 	// Handle different AST types
 	if (ast->type == AST_SIMPLE_CMD)
 	{
@@ -2277,7 +1970,6 @@ int	teardown_free_heredoc_ast(void **state)
 			free(prefix);
 			prefix = next_prefix;
 		}
-		
 		// Free suffix
 		suffix = ast->u_ast.s_simple_cmd.cmd_suffix;
 		while (suffix)
@@ -2308,12 +2000,9 @@ int	teardown_free_heredoc_ast(void **state)
 			teardown_free_heredoc_ast(&right_state);
 		}
 	}
-	
 	free(ast);
 	*state = NULL;
-	
 	// Cleanup any temporary files
 	unlink("/tmp/heredoc_output.txt");
-	
 	return (0);
 }

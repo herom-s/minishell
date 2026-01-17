@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/09 14:00:39 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/15 17:05:01 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,22 +35,21 @@ typedef enum s_cmd_type
 
 typedef struct s_shell_response
 {
-	char				*output;
 	char				*curr_dir;
 	int					exit_code;
-	char				*erro_msg;
 }						t_shell_response;
 
 typedef struct s_cmd_response
 {
-	char				*output;
 	char				*curr_dir;
 	int					exit_code;
-	char				*erro_msg;
 }						t_cmd_response;
 
 typedef struct s_shell_env
 {
+	int					last_exit_code;
+	int					og_stdout_fd;
+	int					og_stdin_fd;
 	char				**envp;
 	t_hashtable			*vars;
 	t_list				*order;
@@ -114,7 +113,7 @@ void					*destroy_shell_env(t_shell_env *env);
 t_cmd_response			*create_cmd_res(void);
 void					*destroy_cmd_res(t_cmd_response *cmd_res);
 
-void					create_child_fds(int *fd_out, int *fd_err);
+void					save_original_std_fds(t_shell_env *env);
 void					child_exit(t_shell_env *env, t_ast *local_ast,
 							int code);
 
@@ -125,20 +124,17 @@ typedef struct s_pipe_context
 	int	prev_pipe_fd_read_end;
 }						t_pipe_context;
 
-t_cmd_response			*handle_parent(pid_t pid, int *fd_out, int *fd_err);
-
-void					create_pipes_or_fail(int *fd_out, int *fd_err);
-void					*closes_pipes(int *fd_out, int *fd_err);
+t_cmd_response			*handle_parent(pid_t pid);
 
 void					func_exec_cmd_pipe(t_ast *ast, t_shell_env *env,
 							int *pipe_fd, int prev_pipe_read_fd);
 void					eval_pipe_recursive(t_ast *shell_ast, t_shell_env *env,
 							int *pipefd, int prev_read_end);
 
-
-int						handle_here_doc(char *limiter, int *heredoc_fd, int read_fd);
-
+int						exec_heredoc(char *limiter, int *heredoc_fd);
+int						get_fd_for_op(const char *filename, t_token_type op);
 int						has_redirections(t_ast *shell_ast);
+int						has_heredoc(t_ast *shell_ast);
 int						eval_redir(t_ast *shell_ast);
 
 char					*get_curdir(void);

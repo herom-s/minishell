@@ -54,26 +54,28 @@ void	test_eval_built_in_pwd_basic(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	buffer = calloc(1, PATH_MAX + 1);
-	if (!buffer)
-		return ;
-	curr_dir = getcwd(buffer, PATH_MAX);
-	expected = calloc(1, strlen(curr_dir) + 2);
-	if (!expected)
 	{
+		char *captured;
+		buffer = calloc(1, PATH_MAX + 1);
+		if (!buffer)
+			return ;
+		curr_dir = getcwd(buffer, PATH_MAX);
+		expected = calloc(1, strlen(curr_dir) + 2);
+		if (!expected)
+		{
+			free(buffer);
+			return ;
+		}
+		strcpy(expected, curr_dir);
+		strcat(expected, "\n");
+		captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_string_equal(captured, expected);
+		assert_int_equal(res->exit_code, 0);
+		free(captured);
+		free(res);
 		free(buffer);
-		return ;
+		free(expected);
 	}
-	strcpy(expected, curr_dir);
-	strcat(expected, "\n");
-	assert_string_equal(res->output, expected);
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
-	free(buffer);
-	free(expected);
     destroy_shell_env(env);
 }

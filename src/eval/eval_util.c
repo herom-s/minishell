@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 16:17:45 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/29 17:05:36 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:58:40 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,27 +32,6 @@ void	read_stream(int fd, char **str)
 		*str = tmp;
 	}
 	close(fd);
-}
-
-void	create_pipes_or_fail(int *fd_out, int *fd_err)
-{
-	if (pipe(fd_out) == -1)
-		exit(EXIT_FAILURE);
-	if (pipe(fd_err) == -1)
-	{
-		close(fd_out[INPUT_END]);
-		close(fd_out[OUTPUT_END]);
-		exit(EXIT_FAILURE);
-	}
-}
-
-void	*closes_pipes(int *fd_out, int *fd_err)
-{
-	close(fd_out[INPUT_END]);
-	close(fd_out[OUTPUT_END]);
-	close(fd_err[INPUT_END]);
-	close(fd_err[OUTPUT_END]);
-	return (NULL);
 }
 
 t_cmd_func_call	*check_cmd(t_ast *shell_ast, t_shell_env *env)

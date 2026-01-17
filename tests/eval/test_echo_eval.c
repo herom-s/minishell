@@ -50,14 +50,17 @@ void	test_eval_built_in_echo_n_basic(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
+	int saved_out, saved_err, pipe_fd;
+	char *captured;
+	assert_int_equal(capture_start(&saved_out, &saved_err, &pipe_fd), 0);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world");
+	captured = capture_end(saved_out, saved_err, pipe_fd);
+	assert_string_equal(captured, "hello world");
+	free(captured);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }
 
 /*
@@ -87,12 +90,15 @@ void	test_eval_built_in_echo_basic(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
+	int saved_out, saved_err, pipe_fd;
+	char *captured;
+	assert_int_equal(capture_start(&saved_out, &saved_err, &pipe_fd), 0);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world\n");
+	captured = capture_end(saved_out, saved_err, pipe_fd);
+	assert_string_equal(captured, "hello world\n");
+	free(captured);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
     destroy_shell_env(env);
 }
@@ -124,12 +130,15 @@ void	test_eval_built_in_echo_empty(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
+	int saved_out, saved_err, pipe_fd;
+	char *captured;
+	assert_int_equal(capture_start(&saved_out, &saved_err, &pipe_fd), 0);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "\n");
+	captured = capture_end(saved_out, saved_err, pipe_fd);
+	assert_string_equal(captured, "\n");
+	free(captured);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
     destroy_shell_env(env);
 }
@@ -161,12 +170,15 @@ void	test_eval_built_in_echo_n_empty(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
+	int saved_out, saved_err, pipe_fd;
+	char *captured;
+	assert_int_equal(capture_start(&saved_out, &saved_err, &pipe_fd), 0);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "");
+	captured = capture_end(saved_out, saved_err, pipe_fd);
+	assert_string_equal(captured, "");
+	free(captured);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
     destroy_shell_env(env);
 }
@@ -198,12 +210,15 @@ void	test_eval_built_in_echo_mutiple_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
+	int saved_out, saved_err, pipe_fd;
+	char *captured;
+	assert_int_equal(capture_start(&saved_out, &saved_err, &pipe_fd), 0);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world world\n");
+	captured = capture_end(saved_out, saved_err, pipe_fd);
+	assert_string_equal(captured, "hello world world\n");
+	free(captured);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
     destroy_shell_env(env);
 }
@@ -235,12 +250,15 @@ void	test_eval_built_in_echo_n_mutiple_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
+	int saved_out, saved_err, pipe_fd;
+	char *captured;
+	assert_int_equal(capture_start(&saved_out, &saved_err, &pipe_fd), 0);
 	res = eval_ast(ast, env);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world world");
+	captured = capture_end(saved_out, saved_err, pipe_fd);
+	assert_string_equal(captured, "hello world world");
+	free(captured);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
     destroy_shell_env(env);
 }

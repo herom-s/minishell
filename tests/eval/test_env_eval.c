@@ -71,19 +71,20 @@ void	test_eval_built_in_env_no_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured;
+	captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(res->output);
+	assert_non_null(captured);
 	i = 0;
 	while (environ[i])
 	{
-		assert_true(env_var_in_output(res->output, environ[i]));
+		assert_true(env_var_in_output(captured, environ[i]));
 		i++;
 	}
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
+	free(captured);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }
 
 /*
@@ -100,14 +101,14 @@ void	test_eval_built_in_env_not_empty(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(res->output);
-	assert_true(strlen(res->output) > 0);
+	assert_non_null(captured);
+	assert_true(strlen(captured) > 0);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
+	free(captured);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }
 
 /*
@@ -124,12 +125,12 @@ void	test_eval_built_in_env_contains_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(res->output);
-	assert_non_null(strstr(res->output, "PATH="));
+	assert_non_null(captured);
+	assert_non_null(strstr(captured, "PATH="));
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
+	free(captured);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }

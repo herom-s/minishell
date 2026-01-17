@@ -62,13 +62,14 @@ void	test_eval_pipe_redir_input_to_wc(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_string_equal(res->output, "3\n");
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_string_equal(captured, "3\n");
+		assert_int_equal(res->exit_code, 0);
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_in.txt");
 }
@@ -109,18 +110,19 @@ void	test_eval_pipe_redir_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_out.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "hello\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_out.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "hello\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_out.txt");
 }
@@ -174,18 +176,19 @@ void	test_eval_pipe_redir_in_out(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_in_out_dest.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "transfer this\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_in_out_dest.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "transfer this\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_in_out_src.txt");
 	unlink("/tmp/pipe_redir_in_out_dest.txt");
@@ -233,18 +236,19 @@ void	test_eval_pipe_redir_append(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_append.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "hello\nworld\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_append.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "hello\nworld\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/tmp/pipe_redir_append.txt");
 }
@@ -289,13 +293,14 @@ void	test_eval_pipe_redir_prefix_input_to_wc(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_string_equal(res->output, "4\n");
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_string_equal(captured, "4\n");
+		assert_int_equal(res->exit_code, 0);
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_prefix_in.txt");
 }
@@ -336,18 +341,19 @@ void	test_eval_pipe_redir_prefix_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_prefix_out.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "hello\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_prefix_out.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "hello\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_prefix_out.txt");
 }
@@ -401,18 +407,19 @@ void	test_eval_pipe_redir_prefix_in_out(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_prefix_in_out_dest.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "prefix transfer\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_prefix_in_out_dest.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "prefix transfer\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_prefix_in_out_src.txt");
 	unlink("/tmp/pipe_redir_prefix_in_out_dest.txt");
@@ -462,18 +469,19 @@ void	test_eval_pipe_redir_prefix_append(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_prefix_append.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "hello\nworld\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_prefix_append.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "hello\nworld\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_prefix_append.txt");
 }
@@ -526,21 +534,22 @@ void	test_eval_pipe_redir_prefix_complex(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	// Output should go to file, not stdout
-	fd = open("/tmp/pipe_redir_prefix_complex_out.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "complex\n");
-	// wc -c should count from its stdin (which gets nothing since cat output went to file)
-	// or get the piped content - depending on implementation
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		// Output should go to file, not stdout
+		fd = open("/tmp/pipe_redir_prefix_complex_out.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "complex\n");
+		// wc -c should count from its stdin (which gets nothing since cat output went to file)
+		// or get the piped content - depending on implementation
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_prefix_complex_in.txt");
 	unlink("/tmp/pipe_redir_prefix_complex_out.txt");
@@ -594,19 +603,20 @@ void	test_eval_pipe_redir_prefix_override_pipe(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_prefix_ignore_out.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	// Should contain file content, not pipe data (input redir overrides pipe)
-	assert_string_equal(buffer, "file_content\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_prefix_ignore_out.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		// Should contain file content, not pipe data (input redir overrides pipe)
+		assert_string_equal(buffer, "file_content\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_prefix_ignore_in.txt");
 	unlink("/tmp/pipe_redir_prefix_ignore_out.txt");
@@ -660,18 +670,19 @@ void	test_eval_pipe_redir_prefix_suffix_mixed(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	fd = open("/tmp/pipe_redir_prefix_mixed_out.txt", O_RDONLY);
-	assert_true(fd >= 0);
-	memset(buffer, 0, sizeof(buffer));
-	read(fd, buffer, sizeof(buffer) - 1);
-	close(fd);
-	assert_string_equal(buffer, "test line\ntest again\n");
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		fd = open("/tmp/pipe_redir_prefix_mixed_out.txt", O_RDONLY);
+		assert_true(fd >= 0);
+		memset(buffer, 0, sizeof(buffer));
+		read(fd, buffer, sizeof(buffer) - 1);
+		close(fd);
+		assert_string_equal(buffer, "test line\ntest again\n");
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 	unlink("/tmp/pipe_redir_prefix_mixed_in.txt");
 	unlink("/tmp/pipe_redir_prefix_mixed_out.txt");
@@ -711,12 +722,13 @@ void	test_eval_pipe_redir_prefix_input_nonexistent(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	// should give 0 becaus echo is have succes
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		// should give 0 becaus echo is have succes
+		assert_int_equal(res->exit_code, 0);
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 }

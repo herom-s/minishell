@@ -31,7 +31,9 @@ SRC_FILES = main.c \
 			$(EVAL_DIR)/cmd_res.c \
 			$(EVAL_DIR)/util.c \
 			$(EVAL_DIR)/redir/redir.c \
+			$(EVAL_DIR)/redir/redir_util.c \
 			$(EVAL_DIR)/redir/here_doc.c \
+			$(EVAL_DIR)/redir/here_doc_util.c \
 			$(EVAL_DIR)/pipe/child_parent.c \
 			$(EVAL_DIR)/pipe/pipe.c \
 			$(EVAL_DIR)/pipe/pipe_exec.c \

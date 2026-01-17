@@ -13,5 +13,11 @@
 #ifndef MINISHELL_SIGNAL_H
 # define MINISHELL_SIGNAL_H
 
-int	setup_signal(void);
+# include <signal.h>
+
+extern volatile sig_atomic_t	g_is_sigint_received;
+
+int								setup_signal(void);
+int								setup_heredoc_signal(void);
+int								setup_child_signals(void);
 #endif

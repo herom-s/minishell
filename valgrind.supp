@@ -1,17 +1,9 @@
 # Readline leaks
 {
-   readline_add_history
-   Memcheck:Leak
-   ...
-   fun:add_history
-   ...
-}
-{
    readline_internal
    Memcheck:Leak
    ...
-   fun:readline
-   ...
+   obj:*/libreadline.so.*
 }
 
 # cmocka internal allocations

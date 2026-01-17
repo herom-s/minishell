@@ -63,12 +63,11 @@ void	test_eval_external_cat_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world\n");
+	assert_string_equal(captured, "hello world\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_test_cat.txt");
@@ -98,12 +97,11 @@ void	test_eval_external_echo_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello world\n");
+	assert_string_equal(captured, "hello world\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -130,12 +128,11 @@ void	test_eval_external_true_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "");
+	assert_string_equal(captured, "");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -162,12 +159,11 @@ void	test_eval_external_false_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "");
+	assert_string_equal(captured, "");
 	assert_true(res->exit_code != 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -206,12 +202,11 @@ void	test_eval_external_ls_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "file.txt\n");
+	assert_string_equal(captured, "file.txt\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	rmdir("/tmp/minishell_test_ls_dir");
@@ -243,12 +238,11 @@ void	test_eval_external_invalid_abs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->erro_msg, "gat: command not found\n");
+	assert_string_equal(captured, "gat: command not found\n");
 	assert_int_equal(res->exit_code, 127);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }

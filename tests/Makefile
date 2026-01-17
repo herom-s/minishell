@@ -26,6 +26,7 @@ TEST_LEXER_DIR = lexer
 TEST_PARSER_DIR = parser
 TEST_SIGNAL_DIR = signal
 TEST_FILES = test_main.c \
+             capture_io.c \
 			 $(TEST_PARSER_DIR)/test_parser.c \
 			 $(TEST_LEXER_DIR)/test_lexer.c \
 			 $(TEST_SIGNAL_DIR)/test_signal.c \

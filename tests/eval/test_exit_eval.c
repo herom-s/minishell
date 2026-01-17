@@ -52,14 +52,14 @@ void	test_eval_built_in_exit_single_arg_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->erro_msg, expected);
+	assert_string_equal(captured, expected);
 	assert_int_equal(res->exit_code, 1);
-	free(res->erro_msg);
+	free(captured);
 	free(res->curr_dir);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }
 
 /*
@@ -89,12 +89,12 @@ void	test_eval_built_in_exit_to_many_args_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->erro_msg, expected);
+	assert_string_equal(captured, expected);
 	assert_int_equal(res->exit_code, 1);
-	free(res->erro_msg);
+	free(captured);
 	free(res->curr_dir);
 	free(res);
-    destroy_shell_env(env);
+	destroy_shell_env(env);
 }

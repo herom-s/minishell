@@ -6,22 +6,14 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:53:22 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/20 14:58:12 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/15 17:11:34 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "eval.h"
-#include "libft.h"
 #include "print.h"
 
 void	print_shell_response(t_shell_response *shell_response)
 {
-	if (shell_response->output)
-	{
-		ft_printf("%s", shell_response->output);
-	}
-	if (shell_response->erro_msg)
-	{
-		ft_printf("%s", shell_response->erro_msg);
-	}
+	(void)shell_response;
 }

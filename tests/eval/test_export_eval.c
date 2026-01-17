@@ -83,17 +83,17 @@ void	test_eval_built_in_export_no_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(res->output);
+	assert_non_null(captured);
 	i = 0;
 	while (environ[i])
 	{
-		assert_true(export_var_in_output(res->output, environ[i]));
+		assert_true(export_var_in_output(captured, environ[i]));
 		i++;
 	}
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -119,6 +119,7 @@ void	test_eval_built_in_export_arg(void **state)
 	t_ast				*ast_export;
 	t_ast				*ast_list;
 	t_shell_response	*res;
+	t_shell_response	*res2;
 	t_shell_env			*env;
 	extern char			**environ;
 
@@ -126,19 +127,19 @@ void	test_eval_built_in_export_arg(void **state)
 	assert_non_null(ast_export);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast_export, env);
+	char *captured = eval_and_capture(ast_export, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
+	free(captured);
 	free(res);
 	ast_list = create_cmd_ast("export", NULL, 0);
-	res = eval_ast(ast_list, env);
-	assert_non_null(res);
-	assert_non_null(res->output);
-	assert_non_null(strstr(res->output, "declare -x FOO=\"bar\""));
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res);
+	char *captured2 = eval_and_capture(ast_list, env, &res2);
+	assert_non_null(res2);
+	assert_non_null(captured2);
+	assert_non_null(strstr(captured2, "declare -x FOO=\"bar\""));
+	assert_int_equal(res2->exit_code, 0);
+	free(captured2);
+	free(res2);
 	free_cmd_ast(ast_list);
 	destroy_shell_env(env);
 }
@@ -164,6 +165,7 @@ void	test_eval_built_in_export_mutiple_args(void **state)
 	t_ast				*ast_export;
 	t_ast				*ast_list;
 	t_shell_response	*res;
+	t_shell_response	*res2;
 	t_shell_env			*env;
 	extern char			**environ;
 
@@ -171,20 +173,20 @@ void	test_eval_built_in_export_mutiple_args(void **state)
 	assert_non_null(ast_export);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast_export, env);
+	char *captured = eval_and_capture(ast_export, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
+	free(captured);
 	free(res);
 	ast_list = create_cmd_ast("export", NULL, 0);
-	res = eval_ast(ast_list, env);
-	assert_non_null(res);
-	assert_non_null(res->output);
-	assert_non_null(strstr(res->output, "declare -x FOO=\"bar\""));
-	assert_non_null(strstr(res->output, "declare -x BAR=\"foo\""));
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res);
+	char *captured2 = eval_and_capture(ast_list, env, &res2);
+	assert_non_null(res2);
+	assert_non_null(captured2);
+	assert_non_null(strstr(captured2, "declare -x FOO=\"bar\""));
+	assert_non_null(strstr(captured2, "declare -x BAR=\"foo\""));
+	assert_int_equal(res2->exit_code, 0);
+	free(captured2);
+	free(res2);
 	free_cmd_ast(ast_list);
 	destroy_shell_env(env);
 }
@@ -216,13 +218,12 @@ void	test_eval_built_in_export_invalid_digit(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 1);
-	assert_non_null(res->erro_msg);
-	assert_non_null(strstr(res->erro_msg, "not a valid identifier"));
-	free(res->output);
-	free(res->erro_msg);
+	assert_non_null(captured);
+	assert_non_null(strstr(captured, "not a valid identifier"));
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -254,13 +255,12 @@ void	test_eval_built_in_export_invalid_special(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 1);
-	assert_non_null(res->erro_msg);
-	assert_non_null(strstr(res->erro_msg, "FOO-BAR=baz"));
-	free(res->output);
-	free(res->erro_msg);
+	assert_non_null(captured);
+	assert_non_null(strstr(captured, "FOO-BAR=baz"));
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -286,6 +286,7 @@ void	test_eval_built_in_export_mixed_args(void **state)
 	t_ast *ast;
 	t_ast *ast_list;
 	t_shell_response *res;
+	t_shell_response *res2;
 	t_shell_env *env;
 	extern char **environ;
 
@@ -293,24 +294,23 @@ void	test_eval_built_in_export_mixed_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 1);
-	assert_non_null(res->erro_msg);
-	assert_non_null(strstr(res->erro_msg, "2INVALID=bad"));
-	free(res->output);
-	free(res->erro_msg);
+	assert_non_null(captured);
+	assert_non_null(strstr(captured, "2INVALID=bad"));
+	free(captured);
 	free(res);
 	ast_list = create_cmd_ast("export", NULL, 0);
-	res = eval_ast(ast_list, env);
-	assert_non_null(res);
-	assert_non_null(res->output);
-	assert_non_null(strstr(res->output, "declare -x VALID=\"ok\""));
-	assert_non_null(strstr(res->output, "declare -x ALSO_VALID=\"yes\""));
-	assert_null(strstr(res->output, "2INVALID"));
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res);
+	char *captured2 = eval_and_capture(ast_list, env, &res2);
+	assert_non_null(res2);
+	assert_non_null(captured2);
+	assert_non_null(strstr(captured2, "declare -x VALID=\"ok\""));
+	assert_non_null(strstr(captured2, "declare -x ALSO_VALID=\"yes\""));
+	assert_null(strstr(captured2, "2INVALID"));
+	assert_int_equal(res2->exit_code, 0);
+	free(captured2);
+	free(res2);
 	free_cmd_ast(ast_list);
 	destroy_shell_env(env);
 }

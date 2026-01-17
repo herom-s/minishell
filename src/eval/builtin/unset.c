@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:42:59 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/29 17:03:46 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:52:48 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "eval.h"
 #include "hashtable.h"
 #include "libft.h"
+#include <unistd.h>
 
 static void	remove_from_order(t_list **order, const char *key)
 {
@@ -63,6 +64,7 @@ t_cmd_response	*func_built_in_unset(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env)
 {
 	t_cmd_response	*res;
+	char			*output;
 
 	(void)shell_ast;
 	res = ft_calloc(1, sizeof(t_cmd_response));
@@ -70,14 +72,15 @@ t_cmd_response	*func_built_in_unset(t_ast *shell_ast, char **cmd_str,
 		return (NULL);
 	if (num_arguments(cmd_str) == 0)
 	{
-		res->output = ft_strdup("");
 		res->exit_code = 0;
 		return (res);
 	}
 	else
 	{
-		res->output = unset_args(cmd_str, env);
+		output = unset_args(cmd_str, env);
+		ft_dprintf(STDOUT_FILENO, "%s", output);
 		res->exit_code = 0;
+		free(output);
 		return (res);
 	}
 	return (res);

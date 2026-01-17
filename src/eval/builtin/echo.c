@@ -6,13 +6,14 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:37:48 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/29 17:01:57 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/15 17:09:47 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "eval.h"
 #include "libft.h"
+#include <unistd.h>
 
 static char	*append_word(char *output, const char *word)
 {
@@ -77,7 +78,8 @@ t_cmd_response	*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
 		free(output);
 		output = tmp;
 	}
-	res->output = output;
 	res->exit_code = 0;
+	ft_dprintf(STDOUT_FILENO, "%s", output);
+	free(output);
 	return (res);
 }
