@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/07 21:33:22 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/17 01:49:41 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,10 @@ int	main(int argc, char *argv[], char *envp[])
 			break ;
 		}
 		if (shell.input[0] != '\0')
+		{
 			add_history(shell.input);
-		parse_input(shell.input, envp);
+			parse_input(shell.input, envp);
+		}
 		free(shell.input);
 	}
 	return (EXIT_SUCCESS);
