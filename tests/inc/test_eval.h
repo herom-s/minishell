@@ -45,4 +45,5 @@ int			capture_start(int *saved_stdout, int *saved_stderr, int *pipe_read_fd);
 char		*capture_end(int saved_stdout, int saved_stderr, int pipe_read_fd);
 char		*eval_and_capture(t_ast *ast, t_shell_env *env, t_shell_response **res_out);
 char		*eval_and_capture_ex(t_ast *ast, t_shell_env *env, t_shell_response **res_out);
+char		*eval_and_capture_heredoc(t_ast *ast, t_shell_env *env, t_shell_response **res_out);
 #endif

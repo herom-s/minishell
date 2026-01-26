@@ -50,6 +50,7 @@ static void	handle_child_process(t_ast *ast, t_shell_env *env,
 
 	if (pipe_fd)
 		close(pipe_fd[INPUT_END]);
+	close(new_fd[INPUT_END]);
 	ctx = (t_pipe_context){new_fd, NULL, -1};
 	run_pipe_child(ast, env, &ctx);
 }

@@ -54,6 +54,7 @@ static char	*build_output(t_ast *node, int *newline_flag)
 	return (output);
 }
 
+//TODO: fix echo adding support for multiple -n and -nnnnn..
 t_cmd_response	*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env)
 {

@@ -14,10 +14,11 @@
 # define MINISHELL_SIGNAL_H
 
 # include <signal.h>
+# include <sys/types.h>
 
-extern volatile sig_atomic_t	g_is_sigint_received;
+extern volatile sig_atomic_t	g_sig;
 
-int								setup_signal(void);
-int								setup_heredoc_signal(void);
-int								setup_child_signals(void);
+int								setup_nonfork_signal(void);
+int								setup_fork_signal(pid_t pid);
+int								check_signal(void);
 #endif

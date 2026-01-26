@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/15 17:05:01 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:03:05 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ char					**get_bin_paths(char *envp[]);
 int						check_path(char *path, char *argv);
 int						check_builtin(char *cmd_name);
 
-void					read_stream(int fd, char **str);
-
 t_cmd_response			*func_exec_cmd(t_ast *shell_ast, char **cmd_str,
 							t_shell_env *env);
 t_cmd_response			*func_built_in_cd(t_ast *shell_ast, char **cmd_str,
@@ -114,6 +112,7 @@ t_cmd_response			*create_cmd_res(void);
 void					*destroy_cmd_res(t_cmd_response *cmd_res);
 
 void					save_original_std_fds(t_shell_env *env);
+void					restore_original_std_fds(t_shell_env *env);
 void					child_exit(t_shell_env *env, t_ast *local_ast,
 							int code);
 
@@ -131,10 +130,17 @@ void					func_exec_cmd_pipe(t_ast *ast, t_shell_env *env,
 void					eval_pipe_recursive(t_ast *shell_ast, t_shell_env *env,
 							int *pipefd, int prev_read_end);
 
-int						exec_heredoc(char *limiter, int *heredoc_fd);
-int						get_fd_for_op(const char *filename, t_token_type op);
-int						has_redirections(t_ast *shell_ast);
-int						has_heredoc(t_ast *shell_ast);
+t_cmd_response			*eval_external_cmd(t_ast *shell_ast,
+							t_cmd_func_call *call);
+t_cmd_response			*exec_call(t_ast *ast, t_cmd_func_call *call);
+
+char					*read_line_interactive(void);
+char					*read_line_noninteractive(void);
+int						should_stop_heredoc(char *line, char *delimiter);
+char					*generate_heredoc_filename(void);
+int						write_heredoc_to_file(char *delimiter, char *filename);
+int						process_heredocs(t_ast *node, t_shell_env *env);
+void					cleanup_heredoc_files(t_ast *ast);
 int						eval_redir(t_ast *shell_ast);
 
 char					*get_curdir(void);

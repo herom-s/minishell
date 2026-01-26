@@ -99,7 +99,7 @@ static void	free_io_file(t_ast *io_file)
 	if (!io_file)
 		return ;
 	if (io_file->u_ast.s_io_file.op)
-		free(io_file->u_ast.s_io_file.op);
+		free_token(io_file->u_ast.s_io_file.op);
 	free(io_file);
 }
 

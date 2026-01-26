@@ -107,6 +107,9 @@ valgrind: $(TEST_BIN)
 valgrind-single: $(TEST_BIN)
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TEST_BIN) $(TEST)
 
+valgrind-log: $(TEST_BIN)
+	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --log-file=valgrind.out --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
+
 valgrind-ci: $(TEST_BIN)
 	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
 

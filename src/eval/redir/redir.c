@@ -21,22 +21,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-static int	handle_heredoc(t_ast *io)
+static int	get_fd_for_op(const char *filename, t_token_type op)
 {
-	int		heredoc_fd;
-	char	*filename;
-
-	heredoc_fd = -1;
-	filename = (char *)io->u_ast.s_io_file.filename;
-	if (exec_heredoc(filename, &heredoc_fd) < 0)
-		return (-1);
-	if (dup2(heredoc_fd, STDIN_FILENO) < 0)
-	{
-		close(heredoc_fd);
-		return (-1);
-	}
-	close(heredoc_fd);
-	return (0);
+	if (op == GREAT)
+		return (open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644));
+	if (op == LESS)
+		return (open(filename, O_RDONLY));
+	if (op == DGREAT)
+		return (open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644));
+	return (-1);
 }
 
 static int	handle_file_redir(t_ast *io)
@@ -69,8 +62,6 @@ static int	process_io_file(t_ast *io_file)
 {
 	if (!io_file)
 		return (-1);
-	if (io_file->u_ast.s_io_file.op->type == DLESS)
-		return (handle_heredoc(io_file));
 	return (handle_file_redir(io_file));
 }
 

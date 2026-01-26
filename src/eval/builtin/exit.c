@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//TODO: make exit really exit minishell
 t_cmd_response	*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env)
 {

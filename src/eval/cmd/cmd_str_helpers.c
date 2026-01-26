@@ -13,6 +13,7 @@
 #include "libft.h"
 #include <unistd.h>
 
+//TODO: Don't use envp use the hashtable to handle cases like unset PATH
 char	**get_bin_paths(char *envp[])
 {
 	char	**default_paths;

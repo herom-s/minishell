@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:13:01 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/07 21:33:22 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/26 15:47:49 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include "libft.h"
 #include "minishell.h"
 #include "parser.h"
-#include "print.h"
 #include "minishell_signal.h"
+#include <unistd.h>
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
@@ -48,6 +48,7 @@ void	parse_input(char *input, char *envp[])
 	t_parser			*parser;
 	t_ast				*ast;
 
+	res = NULL;
 	parser = NULL;
 	lexer = NULL;
 	if (create_lexer_parser(input, &lexer, &parser) < 0)
@@ -57,8 +58,9 @@ void	parse_input(char *input, char *envp[])
 	if (ast)
 	{
 		res = eval_ast(ast, env);
+		if (res)
+			free(res);
 		free_ast(ast);
-		print_shell_response(res);
 	}
 	destroy_shell_env(env);
 	free(parser);
@@ -66,35 +68,46 @@ void	parse_input(char *input, char *envp[])
 	free(lexer);
 }
 
-int	main(int argc, char *argv[], char *envp[])
+static int	get_input(t_minishell *shell)
+{
+	if (isatty(STDIN_FILENO))
+		rl_event_hook = check_signal;
+	shell->input = readline("minishell$ ");
+	if (isatty(STDIN_FILENO))
+		rl_event_hook = NULL;
+	if (g_sig == SIGINT)
+	{
+		free(shell->input);
+		return (1);
+	}
+	if (!shell->input)
+	{
+		ft_putstr_fd("exit\n", 1);
+		return (-1);
+	}
+	if (shell->input[0] != '\0')
+		add_history(shell->input);
+	return (0);
+}
+
+int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	shell;
+	int			status;
 
 	(void)argc;
 	(void)argv;
-	(void)envp;
 	ft_memset(&shell, 0, sizeof(t_minishell));
-	if (setup_signal() < 0)
-		return (1);
+	setup_nonfork_signal();
 	while (1)
 	{
-		shell.input = readline("minishell> ");
-		if (shell.input == NULL)
-		{
-			ft_putstr_fd("exit\n", 1);
-			break ;
-		}
-		if (g_is_sigint_received)
-		{
-			g_is_sigint_received = 0;
-			free(shell.input);
+		g_sig = 0;
+		status = get_input(&shell);
+		if (status == 1)
 			continue ;
-		}
-		if (shell.input[0] != '\0')
-			add_history(shell.input);
+		if (status == -1)
+			break ;
 		parse_input(shell.input, envp);
-		if (g_is_sigint_received)
-			g_is_sigint_received = 0;
 		free(shell.input);
 	}
 	return (EXIT_SUCCESS);
