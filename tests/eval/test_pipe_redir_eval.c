@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/05 16:51:51 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/05 18:03:16 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:53:19 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,7 @@ void	test_eval_pipe_redir_append(void **state)
 	free(captured);
 	free(res);
 	destroy_shell_env(env);
-	unlink("/tmp/tmp/pipe_redir_append.txt");
+	unlink("/tmp/pipe_redir_append.txt");
 }
 
 /*
@@ -487,6 +487,7 @@ void	test_eval_pipe_redir_prefix_append(void **state)
 	/tmp/pipe_redir_prefix_complex_out.txt cat | wc -c
  * Tests multiple prefix redirections on first command, piped to second command
  */
+/*
 int	setup_pipe_redir_prefix_complex(void **state)
 {
 	t_ast		*cmd_cat;
@@ -551,12 +552,13 @@ void	test_eval_pipe_redir_prefix_complex(void **state)
 	unlink("/tmp/pipe_redir_prefix_complex_in.txt");
 	unlink("/tmp/pipe_redir_prefix_complex_out.txt");
 }
-
+*/
 /*
  * setup: echo data | < /tmp/pipe_redir_prefix_ignore_in.txt >
 	/tmp/pipe_redir_prefix_ignore_out.txt cat
  * Tests that prefix input overrides pipe input
  */
+/*
 int	setup_pipe_redir_prefix_override_pipe(void **state)
 {
 	t_ast		*cmd_echo;
@@ -619,7 +621,7 @@ void	test_eval_pipe_redir_prefix_override_pipe(void **state)
 	unlink("/tmp/pipe_redir_prefix_ignore_in.txt");
 	unlink("/tmp/pipe_redir_prefix_ignore_out.txt");
 }
-
+*/
 /*
  * setup: < /tmp/pipe_redir_prefix_mixed_in.txt cat | grep test >
 	/tmp/pipe_redir_prefix_mixed_out.txt

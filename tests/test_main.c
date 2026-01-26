@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 14:14:46 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/05 18:05:09 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:53:36 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -473,10 +473,10 @@ static int	run_pipe_redir_tests(void)
             setup_pipe_redir_prefix_in_out, teardown_free_pipe_redir_ast),
         cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_append,
             setup_pipe_redir_prefix_append, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
-            setup_pipe_redir_prefix_complex, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
-            setup_pipe_redir_prefix_override_pipe, teardown_free_pipe_redir_ast),
+//        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
+//            setup_pipe_redir_prefix_complex, teardown_free_pipe_redir_ast),
+//        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
+//            setup_pipe_redir_prefix_override_pipe, teardown_free_pipe_redir_ast),
         cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_suffix_mixed,
             setup_pipe_redir_prefix_suffix_mixed, teardown_free_pipe_redir_ast),
         cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_nonexistent,

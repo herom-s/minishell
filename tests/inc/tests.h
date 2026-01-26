@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 11:57:12 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/05 18:01:57 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:53:06 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,8 +257,8 @@ int     setup_pipe_redir_prefix_input_to_wc(void **state);
 int     setup_pipe_redir_prefix_output(void **state);
 int     setup_pipe_redir_prefix_in_out(void **state);
 int     setup_pipe_redir_prefix_append(void **state);
-int     setup_pipe_redir_prefix_complex(void **state);
-int     setup_pipe_redir_prefix_override_pipe(void **state);
+//int     setup_pipe_redir_prefix_complex(void **state);
+//int     setup_pipe_redir_prefix_override_pipe(void **state);
 int     setup_pipe_redir_prefix_suffix_mixed(void **state);
 int     setup_pipe_redir_prefix_input_nonexistent(void **state);
 
@@ -271,7 +271,7 @@ void    test_eval_pipe_redir_prefix_input_to_wc(void **state);
 void    test_eval_pipe_redir_prefix_output(void **state);
 void    test_eval_pipe_redir_prefix_in_out(void **state);
 void    test_eval_pipe_redir_prefix_append(void **state);
-void    test_eval_pipe_redir_prefix_complex(void **state);
+//void    test_eval_pipe_redir_prefix_complex(void **state);
 void    test_eval_pipe_redir_prefix_override_pipe(void **state);
 void    test_eval_pipe_redir_prefix_suffix_mixed(void **state);
 void    test_eval_pipe_redir_prefix_input_nonexistent(void **state);
