@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 16:01:12 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/13 19:20:11 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:13:59 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	func_exec_cmd_pipe(t_ast *ast, t_shell_env *env, int *pipe_fd,
 		free(call);
 		child_exit(env, ast, 1);
 	}
-		exit_code = execute_child_cmd_pipe(call, ast);
+	exit_code = execute_child_cmd_pipe(call, ast);
 	if (call->is_builtin)
 		close_prev_and_pipe_fds(pipe_fd, prev_pipe_read_fd);
 	free_cmd_str(call->cmd_str);
