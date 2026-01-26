@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 06:54:33 by thaperei          #+#    #+#             */
-/*   Updated: 2025/12/22 14:32:44 by thaperei         ###   ########.fr       */
+/*   Updated: 2026/01/17 01:26:37 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,8 @@ t_ast	*init_ast(t_parser *parser)
 {
 	t_ast	*root;
 
+	if (cur_token_is(parser->cur_token, (1 << END)))
+		return (NULL);
 	root = parse_and_or(parser);
 	if (cur_token_is(parser->cur_token, (1 << RPAREN))
 		|| !cur_token_is(parser->cur_token, (1 << END)))
