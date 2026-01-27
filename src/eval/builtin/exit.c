@@ -14,7 +14,9 @@
 #include "eval.h"
 #include "libft.h"
 #include <stdlib.h>
+#include <unistd.h>
 
+//TODO: make exit really exit minishell
 t_cmd_response	*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env)
 {
@@ -29,11 +31,11 @@ t_cmd_response	*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
 	num_args = num_arguments(cmd_str);
 	if (num_args >= 1)
 	{
-		res->erro_msg = ft_strdup("too many arguments\n");
+		ft_dprintf(STDERR_FILENO, "too many arguments\n");
 		res->exit_code = 1;
 		return (res);
 	}
-	res->output = ft_strdup("exit");
+	ft_dprintf(STDERR_FILENO, "exit\n");
 	res->exit_code = 0;
 	return (res);
 }

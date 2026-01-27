@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 11:57:12 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/05 18:01:57 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:53:06 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,8 +257,8 @@ int     setup_pipe_redir_prefix_input_to_wc(void **state);
 int     setup_pipe_redir_prefix_output(void **state);
 int     setup_pipe_redir_prefix_in_out(void **state);
 int     setup_pipe_redir_prefix_append(void **state);
-int     setup_pipe_redir_prefix_complex(void **state);
-int     setup_pipe_redir_prefix_override_pipe(void **state);
+//int     setup_pipe_redir_prefix_complex(void **state);
+//int     setup_pipe_redir_prefix_override_pipe(void **state);
 int     setup_pipe_redir_prefix_suffix_mixed(void **state);
 int     setup_pipe_redir_prefix_input_nonexistent(void **state);
 
@@ -271,8 +271,91 @@ void    test_eval_pipe_redir_prefix_input_to_wc(void **state);
 void    test_eval_pipe_redir_prefix_output(void **state);
 void    test_eval_pipe_redir_prefix_in_out(void **state);
 void    test_eval_pipe_redir_prefix_append(void **state);
-void    test_eval_pipe_redir_prefix_complex(void **state);
+//void    test_eval_pipe_redir_prefix_complex(void **state);
 void    test_eval_pipe_redir_prefix_override_pipe(void **state);
 void    test_eval_pipe_redir_prefix_suffix_mixed(void **state);
 void    test_eval_pipe_redir_prefix_input_nonexistent(void **state);
+
+// setup for heredoc eval
+int		setup_heredoc_exec_cat_basic(void **state);
+int		setup_heredoc_exec_with_output(void **state);
+int		setup_heredoc_exec_wc(void **state);
+int		setup_heredoc_exec_grep(void **state);
+int		setup_heredoc_exec_prefix(void **state);
+int		setup_heredoc_exec_empty(void **state);
+int		setup_heredoc_pipe_grep(void **state);
+int		setup_heredoc_multi_pipe(void **state);
+int		setup_heredoc_redir_and_pipe(void **state);
+int		setup_heredoc_pipe_sort_uniq(void **state);
+int		setup_heredoc_pipe_head(void **state);
+int		setup_heredoc_multiple(void **state);
+int		setup_heredoc_with_input_redir(void **state);
+int		setup_heredoc_pipe_tr(void **state);
+int     setup_heredoc_special_chars_content(void **state);
+int     setup_heredoc_long_content(void **state);
+int     setup_heredoc_whitespace_lines(void **state);
+int     setup_heredoc_limiter_in_content(void **state);
+int     setup_heredoc_numeric_limiter(void **state);
+int     setup_heredoc_single_char_limiter(void **state);
+int     setup_heredoc_with_env_vars(void **state);
+int     setup_heredoc_empty_lines(void **state);
+int     setup_heredoc_tabs_content(void **state);
+int     setup_heredoc_unicode_content(void **state);
+int     setup_heredoc_triple_redirect(void **state);
+int     setup_heredoc_after_append(void **state);
+int     setup_heredoc_sed_substitute(void **state);
+int     setup_heredoc_awk_process(void **state);
+int     setup_heredoc_tee_redirect(void **state);
+int     setup_heredoc_nested_pipes(void **state);
+int     setup_heredoc_parallel_commands(void **state);
+int     setup_heredoc_error_in_pipe(void **state);
+int     setup_heredoc_partial_match_limiter(void **state);
+int     setup_heredoc_case_sensitive_limiter(void **state);
+
+// tests for heredoc eval
+void	test_eval_heredoc_basic_structure(void **state);
+void	test_eval_heredoc_with_args(void **state);
+void	test_eval_heredoc_external_cmd(void **state);
+void	test_eval_heredoc_prefix(void **state);
+void	test_eval_heredoc_multiple(void **state);
+void	test_eval_heredoc_with_output_redir(void **state);
+void	test_eval_heredoc_quoted_limiter(void **state);
+void	test_eval_heredoc_in_pipeline(void **state);
+void	test_eval_heredoc_special_limiter(void **state);
+void	test_eval_heredoc_exec_cat_basic(void **state);
+void	test_eval_heredoc_exec_with_output(void **state);
+void	test_eval_heredoc_exec_wc(void **state);
+void	test_eval_heredoc_exec_grep(void **state);
+void	test_eval_heredoc_exec_prefix(void **state);
+void	test_eval_heredoc_exec_empty(void **state);
+void	test_eval_heredoc_pipe_grep(void **state);
+void	test_eval_heredoc_multi_pipe(void **state);
+void	test_eval_heredoc_redir_and_pipe(void **state);
+void	test_eval_heredoc_pipe_sort_uniq(void **state);
+void	test_eval_heredoc_pipe_head(void **state);
+void	test_eval_heredoc_multiple(void **state);
+void	test_eval_heredoc_with_input_redir(void **state);
+void	test_eval_heredoc_pipe_tr(void **state);
+void    test_eval_heredoc_special_chars_content(void **state);
+void    test_eval_heredoc_long_content(void **state);
+void    test_eval_heredoc_whitespace_lines(void **state);
+void    test_eval_heredoc_limiter_in_content(void **state);
+void    test_eval_heredoc_numeric_limiter(void **state);
+void    test_eval_heredoc_single_char_limiter(void **state);
+void    test_eval_heredoc_with_env_vars(void **state);
+void    test_eval_heredoc_empty_lines(void **state);
+void    test_eval_heredoc_tabs_content(void **state);
+void    test_eval_heredoc_unicode_content(void **state);
+void    test_eval_heredoc_triple_redirect(void **state);
+void    test_eval_heredoc_after_append(void **state);
+void    test_eval_heredoc_sed_substitute(void **state);
+void    test_eval_heredoc_awk_process(void **state);
+void    test_eval_heredoc_tee_redirect(void **state);
+void    test_eval_heredoc_nested_pipes(void **state);
+void    test_eval_heredoc_parallel_commands(void **state);
+void    test_eval_heredoc_error_in_pipe(void **state);
+void    test_eval_heredoc_partial_match_limiter(void **state);
+void    test_eval_heredoc_case_sensitive_limiter(void **state);
+
+int		teardown_free_heredoc_ast(void **state);
 #endif

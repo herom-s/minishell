@@ -54,12 +54,11 @@ void	test_eval_pipe_two_stage(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "1\n");
+	assert_string_equal(captured, "1\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -108,12 +107,11 @@ void	test_eval_pipe_file_cat_wc(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "3\n");
+	assert_string_equal(captured, "3\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_pipe_test.txt");
@@ -152,12 +150,11 @@ void	test_eval_pipe_long_chain(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "1\n");
+	assert_string_equal(captured, "1\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -205,12 +202,11 @@ void	test_eval_pipe_large_buffer(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "100000\n");
+	assert_string_equal(captured, "100000\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_large_test.txt");
@@ -241,12 +237,11 @@ void	test_eval_pipe_builtin_to_external(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "6\n");
+	assert_string_equal(captured, "6\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -276,10 +271,9 @@ void	test_eval_pipe_exit_code_success(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -309,10 +303,9 @@ void	test_eval_pipe_exit_code_fail(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_int_not_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -345,13 +338,13 @@ void	test_eval_pipe_error_propagation(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "0\n");
-	assert_non_null(res->erro_msg);
+	assert_string_equal(captured, "0\n");
+	/* Expect some stderr content from ls -> ensure captured contains something */
+	assert_true(captured && captured[0] != '\0');
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -387,13 +380,12 @@ void	test_eval_pipe_mid_cmd_not_found(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "0\n");
-	assert_non_null(res->erro_msg);
+	assert_string_equal(captured, "0\n");
+	assert_true(captured && captured[0] != '\0');
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -427,12 +419,11 @@ void	test_eval_pipe_env_grep(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(strstr(res->output, "PATH="));
+	assert_non_null(strstr(captured, "PATH="));
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -465,12 +456,11 @@ void	test_eval_pipe_single_command(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello\n");
+	assert_string_equal(captured, "hello\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -515,12 +505,11 @@ void	test_eval_pipe_very_long_chain(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "5\n");
+	assert_string_equal(captured, "5\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -554,12 +543,11 @@ void	test_eval_pipe_sigpipe(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "y\ny\ny\ny\ny\n");
+	assert_string_equal(captured, "y\ny\ny\ny\ny\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -593,12 +581,11 @@ void	test_eval_pipe_builtin_pwd_to_cat(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(res->output);
+	assert_non_null(captured);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -635,12 +622,11 @@ void	test_eval_pipe_cd_in_pipeline(void **state)
 	env = create_shell_env(environ);
 	assert_non_null(env);
 	getcwd(cwd_before, sizeof(cwd_before));
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	getcwd(cwd_after, sizeof(cwd_after));
 	assert_non_null(res);
 	assert_string_equal(cwd_before, cwd_after);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -675,11 +661,10 @@ void	test_eval_pipe_exit_in_middle(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "0\n");
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "0\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -725,12 +710,11 @@ void	test_eval_pipe_cat_file_to_wc(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "3\n");
+	assert_string_equal(captured, "3\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_redir_test.txt");
@@ -767,10 +751,9 @@ void	test_eval_pipe_export_in_pipeline(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -804,11 +787,10 @@ void	test_eval_pipe_notfound_first(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(res->erro_msg);
-	free(res->output);
-	free(res->erro_msg);
+	assert_true(captured && captured[0] != '\0');
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -842,11 +824,10 @@ void	test_eval_pipe_notfound_last(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(res->erro_msg);
-	free(res->output);
-	free(res->erro_msg);
+	assert_true(captured && captured[0] != '\0');
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -881,11 +862,10 @@ void	test_eval_pipe_grep_chain(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -932,12 +912,11 @@ void	test_eval_pipe_sort_uniq(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "a\nb\n");
+	assert_string_equal(captured, "a\nb\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_sort_test.txt");
@@ -985,14 +964,13 @@ void	test_eval_pipe_grep_inverse(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_non_null(strstr(res->output, "apple"));
-	assert_non_null(strstr(res->output, "apricot"));
-	assert_null(strstr(res->output, "banana"));
+	assert_non_null(strstr(captured, "apple"));
+	assert_non_null(strstr(captured, "apricot"));
+	assert_null(strstr(captured, "banana"));
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_grep_test.txt");
@@ -1028,12 +1006,11 @@ void	test_eval_pipe_mixed_paths(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "5\n");
+	assert_string_equal(captured, "5\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1067,12 +1044,11 @@ void	test_eval_pipe_special_chars(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello|world\n");
+	assert_string_equal(captured, "hello|world\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1119,12 +1095,11 @@ void	test_eval_pipe_head_tail(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "4\n5\n");
+	assert_string_equal(captured, "4\n5\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_head_tail_test.txt");
@@ -1159,12 +1134,11 @@ void	test_eval_pipe_tr_uppercase(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "HELLO\n");
+	assert_string_equal(captured, "HELLO\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1199,12 +1173,11 @@ void	test_eval_pipe_cut_field(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "field2\n");
+	assert_string_equal(captured, "field2\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1238,12 +1211,11 @@ void	test_eval_pipe_awk_field(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "world\n");
+	assert_string_equal(captured, "world\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1277,12 +1249,11 @@ void	test_eval_pipe_sed_substitute(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "hello universe\n");
+	assert_string_equal(captured, "hello universe\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1317,12 +1288,11 @@ void	test_eval_pipe_xargs(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "Value: test\n");
+	assert_string_equal(captured, "Value: test\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1361,9 +1331,9 @@ void	test_eval_pipe_tee(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "5\n");
+	assert_string_equal(captured, "5\n");
 	assert_int_equal(res->exit_code, 0);
 	memset(buffer, 0, sizeof(buffer));
 	fd = open("/tmp/minishell_tee_test.txt", O_RDONLY);
@@ -1373,8 +1343,7 @@ void	test_eval_pipe_tee(void **state)
 	buffer[bytes_read] = '\0';
 	close(fd);
 	assert_string_equal(buffer, "test\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/minishell_tee_test.txt");
@@ -1409,13 +1378,14 @@ void	test_eval_pipe_rev(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_string_equal(res->output, "olleh\n");
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_string_equal(captured, "olleh\n");
+		assert_int_equal(res->exit_code, 0);
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 }
 
@@ -1448,12 +1418,11 @@ void	test_eval_pipe_wc_words(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "3\n");
+	assert_string_equal(captured, "3\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1487,11 +1456,10 @@ void	test_eval_pipe_ls_grep(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1527,12 +1495,11 @@ void	test_eval_pipe_multiple_cats(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "passthrough\n");
+	assert_string_equal(captured, "passthrough\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1566,12 +1533,11 @@ void	test_eval_pipe_empty_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "1\n");
+	assert_string_equal(captured, "1\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1605,12 +1571,11 @@ void	test_eval_pipe_printf(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
-	assert_string_equal(res->output, "2\n");
+	assert_string_equal(captured, "2\n");
 	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }

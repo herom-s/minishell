@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//TODO: fix cd using oldpwd and pwd
 t_cmd_response	*func_built_in_cd(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env)
 {
@@ -32,12 +33,11 @@ t_cmd_response	*func_built_in_cd(t_ast *shell_ast, char **cmd_str,
 	{
 		chdir(cmd_str[1]);
 		res->curr_dir = get_curdir();
-		res->output = ft_strdup("");
 		res->exit_code = 0;
 	}
 	else if (num_args > 1)
 	{
-		res->erro_msg = ft_strdup("too many arguments\n");
+		ft_dprintf(STDERR_FILENO, "too many arguments\n");
 		res->exit_code = 1;
 		return (res);
 	}

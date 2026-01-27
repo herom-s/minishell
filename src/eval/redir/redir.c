@@ -6,11 +6,12 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 18:37:26 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/05 17:29:23 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/13 19:25:36 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
+#include "eval.h"
 #include "libft.h"
 #include "token.h"
 #include <errno.h>
@@ -19,28 +20,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
-int	has_redirections(t_ast *shell_ast)
-{
-	t_ast	*suffix;
-	t_ast	*prefix;
-
-	prefix = shell_ast->u_ast.s_simple_cmd.cmd_prefix;
-	while (prefix)
-	{
-		if (prefix->u_ast.s_cmd_prefix.io_file)
-			return (1);
-		prefix = prefix->u_ast.s_cmd_prefix.cmd_prefix;
-	}
-	suffix = shell_ast->u_ast.s_simple_cmd.cmd_suffix;
-	while (suffix)
-	{
-		if (suffix->u_ast.s_cmd_suffix.io_file)
-			return (1);
-		suffix = suffix->u_ast.s_cmd_suffix.cmd_suffix;
-	}
-	return (0);
-}
 
 static int	get_fd_for_op(const char *filename, t_token_type op)
 {
@@ -53,18 +32,20 @@ static int	get_fd_for_op(const char *filename, t_token_type op)
 	return (-1);
 }
 
-static int	open_dup2_io_file(const char *filename, t_token_type op)
+static int	handle_file_redir(t_ast *io)
 {
-	int	fd;
-	int	target;
+	int		fd;
+	int		target;
+	char	*file;
 
-	fd = get_fd_for_op(filename, op);
+	file = (char *)io->u_ast.s_io_file.filename;
+	fd = get_fd_for_op(file, io->u_ast.s_io_file.op->type);
 	if (fd < 0)
 	{
-		ft_dprintf(STDERR_FILENO, "%s: %s\n", filename, strerror(errno));
+		ft_dprintf(STDERR_FILENO, "%s: %s\n", file, strerror(errno));
 		return (-1);
 	}
-	if (op == LESS || op == DLESS)
+	if (io->u_ast.s_io_file.op->type == LESS)
 		target = STDIN_FILENO;
 	else
 		target = STDOUT_FILENO;
@@ -74,35 +55,55 @@ static int	open_dup2_io_file(const char *filename, t_token_type op)
 		return (-1);
 	}
 	close(fd);
-	return (1);
+	return (0);
 }
 
 static int	process_io_file(t_ast *io_file)
 {
 	if (!io_file)
-		return (1);
-	return (open_dup2_io_file(io_file->u_ast.s_io_file.filename,
-			io_file->u_ast.s_io_file.op->type));
+		return (-1);
+	return (handle_file_redir(io_file));
+}
+
+static int	process_list(t_ast *node, int is_suffix)
+{
+	t_ast	*io;
+
+	while (node)
+	{
+		if (is_suffix)
+			io = node->u_ast.s_cmd_suffix.io_file;
+		else
+			io = node->u_ast.s_cmd_prefix.io_file;
+		if (io)
+		{
+			if (process_io_file(io) < 0)
+				return (-1);
+		}
+		if (is_suffix)
+			node = node->u_ast.s_cmd_suffix.cmd_suffix;
+		else
+			node = node->u_ast.s_cmd_prefix.cmd_prefix;
+	}
+	return (0);
 }
 
 int	eval_redir(t_ast *shell_ast)
 {
-	t_ast	*suffix;
-	t_ast	*prefix;
+	int	saved_stdin;
+	int	ret;
 
-	prefix = shell_ast->u_ast.s_simple_cmd.cmd_prefix;
-	while (prefix)
+	saved_stdin = dup(STDIN_FILENO);
+	if (saved_stdin < 0)
+		return (-1);
+	ret = process_list(shell_ast->u_ast.s_simple_cmd.cmd_prefix, 0);
+	if (ret != -1)
+		ret = process_list(shell_ast->u_ast.s_simple_cmd.cmd_suffix, 1);
+	if (ret < 0)
 	{
-		if (process_io_file(prefix->u_ast.s_cmd_prefix.io_file) < 0)
-			return (-1);
-		prefix = prefix->u_ast.s_cmd_prefix.cmd_prefix;
+		close(saved_stdin);
+		return (-1);
 	}
-	suffix = shell_ast->u_ast.s_simple_cmd.cmd_suffix;
-	while (suffix)
-	{
-		if (process_io_file(suffix->u_ast.s_cmd_suffix.io_file) < 0)
-			return (-1);
-		suffix = suffix->u_ast.s_cmd_suffix.cmd_suffix;
-	}
+	close(saved_stdin);
 	return (1);
 }

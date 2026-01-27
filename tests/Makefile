@@ -26,6 +26,7 @@ TEST_LEXER_DIR = lexer
 TEST_PARSER_DIR = parser
 TEST_SIGNAL_DIR = signal
 TEST_FILES = test_main.c \
+             capture_io.c \
 			 $(TEST_PARSER_DIR)/test_parser.c \
 			 $(TEST_LEXER_DIR)/test_lexer.c \
 			 $(TEST_SIGNAL_DIR)/test_signal.c \
@@ -40,6 +41,7 @@ TEST_FILES = test_main.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_pipe_eval.c \
 			 $(TEST_EVAL_DIR)/test_redir_eval.c \
 			$(TEST_EVAL_DIR)/test_pipe_redir_eval.c \
+			 $(TEST_EVAL_DIR)/test_heredoc_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval_pipe.c \
 			 $(TEST_EVAL_DIR)/test_eval_redir.c \
@@ -104,6 +106,9 @@ valgrind: $(TEST_BIN)
 
 valgrind-single: $(TEST_BIN)
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TEST_BIN) $(TEST)
+
+valgrind-log: $(TEST_BIN)
+	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --log-file=valgrind.out --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
 
 valgrind-ci: $(TEST_BIN)
 	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=all --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)

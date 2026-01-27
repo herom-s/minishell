@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:39:22 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/29 17:03:24 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:52:32 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,9 @@
 #include <string.h>
 #include <unistd.h>
 
-static char	*add_newline(char *curr_dir)
-{
-	char	*tmp;
-
-	tmp = ft_strjoin(curr_dir, "\n");
-	free(curr_dir);
-	return (tmp);
-}
-
 static t_cmd_response	*pwd_error(t_cmd_response *res, char *curr_dir)
 {
-	res->erro_msg = ft_strdup(strerror(errno));
+	ft_dprintf(STDERR_FILENO, "%s\n", strerror(errno));
 	res->exit_code = 1;
 	free(curr_dir);
 	return (res);
@@ -55,7 +46,8 @@ t_cmd_response	*func_built_in_pwd(t_ast *shell_ast, char **cmd_str,
 	}
 	if (!getcwd(curr_dir, PATH_MAX))
 		return (pwd_error(res, curr_dir));
-	res->output = add_newline(curr_dir);
+	ft_dprintf(STDOUT_FILENO, "%s\n", curr_dir);
 	res->exit_code = 0;
+	free(curr_dir);
 	return (res);
 }

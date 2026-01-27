@@ -58,12 +58,11 @@ void	test_eval_redir_output_create(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	assert_int_equal(access("/tmp/test_redir_out.txt", F_OK), 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/test_redir_out.txt");
@@ -106,7 +105,7 @@ void	test_eval_redir_output_content(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/test_redir_content.txt", O_RDONLY);
@@ -116,8 +115,7 @@ void	test_eval_redir_output_content(void **state)
 	close(fd);
 	assert_true(bytes > 0);
 	assert_string_equal(buffer, "test_content\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/test_redir_content.txt");
@@ -165,7 +163,7 @@ void	test_eval_redir_output_truncate(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/test_trunc.txt", O_RDONLY);
@@ -174,8 +172,7 @@ void	test_eval_redir_output_truncate(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "new\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/test_trunc.txt");
@@ -215,13 +212,12 @@ void	test_eval_redir_append_create(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	assert_int_equal(access("/tmp/test_append.txt", F_OK), 0);
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
+	free(captured);
 	destroy_shell_env(env);
 	unlink("/tmp/test_append.txt");
 }
@@ -268,7 +264,7 @@ void	test_eval_redir_append_content(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/test_append2.txt", O_RDONLY);
@@ -277,9 +273,8 @@ void	test_eval_redir_append_content(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "first\nsecond\n");
-	free(res->output);
-	free(res->erro_msg);
 	free(res);
+	free(captured);
 	destroy_shell_env(env);
 	unlink("/tmp/test_append2.txt");
 }
@@ -324,12 +319,11 @@ void	test_eval_redir_input_read(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_string_equal(res->output, "input_test\n");
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "input_test\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/test_input.txt");
@@ -369,11 +363,10 @@ void	test_eval_redir_input_nonexistent(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_not_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -424,7 +417,7 @@ void	test_eval_redir_input_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/redir_combined_out.txt", O_RDONLY);
@@ -433,8 +426,7 @@ void	test_eval_redir_input_output(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "combined_test\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/redir_combined_in.txt");
@@ -481,7 +473,7 @@ void	test_eval_redir_multiple_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/multi2.txt", O_RDONLY);
@@ -490,8 +482,7 @@ void	test_eval_redir_multiple_output(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "multi_test\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/multi1.txt");
@@ -531,11 +522,10 @@ void	test_eval_redir_output_invalid_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
 	assert_int_not_equal(res->exit_code, 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -577,7 +567,7 @@ void	test_eval_redir_builtin_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/pwd_redir.txt", O_RDONLY);
@@ -588,8 +578,7 @@ void	test_eval_redir_builtin_output(void **state)
 	getcwd(cwd, sizeof(cwd));
 	strcat(cwd, "\n");
 	assert_string_equal(buffer, cwd);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pwd_redir.txt");
@@ -631,7 +620,7 @@ void	test_eval_redir_env_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/env_redir.txt", O_RDONLY);
@@ -640,8 +629,7 @@ void	test_eval_redir_env_output(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_non_null(strstr(buffer, "PATH="));
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/env_redir.txt");
@@ -687,12 +675,11 @@ void	test_eval_redir_external_input(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_string_equal(res->output, "3\n");
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "3\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/wc_input.txt");
@@ -744,7 +731,7 @@ void	test_eval_redir_external_both(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/grep_output.txt", O_RDONLY);
@@ -754,8 +741,7 @@ void	test_eval_redir_external_both(void **state)
 	close(fd);
 	assert_non_null(strstr(buffer, "apple"));
 	assert_non_null(strstr(buffer, "apricot"));
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/grep_input.txt");
@@ -804,7 +790,7 @@ void	test_eval_redir_append_no_newline(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/append_no_newline.txt", O_RDONLY);
@@ -813,8 +799,7 @@ void	test_eval_redir_append_no_newline(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "firstsecond");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/append_no_newline.txt");
@@ -856,7 +841,7 @@ void	test_eval_redir_prefix_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/test_prefix_out.txt", O_RDONLY);
@@ -865,8 +850,7 @@ void	test_eval_redir_prefix_output(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "prefix_success\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/test_prefix_out.txt");
@@ -912,12 +896,11 @@ void	test_eval_redir_prefix_input(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_string_equal(res->output, "prefix_input_data\n");
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "prefix_input_data\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/test_prefix_in.txt");
@@ -969,7 +952,7 @@ void	test_eval_redir_prefix_complex(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/pre_out.txt", O_RDONLY);
@@ -978,8 +961,7 @@ void	test_eval_redir_prefix_complex(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "complex_prefix\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre_in.txt");
@@ -1029,7 +1011,7 @@ void	test_eval_redir_prefix_append(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/prefix_append_only.txt", O_RDONLY);
@@ -1038,8 +1020,7 @@ void	test_eval_redir_prefix_append(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "initial\nappended\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/prefix_append_only.txt");
@@ -1085,7 +1066,7 @@ void	test_eval_redir_prefix_multiple_output(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	// First file should be empty (created but overridden)
@@ -1102,8 +1083,7 @@ void	test_eval_redir_prefix_multiple_output(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "multiple\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre1.txt");
@@ -1159,13 +1139,12 @@ void	test_eval_redir_prefix_multiple_input(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	// Last input redirection should win
-	assert_string_equal(res->output, "second_input\n");
-	free(res->output);
-	free(res->erro_msg);
+	assert_string_equal(captured, "second_input\n");
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre_in1.txt");
@@ -1208,7 +1187,7 @@ void	test_eval_redir_prefix_builtin(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/pre_builtin.txt", O_RDONLY);
@@ -1217,8 +1196,7 @@ void	test_eval_redir_prefix_builtin(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "test_output\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre_builtin.txt");
@@ -1261,7 +1239,7 @@ void	test_eval_redir_prefix_builtin_pwd(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/pre_pwd.txt", O_RDONLY);
@@ -1272,8 +1250,7 @@ void	test_eval_redir_prefix_builtin_pwd(void **state)
 	// Verify it contains a valid directory path
 	getcwd(cwd, sizeof(cwd));
 	assert_true(strstr(buffer, cwd) != NULL || strlen(buffer) > 1);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre_pwd.txt");
@@ -1325,7 +1302,7 @@ void	test_eval_redir_prefix_external(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/pre_ext_out.txt", O_RDONLY);
@@ -1334,8 +1311,7 @@ void	test_eval_redir_prefix_external(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "test line\ntest again\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre_ext_in.txt");
@@ -1382,7 +1358,7 @@ void	test_eval_redir_prefix_suffix_mixed(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	// First file should be empty (overridden by second redirect)
@@ -1399,8 +1375,7 @@ void	test_eval_redir_prefix_suffix_mixed(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "text\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre_mixed.txt");
@@ -1440,12 +1415,11 @@ void	test_eval_redir_prefix_invalid_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture_ex(ast, env, &res);
 	assert_non_null(res);
 	// Should fail with non-zero exit code
 	assert_true(res->exit_code != 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1484,12 +1458,11 @@ void	test_eval_redir_prefix_input_nonexistent(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	// Should fail with non-zero exit code
 	assert_true(res->exit_code != 0);
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 }
@@ -1540,7 +1513,7 @@ void	test_eval_redir_prefix_multiple_append(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/pre_multi_append.txt", O_RDONLY);
@@ -1550,8 +1523,7 @@ void	test_eval_redir_prefix_multiple_append(void **state)
 	close(fd);
 	// Both appends to same file, last one should win
 	assert_string_equal(buffer, "start\nappended\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/pre_multi_append.txt");
@@ -1596,7 +1568,7 @@ void	test_eval_redir_prefix_output_append(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
+	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
 	fd = open("/tmp/prefix1.txt", O_RDONLY);
@@ -1605,8 +1577,7 @@ void	test_eval_redir_prefix_output_append(void **state)
 	read(fd, buffer, sizeof(buffer) - 1);
 	close(fd);
 	assert_string_equal(buffer, "content\n");
-	free(res->output);
-	free(res->erro_msg);
+	free(captured);
 	free(res);
 	destroy_shell_env(env);
 	unlink("/tmp/prefix1.txt");

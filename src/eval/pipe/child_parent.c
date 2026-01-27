@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   child.c                                            :+:      :+:    :+:   */
+/*   child_parent.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 16:15:05 by hermarti          #+#    #+#             */
-/*   Updated: 2025/12/29 16:47:32 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/15 17:04:37 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,26 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-void	create_child_fds(int *fd_out, int *fd_err)
+void	save_original_std_fds(t_shell_env *env)
 {
-	close(fd_out[INPUT_END]);
-	close(fd_err[INPUT_END]);
-	dup2(fd_out[OUTPUT_END], STDOUT_FILENO);
-	dup2(fd_err[OUTPUT_END], STDERR_FILENO);
-	close(fd_out[OUTPUT_END]);
-	close(fd_err[OUTPUT_END]);
+	env->og_stdout_fd = dup(STDOUT_FILENO);
+	env->og_stdin_fd = dup(STDIN_FILENO);
+}
+
+void	restore_original_std_fds(t_shell_env *env)
+{
+	if (env->og_stdin_fd >= 0)
+	{
+		dup2(env->og_stdin_fd, STDIN_FILENO);
+		close(env->og_stdin_fd);
+		env->og_stdin_fd = -1;
+	}
+	if (env->og_stdout_fd >= 0)
+	{
+		dup2(env->og_stdout_fd, STDOUT_FILENO);
+		close(env->og_stdout_fd);
+		env->og_stdout_fd = -1;
+	}
 }
 
 void	child_exit(t_shell_env *env, t_ast *local_ast, int code)
@@ -32,29 +44,29 @@ void	child_exit(t_shell_env *env, t_ast *local_ast, int code)
 	else if (local_ast)
 		free_ast(local_ast);
 	if (env)
+	{
+		close(env->og_stdout_fd);
+		close(env->og_stdin_fd);
 		destroy_shell_env(env);
+	}
 	exit(code);
 }
 
-t_cmd_response	*handle_parent(pid_t pid, int *fd_out, int *fd_err)
+t_cmd_response	*handle_parent(pid_t pid)
 {
 	t_cmd_response	*res;
 	int				status;
 
-	close(fd_out[OUTPUT_END]);
-	close(fd_err[OUTPUT_END]);
 	res = create_cmd_res();
-	if (!res || !res->output || !res->erro_msg)
+	if (!res)
 	{
 		waitpid(pid, &status, 0);
 		return (res);
 	}
-	read_stream(fd_out[INPUT_END], &res->output);
-	read_stream(fd_err[INPUT_END], &res->erro_msg);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		res->exit_code = WEXITSTATUS(status);
 	else
-		res->exit_code = 1;
+		res->exit_code = 128 + WTERMSIG(status);
 	return (res);
 }

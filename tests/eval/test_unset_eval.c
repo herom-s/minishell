@@ -48,12 +48,15 @@ void	test_eval_built_in_unset_no_args(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_string_equal(res->output, "");
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res);
+	{
+		char *captured;
+		captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_string_equal(captured, "");
+		assert_int_equal(res->exit_code, 0);
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 }
 
@@ -87,17 +90,21 @@ void	test_eval_built_in_unset_single_var(void **state)
 	env = create_shell_env(environ);
 	assert_non_null(env);
 	ast_export = create_cmd_ast("export", export_args, 1);
-	res = eval_ast(ast_export, env);
-	free(res->output);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast_export, env, &res);
+		free(captured);
+		free(res);
+	}
 	assert_non_null(hashtable_get(env->vars, "FOO"));
-	res = eval_ast(ast_unset, env);
-	assert_non_null(res);
-	assert_string_equal(res->output, "");
-	assert_int_equal(res->exit_code, 0);
-	assert_null(hashtable_get(env->vars, "FOO"));
-	free(res->output);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast_unset, env, &res);
+		assert_non_null(res);
+		assert_string_equal(captured, "");
+		assert_int_equal(res->exit_code, 0);
+		assert_null(hashtable_get(env->vars, "FOO"));
+		free(captured);
+		free(res);
+	}
     free_cmd_ast(ast_export);
 	destroy_shell_env(env);
 }
@@ -132,18 +139,22 @@ void	test_eval_built_in_unset_multiple_vars(void **state)
 	env = create_shell_env(environ);
 	assert_non_null(env);
 	ast_export = create_cmd_ast("export", export_args, 2);
-	res = eval_ast(ast_export, env);
-	free(res->output);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast_export, env, &res);
+		free(captured);
+		free(res);
+	}
 	assert_non_null(hashtable_get(env->vars, "FOO"));
 	assert_non_null(hashtable_get(env->vars, "BAR"));
-	res = eval_ast(ast_unset, env);
-	assert_non_null(res);
-	assert_int_equal(res->exit_code, 0);
-	assert_null(hashtable_get(env->vars, "FOO"));
-	assert_null(hashtable_get(env->vars, "BAR"));
-	free(res->output);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast_unset, env, &res);
+		assert_non_null(res);
+		assert_int_equal(res->exit_code, 0);
+		assert_null(hashtable_get(env->vars, "FOO"));
+		assert_null(hashtable_get(env->vars, "BAR"));
+		free(captured);
+		free(res);
+	}
     free_cmd_ast(ast_export);
 	destroy_shell_env(env);
 }
@@ -175,11 +186,13 @@ void	test_eval_built_in_unset_nonexistent(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
-	assert_string_equal(res->output, "");
-	assert_int_equal(res->exit_code, 0);
-	free(res->output);
-	free(res);
+	{
+		char *captured = eval_and_capture(ast, env, &res);
+		assert_non_null(res);
+		assert_string_equal(captured, "");
+		assert_int_equal(res->exit_code, 0);
+		free(captured);
+		free(res);
+	}
 	destroy_shell_env(env);
 }

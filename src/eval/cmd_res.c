@@ -21,38 +21,15 @@ t_cmd_response	*create_cmd_res(void)
 	res = ft_calloc(1, sizeof(t_cmd_response));
 	if (!res)
 		return (NULL);
-	res->output = ft_strdup("");
-	if (!res->output)
-	{
-		free(res);
-		return (NULL);
-	}
-	res->erro_msg = ft_strdup("");
-	if (!res->erro_msg)
-	{
-		free(res->output);
-		free(res);
-		return (NULL);
-	}
 	return (res);
 }
 
 void	*destroy_cmd_res(t_cmd_response *cmd_res)
 {
-	if (cmd_res->output)
-	{
-		free(cmd_res->output);
-		cmd_res->output = NULL;
-	}
-	if (cmd_res->erro_msg)
-	{
-		free(cmd_res->erro_msg);
-		cmd_res->erro_msg = NULL;
-	}
 	if (cmd_res->curr_dir)
 	{
 		free(cmd_res->curr_dir);
-		cmd_res->erro_msg = NULL;
+		cmd_res->curr_dir = NULL;
 	}
 	free(cmd_res);
 	cmd_res = NULL;

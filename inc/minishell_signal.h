@@ -13,5 +13,12 @@
 #ifndef MINISHELL_SIGNAL_H
 # define MINISHELL_SIGNAL_H
 
-int	setup_signal(void);
+# include <signal.h>
+# include <sys/types.h>
+
+extern volatile sig_atomic_t	g_sig;
+
+int								setup_nonfork_signal(void);
+int								setup_fork_signal(pid_t pid);
+int								check_signal(void);
 #endif

@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 16:01:12 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/08 16:05:39 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:13:59 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@ static int	execute_child_cmd_pipe(t_cmd_func_call *call, t_ast *ast)
 	if (res)
 	{
 		code = res->exit_code;
-		if (res->output)
-			ft_putstr_fd(res->output, STDOUT_FILENO);
-		if (res->erro_msg)
-			ft_putstr_fd(res->erro_msg, STDERR_FILENO);
 		destroy_cmd_res(res);
 	}
 	return (code);
@@ -56,8 +52,13 @@ void	func_exec_cmd_pipe(t_ast *ast, t_shell_env *env, int *pipe_fd,
 		child_exit(env, ast, 1);
 	if (!call->is_builtin)
 		close_prev_and_pipe_fds(pipe_fd, prev_pipe_read_fd);
-	if (eval_redir(ast) > 0)
-		exit_code = execute_child_cmd_pipe(call, ast);
+	if (eval_redir(ast) == -1)
+	{
+		free_cmd_str(call->cmd_str);
+		free(call);
+		child_exit(env, ast, 1);
+	}
+	exit_code = execute_child_cmd_pipe(call, ast);
 	if (call->is_builtin)
 		close_prev_and_pipe_fds(pipe_fd, prev_pipe_read_fd);
 	free_cmd_str(call->cmd_str);

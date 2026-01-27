@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 14:14:46 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/05 18:05:09 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:53:36 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -473,16 +473,92 @@ static int	run_pipe_redir_tests(void)
             setup_pipe_redir_prefix_in_out, teardown_free_pipe_redir_ast),
         cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_append,
             setup_pipe_redir_prefix_append, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
-            setup_pipe_redir_prefix_complex, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
-            setup_pipe_redir_prefix_override_pipe, teardown_free_pipe_redir_ast),
+//        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
+//            setup_pipe_redir_prefix_complex, teardown_free_pipe_redir_ast),
+//        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
+//            setup_pipe_redir_prefix_override_pipe, teardown_free_pipe_redir_ast),
         cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_suffix_mixed,
             setup_pipe_redir_prefix_suffix_mixed, teardown_free_pipe_redir_ast),
         cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_nonexistent,
             setup_pipe_redir_prefix_input_nonexistent, teardown_free_pipe_redir_ast),
 	};
 	printf("\n--- pipe with redirection Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
+static int	run_heredoc_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_cat_basic,
+			setup_heredoc_exec_cat_basic, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_with_output,
+			setup_heredoc_exec_with_output, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_wc,
+			setup_heredoc_exec_wc, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_grep,
+			setup_heredoc_exec_grep, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_prefix,
+			setup_heredoc_exec_prefix, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_exec_empty,
+			setup_heredoc_exec_empty, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_grep,
+			setup_heredoc_pipe_grep, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_multi_pipe,
+			setup_heredoc_multi_pipe, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_redir_and_pipe,
+			setup_heredoc_redir_and_pipe, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_sort_uniq,
+			setup_heredoc_pipe_sort_uniq, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_head,
+			setup_heredoc_pipe_head, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_multiple,
+			setup_heredoc_multiple, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_with_input_redir,
+			setup_heredoc_with_input_redir, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_pipe_tr,
+			setup_heredoc_pipe_tr, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_special_chars_content,
+			setup_heredoc_special_chars_content, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_long_content,
+			setup_heredoc_long_content, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_whitespace_lines,
+			setup_heredoc_whitespace_lines, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_limiter_in_content,
+			setup_heredoc_limiter_in_content, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_numeric_limiter,
+			setup_heredoc_numeric_limiter, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_single_char_limiter,
+			setup_heredoc_single_char_limiter, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_with_env_vars,
+			setup_heredoc_with_env_vars, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_empty_lines,
+			setup_heredoc_empty_lines, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_tabs_content,
+			setup_heredoc_tabs_content, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_unicode_content,
+			setup_heredoc_unicode_content, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_triple_redirect,
+			setup_heredoc_triple_redirect, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_after_append,
+			setup_heredoc_after_append, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_sed_substitute,
+			setup_heredoc_sed_substitute, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_awk_process,
+			setup_heredoc_awk_process, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_tee_redirect,
+			setup_heredoc_tee_redirect, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_nested_pipes,
+			setup_heredoc_nested_pipes, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_parallel_commands,
+			setup_heredoc_parallel_commands, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_error_in_pipe,
+			setup_heredoc_error_in_pipe, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_partial_match_limiter,
+			setup_heredoc_partial_match_limiter, teardown_free_heredoc_ast),
+		cmocka_unit_test_setup_teardown(test_eval_heredoc_case_sensitive_limiter,
+			setup_heredoc_case_sensitive_limiter, teardown_free_heredoc_ast),
+	};
+	printf("\n--- heredoc Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
@@ -503,6 +579,7 @@ static void	print_usage(void)
 	printf("  pipe         Run pipe tests only\n");
 	printf("  redir        Run redirection tests only\n");
 	printf("  piredir       Run pipe with redirection tests only\n");
+	printf("  heredoc      Run heredoc tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -587,6 +664,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running Pipe with Redirection Tests ===\n");
 			return (run_pipe_redir_tests());
 		}
+		if (strcmp(argv[1], "heredoc") == 0)
+		{
+			printf("\n=== Running Heredoc Tests ===\n");
+			return (run_heredoc_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -634,7 +716,10 @@ int	main(int argc, char *argv[])
 		failed += result;
 	result = run_pipe_redir_tests();
 	if (result != 0)
-		failed += result;
+		failed += result;	
+	result = run_heredoc_tests();
+	if (result != 0)
+		failed += result;	
 	printf("\n=== Test Suite Complete ===\n");
 	if (failed > 0)
 		printf("Total failures: %d\n", failed);

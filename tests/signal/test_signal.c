@@ -16,9 +16,6 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
-// External global variable from signal.c
-extern volatile sig_atomic_t g_is_sigint_received;
-
 // ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
@@ -26,7 +23,7 @@ extern volatile sig_atomic_t g_is_sigint_received;
 void	handle_ctrl_c_mock(int sig)
 {
 	(void)sig;
-	g_is_sigint_received = 1;
+	g_sig = 1;
 	write(2, "\n", 1);
 }
 
@@ -50,7 +47,7 @@ int	setup_signal_mock(void)
 int setup_signal_test(void **state)
 {
 	(void)state;
-	g_is_sigint_received = 0;
+	g_sig = 0;
 	setup_signal_mock();
 	return 0;
 }
@@ -61,7 +58,7 @@ int teardown_signal_test(void **state)
 	// Reset to default signal handlers
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	g_is_sigint_received = 0;
+	g_sig = 0;
 	return 0;
 }
 
@@ -126,27 +123,27 @@ void test_sigint_sets_global_flag(void **state)
 {
 	(void)state;
 
-	assert_int_equal(g_is_sigint_received, 0);
+	assert_int_equal(g_sig, 0);
 
 	send_signal_and_wait(SIGINT);
 
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 }
 
 void test_sigint_multiple_times(void **state)
 {
 	(void)state;
 
-	assert_int_equal(g_is_sigint_received, 0);
+	assert_int_equal(g_sig, 0);
 
 	// Send SIGINT multiple times
 	send_signal_and_wait(SIGINT);
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 
-	g_is_sigint_received = 0;
+	g_sig = 0;
 
 	send_signal_and_wait(SIGINT);
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 }
 
 void test_sigint_does_not_terminate_process(void **state)
@@ -174,7 +171,7 @@ void test_sigquit_is_ignored(void **state)
 
 	// Process should still be alive and nothing should change
 	// Global flag should remain 0
-	assert_int_equal(g_is_sigint_received, 0);
+	assert_int_equal(g_sig, 0);
 }
 
 void test_sigquit_multiple_times_ignored(void **state)
@@ -189,7 +186,7 @@ void test_sigquit_multiple_times_ignored(void **state)
 
 	// Process should still be alive
 	// Global flag should remain 0
-	assert_int_equal(g_is_sigint_received, 0);
+	assert_int_equal(g_sig, 0);
 }
 
 // ============================================================================
@@ -209,7 +206,7 @@ void test_sigint_in_child_process(void **state)
 		send_signal_and_wait(SIGINT);
 
 		// Check that flag was set
-		if (g_is_sigint_received == 1)
+		if (g_sig == 1)
 			exit(0);
 		else
 			exit(1);
@@ -296,15 +293,15 @@ void test_global_flag_can_be_reset(void **state)
 
 	// Set flag
 	send_signal_and_wait(SIGINT);
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 
 	// Reset flag
-	g_is_sigint_received = 0;
-	assert_int_equal(g_is_sigint_received, 0);
+	g_sig = 0;
+	assert_int_equal(g_sig, 0);
 
 	// Should be settable again
 	send_signal_and_wait(SIGINT);
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 }
 
 // ============================================================================
@@ -315,7 +312,7 @@ void test_sigint_and_sigquit_together(void **state)
 {
 	(void)state;
 
-	assert_int_equal(g_is_sigint_received, 0);
+	assert_int_equal(g_sig, 0);
 
 	// Send both signals
 	raise(SIGINT);
@@ -323,7 +320,7 @@ void test_sigint_and_sigquit_together(void **state)
 	usleep(10000);
 
 	// Only SIGINT should have effect
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 }
 
 // ============================================================================
@@ -342,7 +339,7 @@ void test_setup_signal_called_twice(void **state)
 
 	// Signal handlers should still work
 	send_signal_and_wait(SIGINT);
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 }
 
 void test_sigint_with_zero_flag(void **state)
@@ -350,20 +347,20 @@ void test_sigint_with_zero_flag(void **state)
 	(void)state;
 
 	// Ensure flag starts at 0
-	g_is_sigint_received = 0;
-	assert_int_equal(g_is_sigint_received, 0);
+	g_sig = 0;
+	assert_int_equal(g_sig, 0);
 
 	send_signal_and_wait(SIGINT);
 
 	// Should transition from 0 to 1
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 }
 
 void test_rapid_signal_delivery(void **state)
 {
 	(void)state;
 
-	g_is_sigint_received = 0;
+	g_sig = 0;
 
 	// Send signals rapidly
 	for (int i = 0; i < 10; i++)
@@ -374,7 +371,7 @@ void test_rapid_signal_delivery(void **state)
 	usleep(10000);
 
 	// Flag should be set (at least once)
-	assert_int_equal(g_is_sigint_received, 1);
+	assert_int_equal(g_sig, 1);
 }
 
 // ============================================================================
@@ -432,9 +429,9 @@ void test_signal_handler_survives_child_exit(void **state)
 		waitpid(pid, &status, 0);
 
 		// Parent's signal handler should still work
-		g_is_sigint_received = 0;
+		g_sig = 0;
 		send_signal_and_wait(SIGINT);
-		assert_int_equal(g_is_sigint_received, 1);
+		assert_int_equal(g_sig, 1);
 	}
 }
 
@@ -451,9 +448,9 @@ void test_multiple_children_with_signals(void **state)
 		if (pid == 0)
 		{
 			// Child: send SIGINT to itself
-			g_is_sigint_received = 0;
+			g_sig = 0;
 			send_signal_and_wait(SIGINT);
-			exit(g_is_sigint_received == 1 ? 0 : 1);
+			exit(g_sig == 1 ? 0 : 1);
 		}
 		else if (pid > 0)
 		{

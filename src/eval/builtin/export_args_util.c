@@ -18,7 +18,7 @@ char	*build_error_msg(char *arg)
 	char	*msg;
 	char	*tmp;
 
-	msg = ft_strjoin("export: `", arg);
+	msg = ft_strjoin("minishell: `", arg);
 	tmp = msg;
 	msg = ft_strjoin(tmp, "': not a valid identifier\n");
 	free(tmp);

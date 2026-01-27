@@ -46,8 +46,10 @@ void	*destroy_shell_env(t_shell_env *env)
 {
 	if (!env)
 		return (NULL);
-	hashtable_destroy(env->vars);
-	ft_lstclear(&env->order, free);
+	if (env->vars)
+		hashtable_destroy(env->vars);
+	if (env->order)
+		ft_lstclear(&env->order, free);
 	free(env);
 	return (NULL);
 }

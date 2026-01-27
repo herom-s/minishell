@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:45:38 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/08 16:19:32 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:29:34 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,23 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-static void	setup_pipe_fds(int dup_src, int dup_dest, int close_fd)
-{
-	if (dup2(dup_src, dup_dest) == -1)
-		exit(EXIT_FAILURE);
-	close(dup_src);
-	close(close_fd);
-}
-
 void	run_pipe_child(t_ast *ast, t_shell_env *env, t_pipe_context *ctx)
 {
 	if (ctx->writer)
 	{
-		setup_pipe_fds(ctx->writer[OUTPUT_END], STDOUT_FILENO,
-			ctx->writer[OUTPUT_END]);
+		close(ctx->writer[INPUT_END]);
+		if (dup2(ctx->writer[OUTPUT_END], STDOUT_FILENO) == -1)
+			exit(EXIT_FAILURE);
+		close(ctx->writer[OUTPUT_END]);
 		eval_pipe_recursive(ast->u_ast.s_pipe_seq.left, env, ctx->writer,
 			ctx->prev_pipe_fd_read_end);
 	}
 	else
 	{
 		close(ctx->reader[OUTPUT_END]);
-		setup_pipe_fds(ctx->reader[INPUT_END], STDIN_FILENO,
-			ctx->reader[INPUT_END]);
+		if (dup2(ctx->reader[INPUT_END], STDIN_FILENO) == -1)
+			exit(EXIT_FAILURE);
+		close(ctx->reader[INPUT_END]);
 		eval_pipe_recursive(ast->u_ast.s_pipe_seq.right, env, NULL,
 			ctx->prev_pipe_fd_read_end);
 	}
@@ -50,6 +45,7 @@ static void	handle_child_process(t_ast *ast, t_shell_env *env,
 
 	if (pipe_fd)
 		close(pipe_fd[INPUT_END]);
+	close(new_fd[INPUT_END]);
 	ctx = (t_pipe_context){new_fd, NULL, -1};
 	run_pipe_child(ast, env, &ctx);
 }
