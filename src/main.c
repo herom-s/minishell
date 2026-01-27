@@ -40,9 +40,8 @@ int	create_lexer_parser(char *input, t_lexer **lexer, t_parser **parser)
 	return (0);
 }
 
-void	parse_input(char *input, char *envp[])
+void	parse_input(char *input, t_shell_env *env)
 {
-	t_shell_env			*env;
 	t_shell_response	*res;
 	t_lexer				*lexer;
 	t_parser			*parser;
@@ -53,7 +52,6 @@ void	parse_input(char *input, char *envp[])
 	lexer = NULL;
 	if (create_lexer_parser(input, &lexer, &parser) < 0)
 		return ;
-	env = create_shell_env(envp);
 	ast = init_ast(parser);
 	if (ast)
 	{
@@ -62,7 +60,6 @@ void	parse_input(char *input, char *envp[])
 			free(res);
 		free_ast(ast);
 	}
-	destroy_shell_env(env);
 	free(parser);
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);
@@ -93,12 +90,14 @@ static int	get_input(t_minishell *shell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	shell;
+	t_shell_env	*env;
 	int			status;
 
 	(void)argc;
 	(void)argv;
 	ft_memset(&shell, 0, sizeof(t_minishell));
 	setup_nonfork_signal();
+	env = create_shell_env(envp);
 	while (1)
 	{
 		g_sig = 0;
@@ -107,8 +106,9 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		if (status == -1)
 			break ;
-		parse_input(shell.input, envp);
+		parse_input(shell.input, env);
 		free(shell.input);
 	}
+	destroy_shell_env(env);
 	return (EXIT_SUCCESS);
 }

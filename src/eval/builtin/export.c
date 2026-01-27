@@ -25,7 +25,8 @@ char	*export_no_args(t_shell_env *env)
 	node = env->order;
 	while (node)
 	{
-		append_env_line(&res, (char *)node->content, env);
+		if (ft_strncmp((char *)node->content, "_", 2) != 0)
+			append_env_line(&res, (char *)node->content, env);
 		node = node->next;
 	}
 	return (res);
@@ -60,7 +61,6 @@ static void	print_and_free(char *out, char *err)
 	free(err);
 }
 
-//TODO: remove var _ from the export no args print
 t_cmd_response	*func_built_in_export(t_ast *ast, char **cmd, t_shell_env *env)
 {
 	char			*out;
