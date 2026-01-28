@@ -25,7 +25,7 @@ char	*export_no_args(t_shell_env *env)
 	node = env->order;
 	while (node)
 	{
-		if (ft_strncmp((char *)node->content, "_", 2) != 0)
+		if (ft_strncmp((char *)node->content, "_", 1) != 0)
 			append_env_line(&res, (char *)node->content, env);
 		node = node->next;
 	}
