@@ -143,11 +143,13 @@ t_ast	*init_ast(t_parser *parser)
 {
 	t_ast	*root;
 
-	if (cur_token_is(parser->cur_token, (1 << END)))
+	if (cur_token_is(parser->cur_token, (1 << NEWLINE)))
 		return (NULL);
 	root = parse_and_or(parser);
-	if (cur_token_is(parser->cur_token, (1 << RPAREN))
-		|| !cur_token_is(parser->cur_token, (1 << END)))
+	if (root == NULL)
+		return (NULL);
+	if (!parser->has_error && (cur_token_is(parser->cur_token, (1 << RPAREN))
+			|| !cur_token_is(parser->cur_token, (1 << NEWLINE))))
 	{
 		parser_error(parser);
 		return (free_ast(root));

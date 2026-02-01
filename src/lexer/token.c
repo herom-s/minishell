@@ -53,7 +53,7 @@ void	check_operators(t_lexer *lexer, t_token *token)
 {
 	int					i;
 	int					size;
-	const t_hash_item	operators[] = {{"", END}, {"=", EQUAL},
+	const t_hash_item	operators[] = {{"", NEWLINE}, {"=", EQUAL},
 	{"(", LPAREN}, {")", RPAREN}};
 
 	check_duplicate_operators(lexer, token);
@@ -67,6 +67,9 @@ void	check_operators(t_lexer *lexer, t_token *token)
 			{
 				*token = (t_token){operators[i].value, operators[i].key,
 					CHAR_SIZE};
+				if (operators[i].value == NEWLINE)
+					*token = (t_token){operators[i].value, "newline",
+					ft_strlen("newline")};
 			}
 			i++;
 		}
