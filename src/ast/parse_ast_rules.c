@@ -80,7 +80,8 @@ t_ast	*parse_simple_cmd(t_parser *parser)
 		return (parse_subshell(parser));
 	}
 	cmd_prefix = parse_cmd_prefix(parser);
-	if (!cur_token_is(parser->cur_token, (1 << WORD)) && !parser->has_error)
+	if (!cur_token_is(parser->cur_token, (1 << WORD) | (1 << NEWLINE))
+			&& !parser->has_error)
 		return (parser_error(parser));
 	cmd_name = parser->cur_token->literal;
 	next_token(parser);
