@@ -202,6 +202,7 @@ void	test_eval_pipe_large_buffer(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
+	assert_non_null(env);
 	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_string_equal(captured, "100000\n");
@@ -237,6 +238,7 @@ void	test_eval_pipe_builtin_to_external(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
+	assert_non_null(env);
 	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_string_equal(captured, "6\n");
@@ -271,6 +273,7 @@ void	test_eval_pipe_exit_code_success(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
+	assert_non_null(env);
 	char *captured = eval_and_capture(ast, env, &res);
 	assert_int_equal(res->exit_code, 0);
 	free(captured);
@@ -303,6 +306,7 @@ void	test_eval_pipe_exit_code_fail(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
+	assert_non_null(env);
 	char *captured = eval_and_capture(ast, env, &res);
 	assert_int_not_equal(res->exit_code, 0);
 	free(captured);
@@ -338,6 +342,7 @@ void	test_eval_pipe_error_propagation(void **state)
 
 	ast = (t_ast *)(*state);
 	env = create_shell_env(environ);
+	assert_non_null(env);
 	char *captured = eval_and_capture(ast, env, &res);
 	assert_non_null(res);
 	assert_string_equal(captured, "0\n");

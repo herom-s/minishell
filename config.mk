@@ -20,12 +20,15 @@ SRC_FILES = main.c \
 			$(LEX_DIR)/lexer_helpers.c \
 			$(LEX_DIR)/token.c \
 			$(PARSER_DIR)/parser.c \
+			$(PARSER_DIR)/parser_input.c \
 			$(PARSER_DIR)/parser_helpers.c \
 			$(AST_DIR)/ast.c \
 			$(AST_DIR)/free_ast.c \
 			$(AST_DIR)/parse_ast_rules.c \
 			$(AST_DIR)/parse_cmd_rules.c \
 			$(EVAL_DIR)/eval.c \
+			$(EVAL_DIR)/eval_nodes.c \
+			$(EVAL_DIR)/eval_helpers.c \
 			$(EVAL_DIR)/eval_util.c \
 			$(EVAL_DIR)/cmd_res.c \
 			$(EVAL_DIR)/util.c \

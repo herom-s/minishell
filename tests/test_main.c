@@ -33,7 +33,6 @@ static int	run_signal_tests(void)
 			setup_signal_test, teardown_signal_test),
 		cmocka_unit_test_setup_teardown(test_setup_signal_ignores_sigquit,
 			setup_signal_test, teardown_signal_test),
-
 		// SIGINT handler tests
 		cmocka_unit_test_setup_teardown(test_sigint_sets_global_flag,
 			setup_signal_test, teardown_signal_test),
@@ -41,31 +40,25 @@ static int	run_signal_tests(void)
 			setup_signal_test, teardown_signal_test),
 		cmocka_unit_test_setup_teardown(test_sigint_does_not_terminate_process,
 			setup_signal_test, teardown_signal_test),
-
 		// SIGQUIT handler tests
 		cmocka_unit_test_setup_teardown(test_sigquit_is_ignored,
 			setup_signal_test, teardown_signal_test),
 		cmocka_unit_test_setup_teardown(test_sigquit_multiple_times_ignored,
 			setup_signal_test, teardown_signal_test),
-
 		// Child process tests
 		cmocka_unit_test_setup_teardown(test_sigint_in_child_process,
 			setup_signal_test, teardown_signal_test),
 		cmocka_unit_test_setup_teardown(test_child_inherits_signal_handlers,
 			setup_signal_test, teardown_signal_test),
-
 		// Signal restoration tests
 		cmocka_unit_test_setup_teardown(test_signal_can_be_restored_to_default,
 			setup_signal_test, teardown_signal_test),
-
 		// Flag reset tests
 		cmocka_unit_test_setup_teardown(test_global_flag_can_be_reset,
 			setup_signal_test, teardown_signal_test),
-
 		// Concurrent signal tests
 		cmocka_unit_test_setup_teardown(test_sigint_and_sigquit_together,
 			setup_signal_test, teardown_signal_test),
-
 		// Edge case tests
 		cmocka_unit_test_setup_teardown(test_setup_signal_called_twice,
 			setup_signal_test, teardown_signal_test),
@@ -73,13 +66,11 @@ static int	run_signal_tests(void)
 			setup_signal_test, teardown_signal_test),
 		cmocka_unit_test_setup_teardown(test_rapid_signal_delivery,
 			setup_signal_test, teardown_signal_test),
-
 		// Sigaction tests
 		cmocka_unit_test_setup_teardown(test_sigaction_flags_are_correct,
 			setup_signal_test, teardown_signal_test),
 		cmocka_unit_test_setup_teardown(test_signal_mask_is_empty,
 			setup_signal_test, teardown_signal_test),
-
 		// Integration tests
 		cmocka_unit_test_setup_teardown(test_signal_handler_survives_child_exit,
 			setup_signal_test, teardown_signal_test),
@@ -239,10 +230,12 @@ static int	run_env_builtin_tests(void)
 static int	run_exit_builtin_tests(void)
 {
 	const struct CMUnitTest tests[] = {
-		cmocka_unit_test_setup_teardown(test_eval_built_in_exit_single_arg_path,
-			setup_built_in_exit_single_arg_ast, teardown_free_cmd_ast),
-		cmocka_unit_test_setup_teardown(test_eval_built_in_exit_to_many_args_path,
-			setup_built_in_exit_to_many_args_ast, teardown_free_cmd_ast),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_exit_no_args_caught,
+			setup_built_in_exit_no_args_ast, teardown_free_exit_ctx),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_exit_numeric_arg_caught,
+			setup_built_in_exit_numeric_arg_ast, teardown_free_exit_ctx),
+		cmocka_unit_test_setup_teardown(test_eval_built_in_exit_invalid_arg_caught,
+			setup_built_in_exit_invalid_arg_ast, teardown_free_exit_ctx),
 	};
 	printf("\n--- exit Builtin Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
@@ -465,22 +458,23 @@ static int	run_pipe_redir_tests(void)
 			setup_pipe_redir_in_out, teardown_free_pipe_redir_ast),
 		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_append,
 			setup_pipe_redir_append, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_to_wc,
-            setup_pipe_redir_prefix_input_to_wc, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_output,
-            setup_pipe_redir_prefix_output, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_in_out,
-            setup_pipe_redir_prefix_in_out, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_append,
-            setup_pipe_redir_prefix_append, teardown_free_pipe_redir_ast),
-//        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
-//            setup_pipe_redir_prefix_complex, teardown_free_pipe_redir_ast),
-//        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
-//            setup_pipe_redir_prefix_override_pipe, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_suffix_mixed,
-            setup_pipe_redir_prefix_suffix_mixed, teardown_free_pipe_redir_ast),
-        cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_nonexistent,
-            setup_pipe_redir_prefix_input_nonexistent, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_to_wc,
+			setup_pipe_redir_prefix_input_to_wc, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_output,
+			setup_pipe_redir_prefix_output, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_in_out,
+			setup_pipe_redir_prefix_in_out, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_append,
+			setup_pipe_redir_prefix_append, teardown_free_pipe_redir_ast),
+//      cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_complex,
+//            setup_pipe_redir_prefix_complex,teardown_free_pipe_redir_ast),
+//      cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_override_pipe,
+//            setup_pipe_redir_prefix_override_pipe,teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_suffix_mixed,
+			setup_pipe_redir_prefix_suffix_mixed, teardown_free_pipe_redir_ast),
+		cmocka_unit_test_setup_teardown(test_eval_pipe_redir_prefix_input_nonexistent,
+			setup_pipe_redir_prefix_input_nonexistent,
+			teardown_free_pipe_redir_ast),
 	};
 	printf("\n--- pipe with redirection Tests ---\n");
 	return (cmocka_run_group_tests(tests, NULL, NULL));
@@ -562,6 +556,30 @@ static int	run_heredoc_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_and_or_subshell_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(test_eval_and_runs_right_on_success,
+			setup_and_true_and_echo, teardown_free_and_or_subshell),
+		cmocka_unit_test_setup_teardown(test_eval_and_skips_right_on_failure,
+			setup_and_false_and_echo, teardown_free_and_or_subshell),
+		cmocka_unit_test_setup_teardown(test_eval_or_runs_right_on_failure,
+			setup_or_false_or_echo, teardown_free_and_or_subshell),
+		cmocka_unit_test_setup_teardown(test_eval_or_skips_right_on_success,
+			setup_or_true_or_echo, teardown_free_and_or_subshell),
+		cmocka_unit_test_setup_teardown(test_subshell_does_not_modify_parent_env,
+			setup_subshell_export, teardown_free_and_or_subshell),
+		cmocka_unit_test_setup_teardown(test_subshell_echo_outputs_and_exit_zero,
+			setup_subshell_echo, teardown_free_and_or_subshell),
+		cmocka_unit_test_setup_teardown(test_subshell_exit_code_propagated,
+			setup_subshell_exit_5, teardown_free_and_or_subshell),
+		cmocka_unit_test_setup_teardown(test_subshell_cd_does_not_change_parent_cwd,
+			setup_subshell_cd, teardown_free_and_or_subshell),
+	};
+	printf("\n--- and/or/subshell eval Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static void	print_usage(void)
 {
 	printf("Usage: ./run_tests [OPTIONS]\n");
@@ -578,8 +596,9 @@ static void	print_usage(void)
 	printf("  external     Run external commands tests only\n");
 	printf("  pipe         Run pipe tests only\n");
 	printf("  redir        Run redirection tests only\n");
-	printf("  piredir       Run pipe with redirection tests only\n");
+	printf("  piredir      Run pipe with redirection tests only\n");
 	printf("  heredoc      Run heredoc tests only\n");
+	printf("  aos          Run logic (and/or/subshell) tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -669,6 +688,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running Heredoc Tests ===\n");
 			return (run_heredoc_tests());
 		}
+		if (strcmp(argv[1], "aos") == 0)
+		{
+			printf("\n=== Running AND/OR/SUBSHELL Tests ===\n");
+			return (run_and_or_subshell_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -716,10 +740,13 @@ int	main(int argc, char *argv[])
 		failed += result;
 	result = run_pipe_redir_tests();
 	if (result != 0)
-		failed += result;	
+		failed += result;
 	result = run_heredoc_tests();
 	if (result != 0)
-		failed += result;	
+		failed += result;
+	result = run_and_or_subshell_tests();
+	if (result != 0)
+		failed += result;
 	printf("\n=== Test Suite Complete ===\n");
 	if (failed > 0)
 		printf("Total failures: %d\n", failed);

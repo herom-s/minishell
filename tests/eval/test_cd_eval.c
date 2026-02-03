@@ -55,20 +55,23 @@ void	test_eval_built_in_cd_path(void **state)
 	assert_non_null(ast);
 	env = create_shell_env(environ);
 	assert_non_null(env);
-	res = eval_ast(ast, env);
-	assert_non_null(res);
+	/* prepare directory before running the command */
 	mkdir(expected_dir, 0755);
 	buffer = calloc(1, PATH_MAX + 1);
 	if (!buffer)
 		return ;
-	old_dir = getcwd(buffer, PATH_MAX);
-	chdir(expected_dir);
+	/* save current dir */
+	old_dir = strdup(getcwd(buffer, PATH_MAX));
+	res = eval_ast(ast, env);
+	assert_non_null(res);
+	/* verify that the process actually changed to the expected dir */
 	curr_dir = getcwd(buffer, PATH_MAX);
-	assert_string_equal(res->curr_dir, curr_dir);
+	assert_string_equal(curr_dir, expected_dir);
 	assert_int_equal(res->exit_code, 0);
+	/* restore and cleanup */
 	chdir(old_dir);
 	rmdir(expected_dir);
-	free(res->curr_dir);
+	free(old_dir);
 	free(res);
 	free(buffer);
     destroy_shell_env(env);

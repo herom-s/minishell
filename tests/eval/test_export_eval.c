@@ -89,7 +89,7 @@ void	test_eval_built_in_export_no_args(void **state)
 	i = 0;
 	while (environ[i])
 	{
-		if (strncmp(environ[i], "_", 1) != 0)
+		if (strncmp(environ[i], "_=", 2) != 0)
 			assert_true(export_var_in_output(captured, environ[i]));
 		i++;
 	}

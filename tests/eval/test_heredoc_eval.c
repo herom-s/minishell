@@ -42,6 +42,8 @@ static int	setup_stdin_from_string(const char *input)
 		close(pipe_fd[1]);
 		return (-1);
 	}
+	/* Set close-on-exec so forked children that exec close this FD */
+	fcntl(original_stdin, F_SETFD, FD_CLOEXEC);
 	written = write(pipe_fd[1], input, strlen(input));
 	close(pipe_fd[1]);
 	if (written == -1)
@@ -2004,5 +2006,5 @@ int	teardown_free_heredoc_ast(void **state)
 	*state = NULL;
 	// Cleanup any temporary files
 	unlink("/tmp/heredoc_output.txt");
-	return (0);
+    return (0);
 }

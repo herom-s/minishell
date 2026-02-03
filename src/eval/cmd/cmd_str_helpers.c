@@ -10,30 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "eval.h"
 #include "libft.h"
 #include <unistd.h>
 
-//TODO: Don't use envp use the hashtable to handle cases like unset PATH
-char	**get_bin_paths(char *envp[])
+char	**get_bin_paths(t_shell_env *env)
 {
-	char	**default_paths;
+	char	*path_value;
+	char	**empty_paths;
 
-	while (*envp && ft_strncmp(*envp, "PATH=", 5) != 0)
-		envp++;
-	if (!*envp)
+	path_value = hashtable_get(env->vars, "PATH");
+	if (!path_value)
 	{
-		default_paths = ft_calloc(6, sizeof(char *));
-		if (!default_paths)
-			return (NULL);
-		default_paths[0] = ft_strdup("/usr/local/bin");
-		default_paths[1] = ft_strdup("/usr/bin");
-		default_paths[2] = ft_strdup("/bin");
-		default_paths[3] = ft_strdup("/usr/sbin");
-		default_paths[4] = ft_strdup("/sbin");
-		default_paths[5] = NULL;
-		return (default_paths);
+		empty_paths = ft_calloc(1, sizeof(char *));
+		return (empty_paths);
 	}
-	return (ft_split(*envp + 5, ':'));
+	return (ft_split(path_value, ':'));
 }
 
 int	check_path(char *path, char *argv)

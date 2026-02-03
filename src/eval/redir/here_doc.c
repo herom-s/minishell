@@ -13,34 +13,39 @@
 #include "ast.h"
 #include "eval.h"
 #include "libft.h"
-#include <readline/readline.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-static int	handle_io(t_ast *io)
-{
-	char	*temp_file;
+int	handle_heredoc_io(t_ast *io);
 
-	if (io && io->u_ast.s_io_file.op->type == DLESS)
+static int	process_simple_cmd_heredocs(t_ast *node)
+{
+	t_ast	*it;
+
+	it = node->u_ast.s_simple_cmd.cmd_prefix;
+	while (it)
 	{
-		temp_file = generate_heredoc_filename();
-		if (write_heredoc_to_file((char *)io->u_ast.s_io_file.filename,
-				temp_file) == -1)
-		{
-			free(temp_file);
-			return (-1);
-		}
-		io->u_ast.s_io_file.op->type = LESS;
-		io->u_ast.s_io_file.filename = temp_file;
+		if (it->type == AST_CMD_PREFIX && it->u_ast.s_cmd_prefix.io_file
+			&& it->u_ast.s_cmd_prefix.io_file->type == AST_IO_FILE)
+			if (handle_heredoc_io(it->u_ast.s_cmd_prefix.io_file) == -1)
+				return (-1);
+		it = it->u_ast.s_cmd_prefix.cmd_prefix;
+	}
+	it = node->u_ast.s_simple_cmd.cmd_suffix;
+	while (it)
+	{
+		if (it->type == AST_CMD_SUFFIX && it->u_ast.s_cmd_suffix.io_file
+			&& it->u_ast.s_cmd_suffix.io_file->type == AST_IO_FILE)
+			if (handle_heredoc_io(it->u_ast.s_cmd_suffix.io_file) == -1)
+				return (-1);
+		it = it->u_ast.s_cmd_suffix.cmd_suffix;
 	}
 	return (0);
 }
 
 int	process_heredocs(t_ast *node, t_shell_env *env)
 {
-	t_ast	*tmp;
-
 	if (!node)
 		return (0);
 	if (node->type == AST_PIPE_SEQ)
@@ -49,20 +54,16 @@ int	process_heredocs(t_ast *node, t_shell_env *env)
 			return (-1);
 		return (process_heredocs(node->u_ast.s_pipe_seq.right, env));
 	}
-	tmp = node->u_ast.s_simple_cmd.cmd_prefix;
-	while (node->type == AST_SIMPLE_CMD && tmp)
+	if (node->type == AST_AND_OR || node->type == AST_LIST)
 	{
-		if (handle_io(tmp->u_ast.s_cmd_prefix.io_file) == -1)
+		if (process_heredocs(node->u_ast.s_and_or.left, env) == -1)
 			return (-1);
-		tmp = tmp->u_ast.s_cmd_prefix.cmd_prefix;
+		return (process_heredocs(node->u_ast.s_and_or.right, env));
 	}
-	tmp = node->u_ast.s_simple_cmd.cmd_suffix;
-	while (node->type == AST_SIMPLE_CMD && tmp)
-	{
-		if (handle_io(tmp->u_ast.s_cmd_suffix.io_file) == -1)
-			return (-1);
-		tmp = tmp->u_ast.s_cmd_suffix.cmd_suffix;
-	}
+	if (node->type == AST_SUBSHELL)
+		return (process_heredocs(node->u_ast.s_subshell.and_or, env));
+	if (node->type == AST_SIMPLE_CMD)
+		return (process_simple_cmd_heredocs(node));
 	return (0);
 }
 
@@ -87,10 +88,26 @@ static void	unlink_heredoc_node(t_ast *node)
 	}
 }
 
-void	cleanup_heredoc_files(t_ast *ast)
+static void	cleanup_simple_cmd_heredocs(t_ast *ast)
 {
 	t_ast	*curr;
 
+	curr = ast->u_ast.s_simple_cmd.cmd_prefix;
+	while (curr)
+	{
+		unlink_heredoc_node(curr->u_ast.s_cmd_prefix.io_file);
+		curr = curr->u_ast.s_cmd_prefix.cmd_prefix;
+	}
+	curr = ast->u_ast.s_simple_cmd.cmd_suffix;
+	while (curr)
+	{
+		unlink_heredoc_node(curr->u_ast.s_cmd_suffix.io_file);
+		curr = curr->u_ast.s_cmd_suffix.cmd_suffix;
+	}
+}
+
+void	cleanup_heredoc_files(t_ast *ast)
+{
 	if (!ast)
 		return ;
 	if (ast->type == AST_PIPE_SEQ)
@@ -98,19 +115,13 @@ void	cleanup_heredoc_files(t_ast *ast)
 		cleanup_heredoc_files(ast->u_ast.s_pipe_seq.left);
 		cleanup_heredoc_files(ast->u_ast.s_pipe_seq.right);
 	}
-	else if (ast->type == AST_SIMPLE_CMD)
+	else if (ast->type == AST_AND_OR || ast->type == AST_LIST)
 	{
-		curr = ast->u_ast.s_simple_cmd.cmd_prefix;
-		while (curr)
-		{
-			unlink_heredoc_node(curr->u_ast.s_cmd_prefix.io_file);
-			curr = curr->u_ast.s_cmd_prefix.cmd_prefix;
-		}
-		curr = ast->u_ast.s_simple_cmd.cmd_suffix;
-		while (curr)
-		{
-			unlink_heredoc_node(curr->u_ast.s_cmd_suffix.io_file);
-			curr = curr->u_ast.s_cmd_suffix.cmd_suffix;
-		}
+		cleanup_heredoc_files(ast->u_ast.s_and_or.left);
+		cleanup_heredoc_files(ast->u_ast.s_and_or.right);
 	}
+	else if (ast->type == AST_SUBSHELL)
+		cleanup_heredoc_files(ast->u_ast.s_subshell.and_or);
+	else if (ast->type == AST_SIMPLE_CMD)
+		cleanup_simple_cmd_heredocs(ast);
 }

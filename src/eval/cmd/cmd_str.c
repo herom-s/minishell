@@ -75,7 +75,7 @@ static char	**build_cmd_str(char *cmd_name, t_ast *cmd_suffix, char *bin_path)
 	return (cmd_str);
 }
 
-char	**get_cmd_str(char *cmd_name, t_ast *cmd_suffix, char *envp[])
+char	**get_cmd_str(char *cmd_name, t_ast *cmd_suffix, t_shell_env *env)
 {
 	char	**cmd_str;
 	char	**bin_paths;
@@ -85,7 +85,7 @@ char	**get_cmd_str(char *cmd_name, t_ast *cmd_suffix, char *envp[])
 		return (build_cmd_str(cmd_name, cmd_suffix, ""));
 	if (check_builtin(cmd_name))
 		return (build_cmd_str(cmd_name, cmd_suffix, ""));
-	bin_paths = get_bin_paths(envp);
+	bin_paths = get_bin_paths(env);
 	i = 0;
 	while (bin_paths[i])
 	{

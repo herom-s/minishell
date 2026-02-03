@@ -14,6 +14,8 @@
 # define PARSER_H
 # include "lexer.h"
 
+typedef struct s_shell_env	t_shell_env;
+
 typedef struct s_parser
 {
 	t_lexer	*lexer;
@@ -21,6 +23,8 @@ typedef struct s_parser
 	t_token	*peek_token;
 	int		has_error;
 }	t_parser;
+
+void		parse_input(char *input, t_shell_env *env);
 
 t_parser	*create_parser(t_lexer *lexer);
 void		next_token(t_parser *parser);

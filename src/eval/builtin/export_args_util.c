@@ -13,24 +13,15 @@
 #include "eval.h"
 #include "libft.h"
 
-char	*build_error_msg(char *arg)
-{
-	char	*msg;
-	char	*tmp;
-
-	msg = ft_strjoin("minishell: `", arg);
-	tmp = msg;
-	msg = ft_strjoin(tmp, "': not a valid identifier\n");
-	free(tmp);
-	return (msg);
-}
-
-void	append_error(char **erro_msg, char *arg)
+static void	append_error(char **erro_msg, char *arg)
 {
 	char	*new_err;
 	char	*tmp;
 
-	new_err = build_error_msg(arg);
+	new_err = ft_strjoin("minishell: `", arg);
+	tmp = new_err;
+	new_err = ft_strjoin(tmp, "': not a valid identifier\n");
+	free(tmp);
 	if (*erro_msg == NULL)
 		*erro_msg = new_err;
 	else
@@ -46,7 +37,10 @@ void	export_var(t_shell_env *env, char *var, char *equal_pos)
 {
 	if (!hashtable_get(env->vars, var))
 		ft_lstadd_back(&env->order, ft_lstnew(ft_strdup(var)));
-	hashtable_set(env->vars, var, ft_strdup(equal_pos + 1));
+	if (equal_pos)
+		hashtable_set(env->vars, var, ft_strdup(equal_pos + 1));
+	else
+		hashtable_set(env->vars, var, NULL);
 }
 
 int	check_var_name(char *var_name)
@@ -67,14 +61,12 @@ int	check_var_name(char *var_name)
 	return (1);
 }
 
-int	process_export_arg(char *arg, t_shell_env *env, char **error)
+static int	handle_equal_export(char *arg, t_shell_env *env, char **error)
 {
 	char	*var;
 	char	*equal_pos;
 
 	equal_pos = ft_strchr(arg, '=');
-	if (!equal_pos)
-		return (0);
 	var = ft_substr(arg, 0, equal_pos - arg);
 	if (check_var_name(var))
 		export_var(env, var, equal_pos);
@@ -85,5 +77,25 @@ int	process_export_arg(char *arg, t_shell_env *env, char **error)
 		return (1);
 	}
 	free(var);
+	return (0);
+}
+
+int	process_export_arg(char *arg, t_shell_env *env, char **error)
+{
+	char	*equal_pos;
+
+	equal_pos = ft_strchr(arg, '=');
+	if (equal_pos)
+		return (handle_equal_export(arg, env, error));
+	if (check_var_name(arg))
+	{
+		if (!hashtable_get(env->vars, arg))
+			export_var(env, arg, NULL);
+	}
+	else
+	{
+		append_error(error, arg);
+		return (1);
+	}
 	return (0);
 }

@@ -55,12 +55,16 @@ void	test_eval_built_in_env_not_empty(void **state);
 void	test_eval_built_in_env_contains_path(void **state);
 
 // setup for exit eval
-int		setup_built_in_exit_single_arg_ast(void **state);
-int		setup_built_in_exit_to_many_args_ast(void **state);
+int		setup_built_in_exit_no_args_ast(void **state);
+int		setup_built_in_exit_numeric_arg_ast(void **state);
+int		setup_built_in_exit_invalid_arg_ast(void **state);
 
 // tests for exit eval
-void	test_eval_built_in_exit_single_arg_path(void **state);
-void	test_eval_built_in_exit_to_many_args_path(void **state);
+void	test_eval_built_in_exit_no_args_caught(void **state);
+void	test_eval_built_in_exit_numeric_arg_caught(void **state);
+void	test_eval_built_in_exit_invalid_arg_caught(void **state);
+
+int     teardown_free_exit_ctx(void **state);
 
 // setup for export eval
 int		setup_built_in_export_no_args_ast(void **state);
@@ -205,17 +209,17 @@ int		setup_redir_append_no_newline(void **state);
 int		setup_redir_prefix_output(void **state);
 int		setup_redir_prefix_input(void **state);
 int		setup_redir_prefix_complex(void **state);
-int     setup_redir_prefix_output_append(void **state);
-int     setup_redir_prefix_append(void **state);
-int     setup_redir_prefix_multiple_output(void **state);
-int     setup_redir_prefix_multiple_input(void **state);
-int     setup_redir_prefix_builtin(void **state);
-int     setup_redir_prefix_builtin_pwd(void **state);
-int     setup_redir_prefix_external(void **state);
-int     setup_redir_prefix_suffix_mixed(void **state);
-int     setup_redir_prefix_invalid_path(void **state);
-int     setup_redir_prefix_input_nonexistent(void **state);
-int     setup_redir_prefix_multiple_append(void **state);
+int		setup_redir_prefix_output_append(void **state);
+int		setup_redir_prefix_append(void **state);
+int		setup_redir_prefix_multiple_output(void **state);
+int		setup_redir_prefix_multiple_input(void **state);
+int		setup_redir_prefix_builtin(void **state);
+int		setup_redir_prefix_builtin_pwd(void **state);
+int		setup_redir_prefix_external(void **state);
+int		setup_redir_prefix_suffix_mixed(void **state);
+int		setup_redir_prefix_invalid_path(void **state);
+int		setup_redir_prefix_input_nonexistent(void **state);
+int		setup_redir_prefix_multiple_append(void **state);
 
 // tests for redir eval
 void	test_eval_redir_output_create(void **state);
@@ -236,45 +240,45 @@ void	test_eval_redir_append_no_newline(void **state);
 void	test_eval_redir_prefix_output(void **state);
 void	test_eval_redir_prefix_input(void **state);
 void	test_eval_redir_prefix_complex(void **state);
-void    test_eval_redir_prefix_output_append(void **state);
-void    test_eval_redir_prefix_append(void **state);
-void    test_eval_redir_prefix_multiple_output(void **state);
-void    test_eval_redir_prefix_multiple_input(void **state);
-void    test_eval_redir_prefix_builtin(void **state);
-void    test_eval_redir_prefix_builtin_pwd(void **state);
-void    test_eval_redir_prefix_external(void **state);
-void    test_eval_redir_prefix_suffix_mixed(void **state);
-void    test_eval_redir_prefix_invalid_path(void **state);
-void    test_eval_redir_prefix_input_nonexistent(void **state);
-void    test_eval_redir_prefix_multiple_append(void **state);
+void	test_eval_redir_prefix_output_append(void **state);
+void	test_eval_redir_prefix_append(void **state);
+void	test_eval_redir_prefix_multiple_output(void **state);
+void	test_eval_redir_prefix_multiple_input(void **state);
+void	test_eval_redir_prefix_builtin(void **state);
+void	test_eval_redir_prefix_builtin_pwd(void **state);
+void	test_eval_redir_prefix_external(void **state);
+void	test_eval_redir_prefix_suffix_mixed(void **state);
+void	test_eval_redir_prefix_invalid_path(void **state);
+void	test_eval_redir_prefix_input_nonexistent(void **state);
+void	test_eval_redir_prefix_multiple_append(void **state);
 
 // setup for redir pipe eval
 int		setup_pipe_redir_input_to_wc(void **state);
 int		setup_pipe_redir_output(void **state);
 int		setup_pipe_redir_in_out(void **state);
 int		setup_pipe_redir_append(void **state);
-int     setup_pipe_redir_prefix_input_to_wc(void **state);
-int     setup_pipe_redir_prefix_output(void **state);
-int     setup_pipe_redir_prefix_in_out(void **state);
-int     setup_pipe_redir_prefix_append(void **state);
-//int     setup_pipe_redir_prefix_complex(void **state);
-//int     setup_pipe_redir_prefix_override_pipe(void **state);
-int     setup_pipe_redir_prefix_suffix_mixed(void **state);
-int     setup_pipe_redir_prefix_input_nonexistent(void **state);
+int		setup_pipe_redir_prefix_input_to_wc(void **state);
+int		setup_pipe_redir_prefix_output(void **state);
+int		setup_pipe_redir_prefix_in_out(void **state);
+int		setup_pipe_redir_prefix_append(void **state);
+// int     setup_pipe_redir_prefix_complex(void **state);
+// int     setup_pipe_redir_prefix_override_pipe(void **state);
+int		setup_pipe_redir_prefix_suffix_mixed(void **state);
+int		setup_pipe_redir_prefix_input_nonexistent(void **state);
 
 // setup for redir pipe eval
 void	test_eval_pipe_redir_input_to_wc(void **state);
 void	test_eval_pipe_redir_output(void **state);
 void	test_eval_pipe_redir_in_out(void **state);
 void	test_eval_pipe_redir_append(void **state);
-void    test_eval_pipe_redir_prefix_input_to_wc(void **state);
-void    test_eval_pipe_redir_prefix_output(void **state);
-void    test_eval_pipe_redir_prefix_in_out(void **state);
-void    test_eval_pipe_redir_prefix_append(void **state);
-//void    test_eval_pipe_redir_prefix_complex(void **state);
-void    test_eval_pipe_redir_prefix_override_pipe(void **state);
-void    test_eval_pipe_redir_prefix_suffix_mixed(void **state);
-void    test_eval_pipe_redir_prefix_input_nonexistent(void **state);
+void	test_eval_pipe_redir_prefix_input_to_wc(void **state);
+void	test_eval_pipe_redir_prefix_output(void **state);
+void	test_eval_pipe_redir_prefix_in_out(void **state);
+void	test_eval_pipe_redir_prefix_append(void **state);
+// void    test_eval_pipe_redir_prefix_complex(void **state);
+void	test_eval_pipe_redir_prefix_override_pipe(void **state);
+void	test_eval_pipe_redir_prefix_suffix_mixed(void **state);
+void	test_eval_pipe_redir_prefix_input_nonexistent(void **state);
 
 // setup for heredoc eval
 int		setup_heredoc_exec_cat_basic(void **state);
@@ -291,26 +295,26 @@ int		setup_heredoc_pipe_head(void **state);
 int		setup_heredoc_multiple(void **state);
 int		setup_heredoc_with_input_redir(void **state);
 int		setup_heredoc_pipe_tr(void **state);
-int     setup_heredoc_special_chars_content(void **state);
-int     setup_heredoc_long_content(void **state);
-int     setup_heredoc_whitespace_lines(void **state);
-int     setup_heredoc_limiter_in_content(void **state);
-int     setup_heredoc_numeric_limiter(void **state);
-int     setup_heredoc_single_char_limiter(void **state);
-int     setup_heredoc_with_env_vars(void **state);
-int     setup_heredoc_empty_lines(void **state);
-int     setup_heredoc_tabs_content(void **state);
-int     setup_heredoc_unicode_content(void **state);
-int     setup_heredoc_triple_redirect(void **state);
-int     setup_heredoc_after_append(void **state);
-int     setup_heredoc_sed_substitute(void **state);
-int     setup_heredoc_awk_process(void **state);
-int     setup_heredoc_tee_redirect(void **state);
-int     setup_heredoc_nested_pipes(void **state);
-int     setup_heredoc_parallel_commands(void **state);
-int     setup_heredoc_error_in_pipe(void **state);
-int     setup_heredoc_partial_match_limiter(void **state);
-int     setup_heredoc_case_sensitive_limiter(void **state);
+int		setup_heredoc_special_chars_content(void **state);
+int		setup_heredoc_long_content(void **state);
+int		setup_heredoc_whitespace_lines(void **state);
+int		setup_heredoc_limiter_in_content(void **state);
+int		setup_heredoc_numeric_limiter(void **state);
+int		setup_heredoc_single_char_limiter(void **state);
+int		setup_heredoc_with_env_vars(void **state);
+int		setup_heredoc_empty_lines(void **state);
+int		setup_heredoc_tabs_content(void **state);
+int		setup_heredoc_unicode_content(void **state);
+int		setup_heredoc_triple_redirect(void **state);
+int		setup_heredoc_after_append(void **state);
+int		setup_heredoc_sed_substitute(void **state);
+int		setup_heredoc_awk_process(void **state);
+int		setup_heredoc_tee_redirect(void **state);
+int		setup_heredoc_nested_pipes(void **state);
+int		setup_heredoc_parallel_commands(void **state);
+int		setup_heredoc_error_in_pipe(void **state);
+int		setup_heredoc_partial_match_limiter(void **state);
+int		setup_heredoc_case_sensitive_limiter(void **state);
 
 // tests for heredoc eval
 void	test_eval_heredoc_basic_structure(void **state);
@@ -336,26 +340,48 @@ void	test_eval_heredoc_pipe_head(void **state);
 void	test_eval_heredoc_multiple(void **state);
 void	test_eval_heredoc_with_input_redir(void **state);
 void	test_eval_heredoc_pipe_tr(void **state);
-void    test_eval_heredoc_special_chars_content(void **state);
-void    test_eval_heredoc_long_content(void **state);
-void    test_eval_heredoc_whitespace_lines(void **state);
-void    test_eval_heredoc_limiter_in_content(void **state);
-void    test_eval_heredoc_numeric_limiter(void **state);
-void    test_eval_heredoc_single_char_limiter(void **state);
-void    test_eval_heredoc_with_env_vars(void **state);
-void    test_eval_heredoc_empty_lines(void **state);
-void    test_eval_heredoc_tabs_content(void **state);
-void    test_eval_heredoc_unicode_content(void **state);
-void    test_eval_heredoc_triple_redirect(void **state);
-void    test_eval_heredoc_after_append(void **state);
-void    test_eval_heredoc_sed_substitute(void **state);
-void    test_eval_heredoc_awk_process(void **state);
-void    test_eval_heredoc_tee_redirect(void **state);
-void    test_eval_heredoc_nested_pipes(void **state);
-void    test_eval_heredoc_parallel_commands(void **state);
-void    test_eval_heredoc_error_in_pipe(void **state);
-void    test_eval_heredoc_partial_match_limiter(void **state);
-void    test_eval_heredoc_case_sensitive_limiter(void **state);
+void	test_eval_heredoc_special_chars_content(void **state);
+void	test_eval_heredoc_long_content(void **state);
+void	test_eval_heredoc_whitespace_lines(void **state);
+void	test_eval_heredoc_limiter_in_content(void **state);
+void	test_eval_heredoc_numeric_limiter(void **state);
+void	test_eval_heredoc_single_char_limiter(void **state);
+void	test_eval_heredoc_with_env_vars(void **state);
+void	test_eval_heredoc_empty_lines(void **state);
+void	test_eval_heredoc_tabs_content(void **state);
+void	test_eval_heredoc_unicode_content(void **state);
+void	test_eval_heredoc_triple_redirect(void **state);
+void	test_eval_heredoc_after_append(void **state);
+void	test_eval_heredoc_sed_substitute(void **state);
+void	test_eval_heredoc_awk_process(void **state);
+void	test_eval_heredoc_tee_redirect(void **state);
+void	test_eval_heredoc_nested_pipes(void **state);
+void	test_eval_heredoc_parallel_commands(void **state);
+void	test_eval_heredoc_error_in_pipe(void **state);
+void	test_eval_heredoc_partial_match_limiter(void **state);
+void	test_eval_heredoc_case_sensitive_limiter(void **state);
 
 int		teardown_free_heredoc_ast(void **state);
+
+// setup for logic eval
+int		setup_and_true_and_echo(void **state);
+int		setup_and_false_and_echo(void **state);
+int		setup_or_false_or_echo(void **state);
+int		setup_or_true_or_echo(void **state);
+int		setup_subshell_export(void **state);
+int		setup_subshell_echo(void **state);
+int		setup_subshell_exit_5(void **state);
+int		setup_subshell_cd(void **state);
+
+// tests for logic eval
+void	test_eval_and_runs_right_on_success(void **state);
+void	test_eval_and_skips_right_on_failure(void **state);
+void	test_eval_or_runs_right_on_failure(void **state);
+void	test_eval_or_skips_right_on_success(void **state);
+void	test_subshell_does_not_modify_parent_env(void **state);
+void	test_subshell_echo_outputs_and_exit_zero(void **state);
+void	test_subshell_exit_code_propagated(void **state);
+void	test_subshell_cd_does_not_change_parent_cwd(void **state);
+
+int		teardown_free_and_or_subshell(void **state);
 #endif

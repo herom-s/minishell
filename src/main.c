@@ -11,59 +11,15 @@
 /* ************************************************************************** */
 
 #include "eval.h"
-#include "lexer.h"
 #include "libft.h"
 #include "minishell.h"
-#include "parser.h"
 #include "minishell_signal.h"
-#include <unistd.h>
-#include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-int	create_lexer_parser(char *input, t_lexer **lexer, t_parser **parser)
-{
-	*lexer = create_lexer(input);
-	if (lexer == NULL)
-	{
-		ft_printf("Failed to create lexer\n");
-		return (-1);
-	}
-	*parser = create_parser(*lexer);
-	if (parser == NULL)
-	{
-		ft_printf("Failed to create parser\n");
-		free(*lexer);
-		return (-1);
-	}
-	return (0);
-}
-
-void	parse_input(char *input, t_shell_env *env)
-{
-	t_shell_response	*res;
-	t_lexer				*lexer;
-	t_parser			*parser;
-	t_ast				*ast;
-
-	res = NULL;
-	parser = NULL;
-	lexer = NULL;
-	if (create_lexer_parser(input, &lexer, &parser) < 0)
-		return ;
-	ast = init_ast(parser);
-	if (ast)
-	{
-		res = eval_ast(ast, env);
-		if (res)
-			free(res);
-		free_ast(ast);
-	}
-	free(parser);
-	ft_lstclear(&(lexer->tokens), &free_token);
-	free(lexer);
-}
+void	parse_input(char *input, t_shell_env *env);
 
 static int	get_input(t_minishell *shell)
 {
@@ -87,6 +43,18 @@ static int	get_input(t_minishell *shell)
 	return (0);
 }
 
+static void	process_shell_input(t_minishell *shell, t_shell_env *env)
+{
+	env->current_input = shell->input;
+	parse_input(shell->input, env);
+	if (shell->input)
+	{
+		free(shell->input);
+		shell->input = NULL;
+		env->current_input = NULL;
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	shell;
@@ -106,9 +74,9 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		if (status == -1)
 			break ;
-		parse_input(shell.input, env);
-		free(shell.input);
+		process_shell_input(&shell, env);
 	}
+	status = env->last_exit_code;
 	destroy_shell_env(env);
-	return (EXIT_SUCCESS);
+	return (status);
 }
