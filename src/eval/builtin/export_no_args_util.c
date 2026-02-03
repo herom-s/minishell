@@ -21,16 +21,18 @@ char	*build_env_line(char *key, char *value)
 
 	line = ft_strjoin("declare -x ", key);
 	tmp = line;
-	line = ft_strjoin(tmp, "=\"");
-	free(tmp);
-	tmp = line;
 	if (value)
+	{
+		line = ft_strjoin(tmp, "=\"");
+		free(tmp);
+		tmp = line;
 		line = ft_strjoin(tmp, value);
+		free(tmp);
+		tmp = line;
+		line = ft_strjoin(tmp, "\"\n");
+	}
 	else
-		line = ft_strjoin(tmp, "");
-	free(tmp);
-	tmp = line;
-	line = ft_strjoin(tmp, "\"\n");
+		line = ft_strjoin(tmp, "\n");
 	free(tmp);
 	return (line);
 }

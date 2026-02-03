@@ -66,7 +66,7 @@ void test_single_word(void **state)
 	assert_token(token, WORD, "echo");
 
 	token = get_next_token(lexer);
-	assert_token(token, END, NULL);
+	assert_token(token, NEWLINE, NULL);
 
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);
@@ -89,7 +89,7 @@ void test_multiple_words(void **state)
 	assert_token(token, WORD, "world");
 
 	token = get_next_token(lexer);
-	assert_token(token, END, NULL);
+	assert_token(token, NEWLINE, NULL);
 
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);
@@ -103,7 +103,7 @@ void test_empty_input(void **state)
 	assert_non_null(lexer);
 
 	t_token *token = get_next_token(lexer);
-	assert_token(token, END, NULL);
+	assert_token(token, NEWLINE, NULL);
 
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);
@@ -117,7 +117,7 @@ void test_whitespace_only(void **state)
 	assert_non_null(lexer);
 
 	t_token *token = get_next_token(lexer);
-	assert_token(token, END, NULL);
+	assert_token(token, NEWLINE, NULL);
 
 	ft_lstclear(&(lexer->tokens), &free_token);
 	free(lexer);

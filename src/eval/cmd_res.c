@@ -26,11 +26,6 @@ t_cmd_response	*create_cmd_res(void)
 
 void	*destroy_cmd_res(t_cmd_response *cmd_res)
 {
-	if (cmd_res->curr_dir)
-	{
-		free(cmd_res->curr_dir);
-		cmd_res->curr_dir = NULL;
-	}
 	free(cmd_res);
 	cmd_res = NULL;
 	return (cmd_res);

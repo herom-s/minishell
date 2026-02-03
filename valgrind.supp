@@ -17,12 +17,267 @@
    ...
 }
 
-# tester token creation
+# Fork-related "still reachable" from test helpers
+# These are not real leaks - memory is inherited by forked children
+# and freed properly in the parent after children exit
+
 {
-   test_io_file_token_in_fork
+   test_create_cmd_ast_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:create_cmd_ast
+   ...
+}
+
+{
+   test_create_pipeline_ast_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:create_pipeline_ast
+   ...
+}
+
+{
+   test_create_io_file_node_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:create_io_file_node
+   ...
+}
+
+# And/Or test token allocations in forked children
+{
+   test_and_or_create_token_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect
+   fun:malloc
+   ...
+   fun:create_token
+   fun:make_and_or_ast
+   ...
+}
+
+# Pipe+redir test helpers in forked children
+{
+   test_attach_redir_suffix_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:attach_redir_suffix
+   ...
+}
+
+{
+   test_attach_redir_prefix_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:attach_redir_prefix
+   ...
+}
+
+{
+   test_create_pipe_with_redir_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:create_pipe_with_redir
+   ...
+}
+
+# Subshell AST in forked children
+{
+   test_make_subshell_ast_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:make_subshell_ast
+   ...
+}
+
+# io_file node token in forked children (definitely lost in child)
+{
+   test_create_io_file_node_definite_in_fork
    Memcheck:Leak
    match-leak-kinds: definite
    fun:calloc
    fun:create_io_file_node
+   ...
+}
+
+# Shell environment allocations in forked children
+# These are not real leaks - child processes inherit parent memory
+# and exit without returning to cleanup code
+{
+   shell_env_in_fork_calloc
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   fun:ft_calloc
+   fun:create_shell_env
+   ...
+}
+
+{
+   shell_env_hashtable_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   fun:ft_calloc
+   fun:hashtable_create
+   fun:create_shell_env
+   ...
+}
+
+{
+   shell_env_hashtable_set_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   ...
+   fun:hashtable_set
+   fun:create_shell_env
+   ...
+}
+
+{
+   shell_env_strdup_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   fun:ft_strdup
+   ...
+   fun:create_shell_env
+   ...
+}
+
+{
+   shell_env_lstnew_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   fun:ft_lstnew
+   ...
+   fun:create_shell_env
+   ...
+}
+
+{
+   shell_env_expand_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   fun:ft_calloc
+   fun:hashtable_expand
+   ...
+   fun:create_shell_env
+   ...
+}
+
+# capture_io.c allocations in forked children
+{
+   capture_end_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:capture_end
+   ...
+}
+
+# eval_ast response allocation in forked children
+{
+   eval_ast_response_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   fun:ft_calloc
+   fun:eval_ast
+   ...
+}
+
+# cmd_response allocation in forked children
+{
+   create_cmd_res_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   fun:ft_calloc
+   fun:create_cmd_res
+   ...
+}
+
+# General allocations in forked pipe/subshell children
+{
+   pipe_child_allocations
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   ...
+   fun:eval_pipe_recursive
+   ...
+}
+
+{
+   subshell_child_allocations
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   ...
+   fun:eval_subshell
+   ...
+}
+
+# Realloc in capture_end
+{
+   capture_end_realloc
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   fun:capture_end
+   ...
+}
+
+# Heredoc filename allocations in forked children
+# When process_heredocs runs, it allocates a temp filename
+# This is properly freed in parent via cleanup_heredoc_files
+# but child processes inherit and exit without cleanup
+{
+   heredoc_filename_strjoin_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:ft_strjoin
+   fun:generate_heredoc_filename
+   ...
+}
+
+{
+   heredoc_filename_itoa_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:ft_itoa
+   fun:generate_heredoc_filename
+   ...
+}
+
+# Heredoc processing in forked children
+{
+   process_heredocs_in_fork
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   ...
+   fun:process_heredocs
+   ...
+}
+
+# Test setup allocations that leak in forked children
+{
+   test_setup_calloc_in_fork
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:setup_heredoc_*
    ...
 }

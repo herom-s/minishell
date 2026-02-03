@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "eval.h"
+#include "libft.h"
 #include <unistd.h>
 
 t_cmd_func_call	*check_cmd(t_ast *shell_ast, t_shell_env *env)
@@ -22,9 +22,11 @@ t_cmd_func_call	*check_cmd(t_ast *shell_ast, t_shell_env *env)
 	if (!call)
 		return (NULL);
 	call->env = env;
+	if (env)
+		env->current_call = call;
 	call->envp = env->envp;
 	call->cmd_str = get_cmd_str(shell_ast->u_ast.s_simple_cmd.cmd_name,
-			shell_ast->u_ast.s_simple_cmd.cmd_suffix, env->envp);
+			shell_ast->u_ast.s_simple_cmd.cmd_suffix, env);
 	call->cmd_func = get_cmd_func(shell_ast->u_ast.s_simple_cmd.cmd_name);
 	call->is_builtin = check_builtin(shell_ast->u_ast.s_simple_cmd.cmd_name);
 	return (call);

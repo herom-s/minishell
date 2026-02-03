@@ -13,11 +13,10 @@
 #include "lexer.h"
 #include "libft.h"
 
-void	set_operators(t_hash_item operator, char ch, t_token *token,
-		int idx)
+void	set_operators(t_hash_item operator, char ch, t_token *token, int idx)
 {
-	const t_hash_item	dup_operators[] = {{"||", OR_IF}, {"&&", AND_IF},
-	{"<<", DLESS}, {">>", DGREAT}};
+	const t_hash_item	dup_operators[] = {{"||", OR_IF}, {"&&", AND_IF}, {"<<",
+		DLESS}, {">>", DGREAT}};
 
 	if (ch == *(operator.key))
 	{
@@ -32,8 +31,8 @@ void	check_duplicate_operators(t_lexer *lexer, t_token *token)
 {
 	int					i;
 	int					size;
-	const t_hash_item	operators[] = {{"|", PIPE}, {"&", AMPERSAND},
-	{"<", LESS}, {">", GREAT}, {";", ILLEGAL}};
+	const t_hash_item	operators[] = {{"|", PIPE}, {"&", AMPERSAND}, {"<",
+		LESS}, {">", GREAT}, {";", ILLEGAL}};
 
 	i = 0;
 	size = sizeof(operators) / sizeof(t_hash_item);
@@ -53,8 +52,8 @@ void	check_operators(t_lexer *lexer, t_token *token)
 {
 	int					i;
 	int					size;
-	const t_hash_item	operators[] = {{"", END}, {"=", EQUAL},
-	{"(", LPAREN}, {")", RPAREN}};
+	const t_hash_item	operators[] = {{"", NEWLINE}, {"=", EQUAL}, {"(",
+		LPAREN}, {")", RPAREN}};
 
 	check_duplicate_operators(lexer, token);
 	if (token->literal == NULL)
@@ -67,6 +66,9 @@ void	check_operators(t_lexer *lexer, t_token *token)
 			{
 				*token = (t_token){operators[i].value, operators[i].key,
 					CHAR_SIZE};
+				if (operators[i].value == NEWLINE)
+					*token = (t_token){operators[i].value, "newline",
+						ft_strlen("newline")};
 			}
 			i++;
 		}

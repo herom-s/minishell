@@ -117,50 +117,84 @@ t_ast	*create_io_file_node(t_token_type type, char *filename)
 }
 
 /*
- *   helper: free a single io_file node completely
- */
 static void	free_io_file_node(t_ast *io_file)
 {
-	if (!io_file)
-		return ;
-	if (io_file->u_ast.s_io_file.op)
-		free_token(io_file->u_ast.s_io_file.op);
-	free(io_file);
+    if (!io_file)
+        return ;
+    if (io_file->u_ast.s_io_file.op)
+        free_token(io_file->u_ast.s_io_file.op);
+    free(io_file);
+}
+*/
+
+/*
+ *   helper: recursively clean fake tokens in AST before destruction
+ */
+static void	clean_fake_tokens_recursive(t_ast *ast)
+{
+    t_ast	*prefix;
+    t_ast	*suffix;
+
+    if (!ast)
+        return ;
+    if (ast->type == AST_PIPE_SEQ)
+    {
+        clean_fake_tokens_recursive(ast->u_ast.s_pipe_seq.left);
+        clean_fake_tokens_recursive(ast->u_ast.s_pipe_seq.right);
+    }
+    else if (ast->type == AST_SIMPLE_CMD)
+    {
+        prefix = ast->u_ast.s_simple_cmd.cmd_prefix;
+        while (prefix)
+        {
+            // We only free the 'op' token inside the io_file, 
+            // the node itself will be freed by free_ast later
+            if (prefix->u_ast.s_cmd_prefix.io_file)
+            {
+                t_ast *io = prefix->u_ast.s_cmd_prefix.io_file;
+                if (io->u_ast.s_io_file.op)
+                {
+                    free_token(io->u_ast.s_io_file.op);
+                    io->u_ast.s_io_file.op = NULL; // Prevent double free
+                }
+            }
+            prefix = prefix->u_ast.s_cmd_prefix.cmd_prefix;
+        }
+        suffix = ast->u_ast.s_simple_cmd.cmd_suffix;
+        while (suffix)
+        {
+            if (suffix->u_ast.s_cmd_suffix.io_file)
+            {
+                t_ast *io = suffix->u_ast.s_cmd_suffix.io_file;
+                if (io->u_ast.s_io_file.op)
+                {
+                    free_token(io->u_ast.s_io_file.op);
+                    io->u_ast.s_io_file.op = NULL;
+                }
+            }
+            suffix = suffix->u_ast.s_cmd_suffix.cmd_suffix;
+        }
+    }
 }
 
 /*
  *   teardown: free redir AST
+ *   Updated to handle recursive pipe structures and ensure tokens are freed
+ *   before delegating the rest to the standard free_ast.
  */
 int	teardown_free_redir_ast(void **state)
 {
-	t_ast	*ast;
-	t_ast	*prefix;
-	t_ast	*suffix;
-	t_ast	*next;
+    t_ast	*ast;
 
-	if (!state || !*state)
-		return (0);
-	ast = (t_ast *)(*state);
-	if (ast->type == AST_SIMPLE_CMD)
-	{
-		prefix = ast->u_ast.s_simple_cmd.cmd_prefix;
-		while (prefix)
-		{
-			next = prefix->u_ast.s_cmd_prefix.cmd_prefix;
-			free_io_file_node(prefix->u_ast.s_cmd_prefix.io_file);
-			free(prefix);
-			prefix = next;
-		}
-		suffix = ast->u_ast.s_simple_cmd.cmd_suffix;
-		while (suffix)
-		{
-			next = suffix->u_ast.s_cmd_suffix.cmd_suffix;
-			free_io_file_node(suffix->u_ast.s_cmd_suffix.io_file);
-			free(suffix);
-			suffix = next;
-		}
-	}
-	free(ast);
-	*state = NULL;
-	return (0);
+    if (!state || !*state)
+        return (0);
+    ast = (t_ast *)(*state);
+    
+    // First pass: clean up the manually allocated tokens that free_ast won't touch
+    clean_fake_tokens_recursive(ast);
+    
+    // Second pass: standard AST destruction
+    free_ast(ast);
+    *state = NULL;
+    return (0);
 }

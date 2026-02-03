@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ast.h"
 #include "eval.h"
 #include "libft.h"
 #include "minishell_signal.h"
@@ -43,5 +44,24 @@ int	write_heredoc_to_file(char *delimiter, char *filename)
 	close(fd);
 	if (g_sig == SIGINT)
 		return (-1);
+	return (0);
+}
+
+int	handle_heredoc_io(t_ast *io)
+{
+	char	*temp_file;
+
+	if (io && io->u_ast.s_io_file.op->type == DLESS)
+	{
+		temp_file = generate_heredoc_filename();
+		if (write_heredoc_to_file((char *)io->u_ast.s_io_file.filename,
+				temp_file) == -1)
+		{
+			free(temp_file);
+			return (-1);
+		}
+		io->u_ast.s_io_file.op->type = LESS;
+		io->u_ast.s_io_file.filename = temp_file;
+	}
 	return (0);
 }

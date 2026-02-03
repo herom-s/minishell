@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "ast.h"
-#include "parser.h"
 #include "libft.h"
+#include "parser.h"
 
 t_ast	*parse_and_or(t_parser *parser)
 {
@@ -26,8 +26,8 @@ t_ast	*parse_and_or(t_parser *parser)
 	{
 		node.u_ast.s_and_or.op = parser->cur_token;
 		next_token(parser);
-		if (cur_token_is(parser->cur_token, (1 << AND_IF) | (1 << OR_IF)
-				| (1 << PIPE) | (1 << AMPERSAND)))
+		if (cur_token_is(parser->cur_token,
+				(1 << AND_IF) | (1 << OR_IF) | (1 << PIPE) | (1 << AMPERSAND)))
 		{
 			parser_error(parser);
 			return (free_ast(node.u_ast.s_and_or.left));
@@ -52,8 +52,8 @@ t_ast	*parse_pipe_sequence(t_parser *parser)
 	while (cur_token_is(parser->cur_token, (1 << PIPE)))
 	{
 		next_token(parser);
-		if (cur_token_is(parser->cur_token, (1 << PIPE) | (1 << AND_IF)
-				| (1 << OR_IF) | (1 << END)))
+		if (cur_token_is(parser->cur_token,
+				(1 << PIPE) | (1 << AND_IF) | (1 << OR_IF) | (1 << NEWLINE)))
 		{
 			parser_error(parser);
 			return (free_ast(left));
@@ -68,6 +68,23 @@ t_ast	*parse_pipe_sequence(t_parser *parser)
 	return (left);
 }
 
+static t_ast	*build_simple_cmd(t_ast *prefix, char *name, t_ast *suffix)
+{
+	return (create_ast((t_ast){.type = AST_SIMPLE_CMD,
+			.u_ast.s_simple_cmd.cmd_prefix = prefix,
+			.u_ast.s_simple_cmd.cmd_name = name,
+			.u_ast.s_simple_cmd.cmd_suffix = suffix}));
+}
+
+static t_ast	*parse_prefix_only_cmd(t_parser *parser, t_ast *cmd_prefix)
+{
+	if (!cmd_prefix && !parser->has_error)
+		return (parser_error(parser));
+	if (!cmd_prefix)
+		return (NULL);
+	return (build_simple_cmd(cmd_prefix, NULL, NULL));
+}
+
 t_ast	*parse_simple_cmd(t_parser *parser)
 {
 	t_ast	*cmd_prefix;
@@ -80,51 +97,14 @@ t_ast	*parse_simple_cmd(t_parser *parser)
 		return (parse_subshell(parser));
 	}
 	cmd_prefix = parse_cmd_prefix(parser);
-	if (!cur_token_is(parser->cur_token, (1 << WORD)))
+	if (cur_token_is(parser->cur_token, (1 << NEWLINE)))
+		return (parse_prefix_only_cmd(parser, cmd_prefix));
+	if (!cur_token_is(parser->cur_token, (1 << WORD)) && !parser->has_error)
 		return (parser_error(parser));
 	cmd_name = parser->cur_token->literal;
 	next_token(parser);
 	cmd_suffix = parse_cmd_suffix(parser);
 	if (parser->has_error)
 		return (NULL);
-	return (create_ast((t_ast){.type = AST_SIMPLE_CMD,
-			.u_ast.s_simple_cmd.cmd_prefix = cmd_prefix,
-			.u_ast.s_simple_cmd.cmd_name = cmd_name,
-			.u_ast.s_simple_cmd.cmd_suffix = cmd_suffix}));
-}
-
-t_ast	*parse_cmd_prefix(t_parser *parser)
-{
-	t_ast	*io_file;
-	t_ast	*cmd_prefix;
-
-	io_file = parse_io_redirect(parser);
-	if (!io_file)
-		return (NULL);
-	cmd_prefix = parse_cmd_prefix(parser);
-	return (create_ast((t_ast){.type = AST_CMD_PREFIX,
-			.u_ast.s_cmd_prefix.io_file = io_file,
-			.u_ast.s_cmd_prefix.cmd_prefix = cmd_prefix}));
-}
-
-t_ast	*parse_cmd_suffix(t_parser *parser)
-{
-	t_ast		node;
-
-	node.type = AST_CMD_SUFFIX;
-	node.u_ast.s_cmd_suffix.io_file = parse_io_redirect(parser);
-	if (node.u_ast.s_cmd_suffix.io_file)
-	{
-		node.u_ast.s_cmd_suffix.cmd_suffix = parse_cmd_suffix(parser);
-		node.u_ast.s_cmd_suffix.word = NULL;
-		return (create_ast(node));
-	}
-	if (!cur_token_is(parser->cur_token, (1 << WORD)))
-		return (NULL);
-	node.u_ast.s_cmd_suffix.word = parser->cur_token->literal;
-	next_token(parser);
-	node.u_ast.s_cmd_suffix.cmd_suffix = parse_cmd_suffix(parser);
-	if (parser->has_error)
-		return (NULL);
-	return (create_ast(node));
+	return (build_simple_cmd(cmd_prefix, cmd_name, cmd_suffix));
 }

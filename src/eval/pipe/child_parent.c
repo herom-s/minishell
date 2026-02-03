@@ -10,10 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ast.h"
 #include "eval.h"
+#include <readline/readline.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <string.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 void	save_original_std_fds(t_shell_env *env)
 {
@@ -40,16 +44,17 @@ void	restore_original_std_fds(t_shell_env *env)
 void	child_exit(t_shell_env *env, t_ast *local_ast, int code)
 {
 	if (env && env->root_node)
-		free_ast(env->root_node);
-	else if (local_ast)
-		free_ast(local_ast);
-	if (env)
 	{
-		close(env->og_stdout_fd);
-		close(env->og_stdin_fd);
 		destroy_shell_env(env);
 	}
-	exit(code);
+	else
+	{
+		if (local_ast)
+			free_ast(local_ast);
+		if (env)
+			destroy_shell_env(env);
+	}
+	exit((unsigned char)code);
 }
 
 t_cmd_response	*handle_parent(pid_t pid)

@@ -15,6 +15,22 @@
 #include "libft.h"
 #include <unistd.h>
 
+static t_cmd_response	*init_env_res(char **output)
+{
+	t_cmd_response	*res;
+
+	*output = ft_strdup("");
+	if (!*output)
+		return (NULL);
+	res = ft_calloc(1, sizeof(t_cmd_response));
+	if (!res)
+	{
+		free(*output);
+		return (NULL);
+	}
+	return (res);
+}
+
 t_cmd_response	*func_built_in_env(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env)
 {
@@ -24,19 +40,14 @@ t_cmd_response	*func_built_in_env(t_ast *shell_ast, char **cmd_str,
 
 	(void)shell_ast;
 	(void)cmd_str;
-	output = ft_strdup("");
-	if (!output)
-		return (NULL);
-	res = ft_calloc(1, sizeof(t_cmd_response));
+	res = init_env_res(&output);
 	if (!res)
-	{
-		free(output);
 		return (NULL);
-	}
 	node = env->order;
 	while (node)
 	{
-		append_env_plain_line(&output, (char *)node->content, env);
+		if (hashtable_get(env->vars, (char *)node->content))
+			append_env_plain_line(&output, (char *)node->content, env);
 		node = node->next;
 	}
 	ft_dprintf(STDOUT_FILENO, "%s", output);

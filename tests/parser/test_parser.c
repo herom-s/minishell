@@ -31,7 +31,7 @@ typedef struct s_parse_result
 	t_lexer		*lexer;
 }	t_parse_result;
 
-t_parse_result *parse_input(const char *input)
+static t_parse_result	*test_parse_input(const char *input)
 {
 	t_parse_result *result = malloc(sizeof(t_parse_result));
 
@@ -77,7 +77,7 @@ void test_parser_simple_command_single_word(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo");
+	t_parse_result *result = test_parse_input("echo");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -95,7 +95,7 @@ void test_parser_simple_command_with_args(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello world");
+	t_parse_result *result = test_parse_input("echo hello world");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -117,7 +117,7 @@ void test_parser_simple_command_with_path(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("/bin/ls -la");
+	t_parse_result *result = test_parse_input("/bin/ls -la");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -133,7 +133,7 @@ void test_parser_command_multiple_args(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("ls -l -a -h");
+	t_parse_result *result = test_parse_input("ls -l -a -h");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -153,7 +153,7 @@ void test_parser_simple_pipe(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello | grep hello");
+	t_parse_result *result = test_parse_input("echo hello | grep hello");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -175,7 +175,7 @@ void test_parser_multiple_pipes(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("cat file.txt | grep test | wc -l");
+	t_parse_result *result = test_parse_input("cat file.txt | grep test | wc -l");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -200,7 +200,7 @@ void test_parser_output_redirect(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello > output.txt");
+	t_parse_result *result = test_parse_input("echo hello > output.txt");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -229,7 +229,7 @@ void test_parser_input_redirect(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("cat < input.txt");
+	t_parse_result *result = test_parse_input("cat < input.txt");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -255,7 +255,7 @@ void test_parser_append_redirect(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo test >> output.txt");
+	t_parse_result *result = test_parse_input("echo test >> output.txt");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -284,7 +284,7 @@ void test_parser_heredoc(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("cat << EOF");
+	t_parse_result *result = test_parse_input("cat << EOF");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -307,7 +307,7 @@ void test_parser_multiple_redirects(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("cat < input.txt > output.txt");
+	t_parse_result *result = test_parse_input("cat < input.txt > output.txt");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -339,7 +339,7 @@ void test_parser_and_operator(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello && echo world");
+	t_parse_result *result = test_parse_input("echo hello && echo world");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -361,7 +361,7 @@ void test_parser_or_operator(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello || echo world");
+	t_parse_result *result = test_parse_input("echo hello || echo world");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -380,7 +380,7 @@ void test_parser_mixed_logical_operators(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo a && echo b || echo c");
+	t_parse_result *result = test_parse_input("echo a && echo b || echo c");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -397,7 +397,7 @@ void test_parser_precedence_and_vs_pipe(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo a | grep a && echo b");
+	t_parse_result *result = test_parse_input("echo a | grep a && echo b");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -421,7 +421,7 @@ void test_parser_simple_subshell(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("(echo hello)");
+	t_parse_result *result = test_parse_input("(echo hello)");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -438,7 +438,7 @@ void test_parser_subshell_with_pipe(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("(echo hello | grep h)");
+	t_parse_result *result = test_parse_input("(echo hello | grep h)");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -454,7 +454,7 @@ void test_parser_nested_subshells(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("((echo hello))");
+	t_parse_result *result = test_parse_input("((echo hello))");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -474,7 +474,7 @@ void test_parser_subshell_with_logical_ops(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("(echo a && echo b)");
+	t_parse_result *result = test_parse_input("(echo a && echo b)");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -494,7 +494,7 @@ void test_parser_pipe_with_redirects(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("cat < input.txt | grep test > output.txt");
+	t_parse_result *result = test_parse_input("cat < input.txt | grep test > output.txt");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -512,7 +512,7 @@ void test_parser_logical_with_pipes(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo a | grep a && echo b | grep b");
+	t_parse_result *result = test_parse_input("echo a | grep a && echo b | grep b");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -530,7 +530,7 @@ void test_parser_subshell_in_pipeline(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("(echo hello) | grep h");
+	t_parse_result *result = test_parse_input("(echo hello) | grep h");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -548,7 +548,7 @@ void test_parser_subshell_and_logical(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("(echo a) && (echo b)");
+	t_parse_result *result = test_parse_input("(echo a) && (echo b)");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -570,7 +570,7 @@ void test_parser_empty_input(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("");
+	t_parse_result *result = test_parse_input("");
 	assert_non_null(result);
 
 	free_parse_result(result);
@@ -580,7 +580,7 @@ void test_parser_only_pipe(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("|");
+	t_parse_result *result = test_parse_input("|");
 	assert_non_null(result);
 	assert_int_equal(result->parser->has_error, 1);
 
@@ -591,7 +591,7 @@ void test_parser_pipe_without_right_side(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello |");
+	t_parse_result *result = test_parse_input("echo hello |");
 	assert_non_null(result);
 	assert_int_equal(result->parser->has_error, 1);
 
@@ -602,7 +602,7 @@ void test_parser_redirect_without_filename(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello >");
+	t_parse_result *result = test_parse_input("echo hello >");
 	assert_non_null(result);
 	assert_int_equal(result->parser->has_error, 1);
 
@@ -613,7 +613,7 @@ void test_parser_unclosed_subshell(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("(echo hello");
+	t_parse_result *result = test_parse_input("(echo hello");
 	assert_non_null(result);
 	assert_int_equal(result->parser->has_error, 1);
 
@@ -624,7 +624,7 @@ void test_parser_unopened_subshell(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello)");
+	t_parse_result *result = test_parse_input("echo hello)");
 	assert_non_null(result);
 	assert_int_equal(result->parser->has_error, 1);
 
@@ -635,7 +635,7 @@ void test_parser_double_pipe(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo | | cat");
+	t_parse_result *result = test_parse_input("echo | | cat");
 	assert_non_null(result);
 	assert_int_equal(result->parser->has_error, 1);
 
@@ -646,7 +646,7 @@ void test_parser_double_redirect(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo > > file");
+	t_parse_result *result = test_parse_input("echo > > file");
 	assert_null(result->ast);
 	assert_int_equal(result->parser->has_error, 1);
 
@@ -661,7 +661,7 @@ void test_parser_command_with_quoted_args(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo 'hello world'");
+	t_parse_result *result = test_parse_input("echo 'hello world'");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -677,7 +677,7 @@ void test_parser_redirect_with_quoted_filename(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo hello > \"output file.txt\"");
+	t_parse_result *result = test_parse_input("echo hello > \"output file.txt\"");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);
@@ -691,7 +691,7 @@ void test_parser_mixed_quotes(void **state)
 {
 	(void)state;
 
-	t_parse_result *result = parse_input("echo \"hello 'world'\"");
+	t_parse_result *result = test_parse_input("echo \"hello 'world'\"");
 	assert_non_null(result);
 	assert_non_null(result->ast);
 	assert_int_equal(result->parser->has_error, 0);

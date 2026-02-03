@@ -15,72 +15,58 @@
 #include "libft.h"
 #include <unistd.h>
 
-static char	*append_word(char *output, const char *word)
+static int	is_newline_flag(char *arg)
 {
-	char	*tmp;
-	char	*result;
+	int	i;
 
-	if (!output)
+	if (!arg || arg[0] != '-' || !arg[1])
+		return (0);
+	i = 1;
+	while (arg[i])
 	{
-		if (!word)
-			return (ft_strdup(""));
-		return (ft_strdup(word));
+		if (arg[i] != 'n')
+			return (0);
+		i++;
 	}
-	tmp = ft_strjoin(output, " ");
-	free(output);
-	result = ft_strjoin(tmp, word);
-	free(tmp);
-	return (result);
+	return (1);
 }
 
-static char	*build_output(t_ast *node, int *newline_flag)
+static void	print_echo_args(char **cmd_str, int start_idx, int newline)
 {
-	char	*output;
+	int	i;
 
-	output = NULL;
-	while (node)
+	i = start_idx;
+	while (cmd_str[i])
 	{
-		if (node->u_ast.s_cmd_suffix.word)
-		{
-			if (ft_strcmp(node->u_ast.s_cmd_suffix.word, "-n") == 0)
-				*newline_flag = 0;
-			else
-				output = append_word(output, node->u_ast.s_cmd_suffix.word);
-		}
-		node = node->u_ast.s_cmd_suffix.cmd_suffix;
+		ft_dprintf(STDOUT_FILENO, "%s", cmd_str[i]);
+		if (cmd_str[i + 1])
+			ft_dprintf(STDOUT_FILENO, " ");
+		i++;
 	}
-	if (!output)
-		return (ft_strdup(""));
-	return (output);
+	if (newline)
+		ft_dprintf(STDOUT_FILENO, "\n");
 }
 
-//TODO: fix echo adding support for multiple -n and -nnnnn..
 t_cmd_response	*func_built_in_echo(t_ast *shell_ast, char **cmd_str,
 		t_shell_env *env)
 {
 	t_cmd_response	*res;
-	char			*output;
-	char			*tmp;
-	int				newline_flag;
+	int				i;
+	int				newline;
 
-	(void)cmd_str;
+	(void)shell_ast;
 	(void)env;
-	if (!shell_ast)
-		return (NULL);
 	res = ft_calloc(1, sizeof(t_cmd_response));
 	if (!res)
 		return (NULL);
-	newline_flag = 1;
-	output = build_output(shell_ast->u_ast.s_simple_cmd.cmd_suffix,
-			&newline_flag);
-	if (newline_flag)
+	i = 1;
+	newline = 1;
+	while (cmd_str[i] && is_newline_flag(cmd_str[i]))
 	{
-		tmp = ft_strjoin(output, "\n");
-		free(output);
-		output = tmp;
+		newline = 0;
+		i++;
 	}
+	print_echo_args(cmd_str, i, newline);
 	res->exit_code = 0;
-	ft_dprintf(STDOUT_FILENO, "%s", output);
-	free(output);
 	return (res);
 }

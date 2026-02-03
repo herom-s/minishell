@@ -96,11 +96,11 @@ void	attach_redir_to_cmd(t_ast *cmd, t_ast *redir)
  */
 static void	free_io_file(t_ast *io_file)
 {
-	if (!io_file)
-		return ;
-	if (io_file->u_ast.s_io_file.op)
-		free_token(io_file->u_ast.s_io_file.op);
-	free(io_file);
+    if (!io_file)
+        return ;
+    if (io_file->u_ast.s_io_file.op)
+        free_token(io_file->u_ast.s_io_file.op);
+    free(io_file);
 }
 
 /*
@@ -108,38 +108,42 @@ static void	free_io_file(t_ast *io_file)
  */
 void	free_pipe_redir_ast_recursive(t_ast *ast)
 {
-	t_ast	*node;
-	t_ast	*next;
+    t_ast	*node;
+    t_ast	*next;
 
-	if (!ast)
-		return ;
-	if (ast->type == AST_PIPE_SEQ)
-	{
-		free_pipe_redir_ast_recursive(ast->u_ast.s_pipe_seq.left);
-		free_pipe_redir_ast_recursive(ast->u_ast.s_pipe_seq.right);
-		free(ast);
-		return ;
-	}
-	if (ast->type == AST_SIMPLE_CMD)
-	{
-		node = ast->u_ast.s_simple_cmd.cmd_prefix;
-		while (node)
-		{
-			next = node->u_ast.s_cmd_prefix.cmd_prefix;
-			free_io_file(node->u_ast.s_cmd_prefix.io_file);
-			free(node);
-			node = next;
-		}
-		node = ast->u_ast.s_simple_cmd.cmd_suffix;
-		while (node)
-		{
-			next = node->u_ast.s_cmd_suffix.cmd_suffix;
-			free_io_file(node->u_ast.s_cmd_suffix.io_file);
-			free(node);
-			node = next;
-		}
-	}
-	free(ast);
+    if (!ast)
+        return ;
+    if (ast->type == AST_PIPE_SEQ)
+    {
+        free_pipe_redir_ast_recursive(ast->u_ast.s_pipe_seq.left);
+        free_pipe_redir_ast_recursive(ast->u_ast.s_pipe_seq.right);
+        free(ast);
+        return ;
+    }
+    if (ast->type == AST_SIMPLE_CMD)
+    {
+        node = ast->u_ast.s_simple_cmd.cmd_prefix;
+        while (node)
+        {
+            next = node->u_ast.s_cmd_prefix.cmd_prefix;
+            free_io_file(node->u_ast.s_cmd_prefix.io_file);
+            free(node);
+            node = next;
+        }
+        ast->u_ast.s_simple_cmd.cmd_prefix = NULL;
+        node = ast->u_ast.s_simple_cmd.cmd_suffix;
+        while (node)
+        {
+            next = node->u_ast.s_cmd_suffix.cmd_suffix;
+            free_io_file(node->u_ast.s_cmd_suffix.io_file);
+            free(node);
+            node = next;
+        }
+        ast->u_ast.s_simple_cmd.cmd_suffix = NULL;
+        free_ast(ast);
+    }
+    else
+        free_ast(ast);
 }
 
 /*
@@ -147,9 +151,13 @@ void	free_pipe_redir_ast_recursive(t_ast *ast)
  */
 int	teardown_free_pipe_redir_ast(void **state)
 {
-	if (!state || !*state)
-		return (0);
-	free_pipe_redir_ast_recursive((t_ast *)(*state));
-	*state = NULL;
-	return (0);
+    t_ast	*ast;
+
+    if (state && *state)
+    {
+        ast = (t_ast *)*state;
+        free_pipe_redir_ast_recursive(ast);
+        *state = NULL;
+    }
+    return (0);
 }
