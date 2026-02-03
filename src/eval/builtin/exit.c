@@ -74,8 +74,8 @@ static void	exit_no_args(t_ast *ast, t_shell_env *env, t_cmd_response *res)
 static void	exit_invalid_arg(t_ast *ast, char **cmd, t_shell_env *env,
 					t_cmd_response *res)
 {
-	ft_dprintf(STDERR_FILENO, "minishell: exit: %s: numeric argument required\n",
-		cmd[1]);
+	ft_dprintf(STDERR_FILENO,
+		"minishell: exit: %s: numeric argument required\n", cmd[1]);
 	destroy_cmd_res(res);
 	child_exit(env, ast, 2);
 }
