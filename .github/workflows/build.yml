@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           submodules: recursive
+          persist-credentials: true
       - name: Install libreadline-dev
         run: sudo apt-get update && sudo apt-get install -y libreadline-dev
       - name: make
