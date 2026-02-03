@@ -28,7 +28,7 @@ typedef enum s_token_type
 	LPAREN,
 	RPAREN,
 	EQUAL,
-	END,
+	NEWLINE,
 	ILLEGAL,
 }	t_token_type;
 
