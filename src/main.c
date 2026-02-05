@@ -19,8 +19,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	parse_input(char *input, t_shell_env *env);
-
 static int	get_input(t_minishell *shell, t_shell_env *env)
 {
 	if (isatty(STDIN_FILENO))
