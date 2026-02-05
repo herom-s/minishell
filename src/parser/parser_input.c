@@ -100,5 +100,7 @@ void	parse_input(char *input, t_shell_env *env)
 		free_ast(ast);
 		env->root_node = NULL;
 	}
+	else if (env->parser->has_error)
+		env->last_exit_code = 2;
 	cleanup_lexer_parser(env);
 }
