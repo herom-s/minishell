@@ -15,6 +15,7 @@
 
 # include <signal.h>
 # include <sys/types.h>
+# include <termios.h>
 
 extern volatile sig_atomic_t	g_sig;
 
@@ -22,6 +23,7 @@ int								setup_nonfork_signal(void);
 int								setup_fork_signal(pid_t pid);
 int								check_signal(void);
 void							print_signal_msg(int sig);
-void							save_terminal_settings(void);
-void							restore_terminal_settings(void);
+int								save_terminal_settings(struct termios *saved);
+void							restore_terminal_settings(struct termios *saved,
+									int was_saved);
 #endif

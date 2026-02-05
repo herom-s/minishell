@@ -64,8 +64,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	ft_memset(&shell, 0, sizeof(t_minishell));
 	setup_nonfork_signal();
-	save_terminal_settings();
 	env = create_shell_env(envp);
+	env->termios_saved = save_terminal_settings(&env->saved_termios);
 	while (1)
 	{
 		g_sig = 0;

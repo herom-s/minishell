@@ -18,6 +18,7 @@
 # include "lexer.h"
 # include "parser.h"
 # include <stdlib.h>
+# include <termios.h>
 
 # define INPUT_END 0
 # define OUTPUT_END 1
@@ -64,6 +65,8 @@ typedef struct s_shell_env
 	t_lexer						*lexer;
 	t_parser					*parser;
 	t_ast						*root_node;
+	struct termios				saved_termios;
+	int							termios_saved;
 }								t_shell_env;
 
 typedef t_cmd_response			*(*t_cmd_func)(t_ast *shell_ast, char **cmd_str,

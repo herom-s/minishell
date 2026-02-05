@@ -57,6 +57,7 @@ t_cmd_response	*eval_external_cmd(t_ast *shell_ast, t_cmd_func_call *call)
 	setup_fork_signal(cmd_pid);
 	res = handle_parent(cmd_pid);
 	setup_nonfork_signal();
-	restore_terminal_settings();
+	restore_terminal_settings(&call->env->saved_termios,
+		call->env->termios_saved);
 	return (res);
 }

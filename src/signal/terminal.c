@@ -14,16 +14,16 @@
 #include <termios.h>
 #include <unistd.h>
 
-static struct termios	g_termios;
-
-void	save_terminal_settings(void)
+int	save_terminal_settings(struct termios *saved)
 {
-	if (isatty(STDIN_FILENO))
-		tcgetattr(STDIN_FILENO, &g_termios);
+	if (saved && isatty(STDIN_FILENO)
+		&& tcgetattr(STDIN_FILENO, saved) == 0)
+		return (1);
+	return (0);
 }
 
-void	restore_terminal_settings(void)
+void	restore_terminal_settings(struct termios *saved, int was_saved)
 {
-	if (isatty(STDIN_FILENO))
-		tcsetattr(STDIN_FILENO, TCSANOW, &g_termios);
+	if (was_saved && saved && isatty(STDIN_FILENO))
+		tcsetattr(STDIN_FILENO, TCSANOW, saved);
 }
