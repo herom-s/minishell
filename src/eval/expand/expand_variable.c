@@ -14,13 +14,6 @@
 #include "hashtable.h"
 #include "libft.h"
 
-int	is_valid_var_char(char c, int is_first)
-{
-	if (is_first)
-		return (ft_isalpha(c) || c == '_');
-	return (ft_isalnum(c) || c == '_');
-}
-
 char	*get_var_value(const char *name, t_expand_ctx *ctx)
 {
 	char	*value;
@@ -33,26 +26,6 @@ char	*get_var_value(const char *name, t_expand_ctx *ctx)
 	return (ft_strdup(""));
 }
 
-char	*expand_exit_status(t_expand_ctx *ctx)
-{
-	if (!ctx)
-		return (ft_strdup("0"));
-	return (ft_itoa(ctx->last_exit_code));
-}
-
-char	*expand_shell_pid(t_expand_ctx *ctx)
-{
-	if (!ctx)
-		return (ft_strdup("0"));
-	return (ft_itoa(ctx->shell_pid));
-}
-
-char	*expand_shell_name(t_expand_ctx *ctx)
-{
-	(void)ctx;
-	return (ft_strdup("minishell"));
-}
-
 char	*expand_var_name(const char *str, int *len, t_expand_ctx *ctx)
 {
 	char	*name;
@@ -62,20 +35,11 @@ char	*expand_var_name(const char *str, int *len, t_expand_ctx *ctx)
 	*len = 0;
 	if (!str || !*str)
 		return (ft_strdup("$"));
-	if (*str == '?')
+	value = handle_special_var(*str, ctx);
+	if (value)
 	{
 		*len = 1;
-		return (expand_exit_status(ctx));
-	}
-	if (*str == '$')
-	{
-		*len = 1;
-		return (expand_shell_pid(ctx));
-	}
-	if (*str == '0')
-	{
-		*len = 1;
-		return (expand_shell_name(ctx));
+		return (value);
 	}
 	if (!is_valid_var_char(*str, 1))
 		return (ft_strdup("$"));
@@ -90,26 +54,31 @@ char	*expand_var_name(const char *str, int *len, t_expand_ctx *ctx)
 }
 
 static char	*handle_dollar_expansion(const char *str, int *i,
-	t_expand_ctx *ctx, t_quote_state q_state)
+	t_expand_ctx *ctx)
 {
 	int		var_len;
 	char	*expanded;
 
-	if (q_state == QUOTE_SINGLE)
-	{
-		(*i)++;
-		return (ft_strdup("$"));
-	}
 	(*i)++;
 	expanded = expand_var_name(str + *i, &var_len, ctx);
 	*i += var_len;
 	return (expanded);
 }
 
+static char	*append_expanded_var(char *result, const char *str, int *i,
+	t_expand_ctx *ctx)
+{
+	char	*expanded;
+
+	expanded = handle_dollar_expansion(str, i, ctx);
+	result = ft_strjoin_free(result, expanded);
+	free(expanded);
+	return (result);
+}
+
 char	*expand_variables(const char *str, t_expand_ctx *ctx)
 {
 	char			*result;
-	char			*expanded;
 	t_quote_state	q_state;
 	int				i;
 
@@ -122,11 +91,7 @@ char	*expand_variables(const char *str, t_expand_ctx *ctx)
 	{
 		q_state = update_quote_state(str[i], q_state);
 		if (str[i] == '$' && str[i + 1] && q_state != QUOTE_SINGLE)
-		{
-			expanded = handle_dollar_expansion(str, &i, ctx, q_state);
-			result = ft_strjoin_free(result, expanded);
-			free(expanded);
-		}
+			result = append_expanded_var(result, str, &i, ctx);
 		else
 		{
 			result = ft_charjoin(result, str[i]);

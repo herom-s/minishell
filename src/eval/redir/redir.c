@@ -22,75 +22,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-static int	get_fd_for_op(const char *filename, t_token_type op)
+static int	setup_redir_dup(int fd, t_token_type op)
 {
-	if (op == GREAT)
-		return (open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644));
+	int	target;
+
 	if (op == LESS)
-		return (open(filename, O_RDONLY));
-	if (op == DGREAT)
-		return (open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644));
-	return (-1);
-}
-
-static char	*expand_redir_target(const char *file, t_shell_env *env)
-{
-	t_expand_ctx	*ctx;
-	char			*var_expanded;
-	char			*expanded;
-	char			**matches;
-
-	ctx = create_expand_ctx(env);
-	var_expanded = expand_variables(file, ctx);
-	destroy_expand_ctx(ctx);
-	if (!var_expanded)
-		return (NULL);
-	if (has_wildcard(var_expanded))
-	{
-		expanded = remove_quotes(var_expanded);
-		free(var_expanded);
-		matches = expand_wildcards(expanded);
-		free(expanded);
-		if (!matches || !matches[0] || matches[1])
-		{
-			ft_dprintf(STDERR_FILENO, "minishell: ambiguous redirect\n");
-			if (matches)
-			{
-				while (*matches)
-					free(*matches++);
-			}
-			return (NULL);
-		}
-		expanded = ft_strdup(matches[0]);
-		free(matches[0]);
-		free(matches);
-		return (expanded);
-	}
-	expanded = remove_quotes(var_expanded);
-	free(var_expanded);
-	return (expanded);
-}
-
-static int	handle_file_redir(t_ast *io, t_shell_env *env)
-{
-	int				fd;
-	int				target;
-	char			*file;
-	char			*expanded;
-
-	file = (char *)io->u_ast.s_io_file.filename;
-	expanded = expand_redir_target(file, env);
-	if (!expanded)
-		return (-1);
-	fd = get_fd_for_op(expanded, io->u_ast.s_io_file.op->type);
-	if (fd < 0)
-	{
-		ft_dprintf(STDERR_FILENO, "%s: %s\n", expanded, strerror(errno));
-		free(expanded);
-		return (-1);
-	}
-	free(expanded);
-	if (io->u_ast.s_io_file.op->type == LESS)
 		target = STDIN_FILENO;
 	else
 		target = STDOUT_FILENO;
@@ -103,11 +39,23 @@ static int	handle_file_redir(t_ast *io, t_shell_env *env)
 	return (0);
 }
 
-static int	process_io_file(t_ast *io_file, t_shell_env *env)
+static int	handle_file_redir(t_ast *io, t_shell_env *env)
 {
-	if (!io_file)
+	int				fd;
+	char			*expanded;
+
+	expanded = expand_redir_target(io->u_ast.s_io_file.filename, env);
+	if (!expanded)
 		return (-1);
-	return (handle_file_redir(io_file, env));
+	fd = get_fd_for_op(expanded, io->u_ast.s_io_file.op->type);
+	if (fd < 0)
+	{
+		ft_dprintf(STDERR_FILENO, "%s: %s\n", expanded, strerror(errno));
+		free(expanded);
+		return (-1);
+	}
+	free(expanded);
+	return (setup_redir_dup(fd, io->u_ast.s_io_file.op->type));
 }
 
 static int	process_list(t_ast *node, int is_suffix, t_shell_env *env)
@@ -122,7 +70,7 @@ static int	process_list(t_ast *node, int is_suffix, t_shell_env *env)
 			io = node->u_ast.s_cmd_prefix.io_file;
 		if (io)
 		{
-			if (process_io_file(io, env) < 0)
+			if (handle_file_redir(io, env) < 0)
 				return (-1);
 		}
 		if (is_suffix)

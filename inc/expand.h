@@ -48,6 +48,7 @@ char					*expand_var_name(const char *str, int *len,
 char					*get_var_value(const char *name, t_expand_ctx *ctx);
 int						is_valid_var_char(char c, int is_first);
 
+char					*handle_special_var(char c, t_expand_ctx *ctx);
 char					*expand_exit_status(t_expand_ctx *ctx);
 char					*expand_shell_pid(t_expand_ctx *ctx);
 char					*expand_shell_name(t_expand_ctx *ctx);
@@ -70,10 +71,22 @@ void					sort_matches(char **matches, int count);
 t_match_list			*add_match(t_match_list *list, const char *match);
 char					*extract_directory(const char *pattern);
 char					*extract_pattern(const char *pattern);
+int						should_include_file(const char *filename,
+							const char *pattern);
+char					*build_full_path(const char *dir, const char *filename);
 
 t_expand_ctx			*create_expand_ctx(t_shell_env *env);
 void					destroy_expand_ctx(t_expand_ctx *ctx);
 char					*ft_strjoin_free(char *s1, char *s2);
 char					*ft_charjoin(char *s, char c);
+
+int						count_args(char **args);
+void					free_str_array(char **arr);
+int						add_expanded_args(char **result, int pos,
+							char **expanded);
+int						expand_and_add_wildcards(char **result, int pos,
+							char *expanded, int do_wildcard);
+int						should_skip_empty(const char *original,
+							const char *expanded);
 
 #endif

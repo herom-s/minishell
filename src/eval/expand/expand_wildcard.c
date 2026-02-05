@@ -62,98 +62,52 @@ int	match_pattern(const char *pattern, const char *str)
 	return (!*pattern && !*str);
 }
 
-void	free_match_list(t_match_list *list)
+t_match_list	*get_matching_files(const char *dir, const char *pattern)
 {
-	t_match_list	*tmp;
+	DIR				*dp;
+	struct dirent	*entry;
+	t_match_list	*matches;
+	char			*full_path;
 
-	while (list)
+	if (!dir || !pattern)
+		return (NULL);
+	dp = opendir(dir);
+	if (!dp)
+		return (NULL);
+	matches = NULL;
+	entry = readdir(dp);
+	while (entry)
 	{
-		tmp = list;
-		list = list->next;
-		if (tmp->match)
-			free(tmp->match);
-		free(tmp);
-	}
-}
-
-t_match_list	*add_match(t_match_list *list, const char *match)
-{
-	t_match_list	*new;
-	t_match_list	*curr;
-
-	new = ft_calloc(1, sizeof(t_match_list));
-	if (!new)
-		return (list);
-	new->match = ft_strdup(match);
-	new->next = NULL;
-	if (!list)
-		return (new);
-	curr = list;
-	while (curr->next)
-		curr = curr->next;
-	curr->next = new;
-	return (list);
-}
-
-int	count_matches(t_match_list *list)
-{
-	int	count;
-
-	count = 0;
-	while (list)
-	{
-		count++;
-		list = list->next;
-	}
-	return (count);
-}
-
-void	sort_matches(char **matches, int count)
-{
-	char	*tmp;
-	int		i;
-	int		j;
-
-	i = 0;
-	while (i < count - 1)
-	{
-		j = 0;
-		while (j < count - i - 1)
+		if (should_include_file(entry->d_name, pattern)
+			&& match_pattern(pattern, entry->d_name))
 		{
-			if (ft_strcmp(matches[j], matches[j + 1]) > 0)
-			{
-				tmp = matches[j];
-				matches[j] = matches[j + 1];
-				matches[j + 1] = tmp;
-			}
-			j++;
+			full_path = build_full_path(dir, entry->d_name);
+			matches = add_match(matches, full_path);
+			free(full_path);
 		}
-		i++;
+		entry = readdir(dp);
 	}
+	closedir(dp);
+	return (matches);
 }
 
-char	**match_list_to_array(t_match_list *list)
+char	**expand_wildcards(const char *pattern)
 {
+	char			*dir;
+	char			*file_pattern;
+	t_match_list	*matches;
 	char			**result;
-	int				count;
-	int				i;
-	t_match_list	*curr;
 
-	count = count_matches(list);
-	if (count == 0)
+	if (!pattern || !has_wildcard(pattern))
 		return (NULL);
-	result = ft_calloc(count + 1, sizeof(char *));
-	if (!result)
+	dir = extract_directory(pattern);
+	file_pattern = extract_pattern(pattern);
+	matches = get_matching_files(dir, file_pattern);
+	free(dir);
+	free(file_pattern);
+	if (!matches)
 		return (NULL);
-	curr = list;
-	i = 0;
-	while (curr)
-	{
-		result[i] = ft_strdup(curr->match);
-		curr = curr->next;
-		i++;
-	}
-	result[i] = NULL;
-	sort_matches(result, count);
+	result = match_list_to_array(matches);
+	free_match_list(matches);
 	return (result);
 }

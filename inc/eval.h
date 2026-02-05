@@ -83,9 +83,12 @@ t_shell_response				*eval_ast(t_ast *shell_ast, t_shell_env *env);
 char							**get_cmd_str(char *cmd_name, t_ast *cmd_suffix,
 									t_shell_env *env);
 void							free_cmd_str(char **cmd_str);
+int								count_cmd_suffix(t_ast *cmd_suffix);
 
 char							**get_bin_paths(t_shell_env *env);
 int								check_path(char *path, char *argv);
+char							*resolve_command_path(char *cmd_name,
+									t_shell_env *env);
 int								check_builtin(char *cmd_name);
 
 t_cmd_response					*func_exec_cmd(t_ast *shell_ast, char **cmd_str,
@@ -109,6 +112,7 @@ int								process_export_arg(char *arg, t_shell_env *env,
 									char **error);
 t_cmd_response					*func_built_in_export(t_ast *shell_ast,
 									char **cmd_str, t_shell_env *env);
+char							*export_no_args(t_shell_env *env);
 
 t_cmd_response					*func_built_in_pwd(t_ast *shell_ast,
 									char **cmd_str, t_shell_env *env);
@@ -146,6 +150,7 @@ void							eval_pipe_recursive(t_ast *shell_ast,
 
 t_cmd_response					*eval_cmd(t_ast *shell_ast, t_shell_env *env);
 t_cmd_response					*eval_pipe(t_ast *shell_ast, t_shell_env *env);
+t_cmd_response					*eval_node(t_ast *node, t_shell_env *env);
 t_cmd_response					*eval_subshell(t_ast *shell_ast,
 									t_shell_env *env);
 void							eval_subshell_in_pipe(t_ast *shell_ast,
@@ -168,8 +173,19 @@ int								write_heredoc_to_file(char *delimiter,
 int								process_heredocs(t_ast *node, t_shell_env *env);
 void							cleanup_heredoc_files(t_ast *ast);
 void							free_heredoc_filenames(t_ast *ast);
+
+void							unlink_heredoc_node(t_ast *node);
+void							free_heredoc_mem(t_ast *node);
+void							cleanup_simple_cmd_heredocs(t_ast *ast);
+void							free_simple_cmd_heredocs(t_ast *ast);
+void							free_heredoc_prefix(t_ast *prefix);
+
 int								eval_redir(t_ast *shell_ast, t_shell_env *env);
 int								eval_io_file(t_ast *io_file, t_shell_env *env);
+int								get_fd_for_op(const char *filename,
+									t_token_type op);
+char							*expand_redir_target(const char *file,
+									t_shell_env *env);
 
 char							*get_curdir(void);
 t_cmd_func						get_cmd_func(char *cmd_name);

@@ -15,20 +15,10 @@
 #include "libft.h"
 #include <unistd.h>
 
-t_cmd_func_call	*check_cmd(t_ast *shell_ast, t_shell_env *env)
+static void	setup_func(t_cmd_func_call *call)
 {
-	t_cmd_func_call	*call;
-	char			*cmd_name;
+	char	*cmd_name;
 
-	call = ft_calloc(1, sizeof(t_cmd_func_call));
-	if (!call)
-		return (NULL);
-	call->env = env;
-	if (env)
-		env->current_call = call;
-	call->envp = env->envp;
-	call->cmd_str = get_cmd_str(shell_ast->u_ast.s_simple_cmd.cmd_name,
-			shell_ast->u_ast.s_simple_cmd.cmd_suffix, env);
 	if (call->cmd_str && call->cmd_str[0] && call->cmd_str[0][0] != '\0')
 	{
 		cmd_name = call->cmd_str[0];
@@ -42,6 +32,22 @@ t_cmd_func_call	*check_cmd(t_ast *shell_ast, t_shell_env *env)
 		call->cmd_func = NULL;
 		call->is_builtin = 0;
 	}
+}
+
+t_cmd_func_call	*check_cmd(t_ast *shell_ast, t_shell_env *env)
+{
+	t_cmd_func_call	*call;
+
+	call = ft_calloc(1, sizeof(t_cmd_func_call));
+	if (!call)
+		return (NULL);
+	call->env = env;
+	if (env)
+		env->current_call = call;
+	call->envp = env->envp;
+	call->cmd_str = get_cmd_str(shell_ast->u_ast.s_simple_cmd.cmd_name,
+			shell_ast->u_ast.s_simple_cmd.cmd_suffix, env);
+	setup_func(call);
 	return (call);
 }
 
