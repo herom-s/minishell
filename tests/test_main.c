@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "test_eval.h"
+#include "test_expand.h"
 #include "test_lexer.h"
 #include "test_parser.h"
 #include "test_signal.h"
@@ -580,6 +581,49 @@ static int	run_and_or_subshell_tests(void)
 	return (cmocka_run_group_tests(tests, NULL, NULL));
 }
 
+static int	run_expand_tests(void)
+{
+	const struct CMUnitTest tests[] = {
+		// Variable expansion tests
+		cmocka_unit_test_setup_teardown(test_expand_simple_variable,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_undefined_variable,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_exit_status,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_shell_pid,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_shell_name,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_dollar_at_end,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_dollar_with_invalid_char,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_adjacent_variables,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_variable_in_double_quotes,
+			setup_expand_test, teardown_expand_test),
+		cmocka_unit_test_setup_teardown(test_expand_variable_in_single_quotes,
+			setup_expand_test, teardown_expand_test),
+		// Quote handling tests
+		cmocka_unit_test(test_remove_single_quotes),
+		cmocka_unit_test(test_remove_double_quotes),
+		cmocka_unit_test(test_expand_mixed_quotes),
+		cmocka_unit_test(test_expand_nested_quotes),
+		cmocka_unit_test(test_quote_state_tracking),
+		// Wildcard tests
+		cmocka_unit_test(test_wildcard_detection),
+		cmocka_unit_test(test_pattern_matching_star_only),
+		cmocka_unit_test(test_pattern_matching_prefix),
+		cmocka_unit_test(test_pattern_matching_suffix),
+		cmocka_unit_test(test_pattern_matching_middle),
+		cmocka_unit_test(test_wildcard_in_quotes_not_expanded),
+		cmocka_unit_test(test_wildcard_sorting),
+	};
+	printf("\n--- Expansion Tests ---\n");
+	return (cmocka_run_group_tests(tests, NULL, NULL));
+}
+
 static void	print_usage(void)
 {
 	printf("Usage: ./run_tests [OPTIONS]\n");
@@ -599,6 +643,7 @@ static void	print_usage(void)
 	printf("  piredir      Run pipe with redirection tests only\n");
 	printf("  heredoc      Run heredoc tests only\n");
 	printf("  aos          Run logic (and/or/subshell) tests only\n");
+	printf("  expand       Run expansion tests only\n");
 	printf("  -h, --help   Show this help message\n");
 }
 int	main(int argc, char *argv[])
@@ -693,6 +738,11 @@ int	main(int argc, char *argv[])
 			printf("\n=== Running AND/OR/SUBSHELL Tests ===\n");
 			return (run_and_or_subshell_tests());
 		}
+		if (strcmp(argv[1], "expand") == 0)
+		{
+			printf("\n=== Running Expansion Tests ===\n");
+			return (run_expand_tests());
+		}
 		printf("Unknown option: %s\n", argv[1]);
 		print_usage();
 		return (1);
@@ -745,6 +795,9 @@ int	main(int argc, char *argv[])
 	if (result != 0)
 		failed += result;
 	result = run_and_or_subshell_tests();
+	if (result != 0)
+		failed += result;
+	result = run_expand_tests();
 	if (result != 0)
 		failed += result;
 	printf("\n=== Test Suite Complete ===\n");

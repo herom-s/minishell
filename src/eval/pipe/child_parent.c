@@ -12,10 +12,9 @@
 
 #include "ast.h"
 #include "eval.h"
+#include "minishell_signal.h"
 #include <readline/readline.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -23,6 +22,20 @@ void	save_original_std_fds(t_shell_env *env)
 {
 	env->og_stdout_fd = dup(STDOUT_FILENO);
 	env->og_stdin_fd = dup(STDIN_FILENO);
+}
+
+void	close_saved_fds(t_shell_env *env)
+{
+	if (env->og_stdin_fd >= 0)
+	{
+		close(env->og_stdin_fd);
+		env->og_stdin_fd = -1;
+	}
+	if (env->og_stdout_fd >= 0)
+	{
+		close(env->og_stdout_fd);
+		env->og_stdout_fd = -1;
+	}
 }
 
 void	restore_original_std_fds(t_shell_env *env)
@@ -70,8 +83,15 @@ t_cmd_response	*handle_parent(pid_t pid)
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
+	{
 		res->exit_code = WEXITSTATUS(status);
-	else
+		if (res->exit_code > 128 && res->exit_code < 160)
+			print_signal_msg(res->exit_code - 128);
+	}
+	else if (WIFSIGNALED(status))
+	{
+		print_signal_msg(WTERMSIG(status));
 		res->exit_code = 128 + WTERMSIG(status);
+	}
 	return (res);
 }

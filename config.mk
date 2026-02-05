@@ -43,6 +43,11 @@ SRC_FILES = main.c \
 			$(EVAL_DIR)/cmd/cmd_str.c \
 			$(EVAL_DIR)/cmd/cmd_str_helpers.c \
 			$(EVAL_DIR)/shell_env/shell_env.c \
+			$(EVAL_DIR)/expand/expand.c \
+			$(EVAL_DIR)/expand/expand_variable.c \
+			$(EVAL_DIR)/expand/expand_quotes.c \
+			$(EVAL_DIR)/expand/expand_wildcard.c \
+			$(EVAL_DIR)/expand/expand_wildcard_utils.c \
 			$(EVAL_DIR)/builtin/cd.c \
 			$(EVAL_DIR)/builtin/echo.c \
 			$(EVAL_DIR)/builtin/env.c \

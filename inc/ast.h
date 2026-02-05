@@ -46,6 +46,7 @@ typedef struct s_ast
 		struct
 		{
 			struct s_ast	*and_or;
+			struct s_ast	*io_file;
 		}	s_subshell;
 		struct
 		{

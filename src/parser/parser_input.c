@@ -49,6 +49,7 @@ static int	create_lexer_parser(char *input, t_shell_env *env)
 	if (has_unclosed_quotes(input, 0, 0))
 	{
 		ft_printf("syntax error: unclosed quotes\n");
+		env->last_exit_code = 2;
 		return (-1);
 	}
 	env->lexer = create_lexer(input);

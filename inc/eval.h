@@ -6,7 +6,7 @@
 /*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 13:21:40 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/26 16:03:05 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:38:17 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,8 @@ t_cmd_response					*eval_cmd(t_ast *shell_ast, t_shell_env *env);
 t_cmd_response					*eval_pipe(t_ast *shell_ast, t_shell_env *env);
 t_cmd_response					*eval_subshell(t_ast *shell_ast,
 									t_shell_env *env);
+void							eval_subshell_in_pipe(t_ast *shell_ast,
+									t_shell_env *env);
 t_cmd_response					*eval_and_or(t_ast *shell_ast,
 									t_shell_env *env);
 
@@ -161,10 +163,13 @@ int								should_stop_heredoc(char *line,
 									char *delimiter);
 char							*generate_heredoc_filename(void);
 int								write_heredoc_to_file(char *delimiter,
-									char *filename);
+									char *filename, t_shell_env *env,
+									int expand);
 int								process_heredocs(t_ast *node, t_shell_env *env);
 void							cleanup_heredoc_files(t_ast *ast);
-int								eval_redir(t_ast *shell_ast);
+void							free_heredoc_filenames(t_ast *ast);
+int								eval_redir(t_ast *shell_ast, t_shell_env *env);
+int								eval_io_file(t_ast *io_file, t_shell_env *env);
 
 char							*get_curdir(void);
 t_cmd_func						get_cmd_func(char *cmd_name);

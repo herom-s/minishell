@@ -6,14 +6,13 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 14:50:32 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/26 15:51:06 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/02/03 15:01:32 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "eval.h"
 #include "libft.h"
-#include "minishell_signal.h"
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -27,7 +26,7 @@ static t_cmd_response	*handle_no_cmd_name(t_ast *shell_ast, t_shell_env *env)
 	if (res)
 	{
 		res->exit_code = 1;
-		if (eval_redir(shell_ast) > 0)
+		if (eval_redir(shell_ast, env) > 0)
 			res->exit_code = 0;
 	}
 	restore_original_std_fds(env);
@@ -39,9 +38,8 @@ static t_cmd_response	*exec_cmd_with_call(t_ast *ast, t_cmd_func_call *call,
 {
 	t_cmd_response	*res;
 
-	(void)env;
 	res = NULL;
-	if (eval_redir(ast) > 0)
+	if (eval_redir(ast, env) > 0)
 		res = exec_call(ast, call);
 	else
 	{
@@ -50,6 +48,15 @@ static t_cmd_response	*exec_cmd_with_call(t_ast *ast, t_cmd_func_call *call,
 			res->exit_code = 1;
 	}
 	return (res);
+}
+
+static int	is_empty_cmd(t_cmd_func_call *call)
+{
+	if (!call->cmd_str || !call->cmd_str[0])
+		return (1);
+	if (call->cmd_str[0][0] == '\0')
+		return (1);
+	return (0);
 }
 
 t_cmd_response	*eval_cmd(t_ast *shell_ast, t_shell_env *env)
@@ -62,6 +69,17 @@ t_cmd_response	*eval_cmd(t_ast *shell_ast, t_shell_env *env)
 	call = check_cmd(shell_ast, env);
 	if (!call)
 		return (NULL);
+	if (is_empty_cmd(call))
+	{
+		res = create_cmd_res();
+		if (res)
+			res->exit_code = 0;
+		free_cmd_str(call->cmd_str);
+		if (env)
+			env->current_call = NULL;
+		free(call);
+		return (res);
+	}
 	if (env)
 		env->current_call = call;
 	save_original_std_fds(env);
@@ -97,6 +115,8 @@ t_shell_response	*eval_ast(t_ast *shell_ast, t_shell_env *env)
 	if (process_heredocs(shell_ast, env) == -1)
 	{
 		cleanup_heredoc_files(shell_ast);
+		if (env)
+			env->last_exit_code = 130;
 		return (NULL);
 	}
 	cmd_res = eval_node(shell_ast, env);

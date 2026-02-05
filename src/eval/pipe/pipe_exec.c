@@ -54,7 +54,7 @@ void	run_pipe_child(t_ast *ast, t_shell_env *env, t_pipe_context *ctx)
 	{
 		close(ctx->writer[INPUT_END]);
 		if (dup2(ctx->writer[OUTPUT_END], STDOUT_FILENO) == -1)
-			exit(EXIT_FAILURE);
+			child_exit(env, ast, EXIT_FAILURE);
 		close(ctx->writer[OUTPUT_END]);
 		eval_pipe_recursive(ast->u_ast.s_pipe_seq.left, env, ctx->writer,
 			ctx->prev_pipe_fd_read_end);
@@ -63,7 +63,7 @@ void	run_pipe_child(t_ast *ast, t_shell_env *env, t_pipe_context *ctx)
 	{
 		close(ctx->reader[OUTPUT_END]);
 		if (dup2(ctx->reader[INPUT_END], STDIN_FILENO) == -1)
-			exit(EXIT_FAILURE);
+			child_exit(env, ast, EXIT_FAILURE);
 		close(ctx->reader[INPUT_END]);
 		eval_pipe_recursive(ast->u_ast.s_pipe_seq.right, env, NULL,
 			ctx->prev_pipe_fd_read_end);
@@ -83,8 +83,14 @@ void	func_exec_cmd_pipe(t_ast *ast, t_shell_env *env, int *pipe_fd,
 		child_exit(env, ast, 1);
 	if (!call->is_builtin)
 		close_prev_and_pipe_fds(pipe_fd, prev_pipe_read_fd);
-	if (eval_redir(ast) == -1)
+	if (eval_redir(ast, env) == -1)
 		cleanup_and_exit(ast, env, call, 1);
+	if (!call->cmd_func)
+	{
+		if (call->is_builtin)
+			close_prev_and_pipe_fds(pipe_fd, prev_pipe_read_fd);
+		cleanup_and_exit(ast, env, call, 0);
+	}
 	exit_code = execute_child_cmd_pipe(call, ast);
 	if (call->is_builtin)
 		close_prev_and_pipe_fds(pipe_fd, prev_pipe_read_fd);

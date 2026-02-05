@@ -49,6 +49,8 @@ static void	subshell_child(t_ast *shell_ast, t_shell_env *env)
 	setup_fork_signal(0);
 	if (env)
 		env->interactive_owner = 0;
+	if (eval_io_file(shell_ast->u_ast.s_subshell.io_file, env) == -1)
+		child_exit(env, shell_ast, 1);
 	sub_res = eval_ast(shell_ast->u_ast.s_subshell.and_or, env);
 	code = 0;
 	if (sub_res)
@@ -116,9 +118,25 @@ t_cmd_response	*eval_and_or(t_ast *shell_ast, t_shell_env *env)
 	if ((op_type == AND_IF && left_res->exit_code == 0)
 		|| (op_type == OR_IF && left_res->exit_code != 0))
 	{
-		right_res = eval_node(right, env);
 		destroy_cmd_res(left_res);
+		right_res = eval_node(right, env);
+		if (!right_res)
+			return (NULL);
 		return (right_res);
 	}
 	return (left_res);
+}
+
+void	eval_subshell_in_pipe(t_ast *shell_ast, t_shell_env *env)
+{
+	t_shell_response	*sub_res;
+	int					code;
+
+	sub_res = eval_ast(shell_ast->u_ast.s_subshell.and_or, env);
+	code = 0;
+	if (sub_res)
+		code = sub_res->exit_code;
+	if (sub_res)
+		free(sub_res);
+	child_exit(env, shell_ast, code);
 }

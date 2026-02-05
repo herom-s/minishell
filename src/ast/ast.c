@@ -117,7 +117,10 @@ void	*free_ast(t_ast *node)
 	if (node->type == AST_AND_OR || node->type == AST_PIPE_SEQ)
 		free_left_right_node(node);
 	else if (node->type == AST_SUBSHELL)
+	{
 		free_ast(node->u_ast.s_subshell.and_or);
+		free_ast(node->u_ast.s_subshell.io_file);
+	}
 	else if (node->type == AST_SIMPLE_CMD)
 		free_simple_cmd(node);
 	else if (node->type == AST_CMD_PREFIX)

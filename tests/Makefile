@@ -40,13 +40,16 @@ TEST_FILES = test_main.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_eval.c \
 			 $(TEST_EVAL_DIR)/test_cmd_external_pipe_eval.c \
 			 $(TEST_EVAL_DIR)/test_redir_eval.c \
-			$(TEST_EVAL_DIR)/test_pipe_redir_eval.c \
+			 $(TEST_EVAL_DIR)/test_pipe_redir_eval.c \
 			 $(TEST_EVAL_DIR)/test_heredoc_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval.c \
 			 $(TEST_EVAL_DIR)/test_eval_pipe.c \
 			 $(TEST_EVAL_DIR)/test_eval_redir.c \
-		 $(TEST_EVAL_DIR)/test_eval_pipe_redir.c \
-		 $(TEST_EVAL_DIR)/test_and_or_subshell_eval.c
+			 $(TEST_EVAL_DIR)/test_eval_pipe_redir.c \
+			 $(TEST_EVAL_DIR)/test_and_or_subshell_eval.c \
+			 $(TEST_EVAL_DIR)/test_expand_variable.c \
+			 $(TEST_EVAL_DIR)/test_expand_quotes.c \
+			 $(TEST_EVAL_DIR)/test_expand_wildcard.c
 
 TEST_OBJ = $(TEST_FILES:%.c=$(TEST_OBJ_DIR)/%.o)
 TEST_BIN = run_tests
@@ -108,10 +111,10 @@ valgrind-single: $(TEST_BIN)
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TEST_BIN) $(TEST)
 
 valgrind-log: $(TEST_BIN)
-	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=definite,indirect --error-exitcode=1 --log-file=valgrind.out --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
+	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=definite,indirect --error-exitcode=1 --log-file=valgrind.out --suppressions=$(ROOT_DIR)/valgrind-test.supp ./$(TEST_BIN)
 
 valgrind-ci: $(TEST_BIN)
-	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=definite,indirect --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind.supp ./$(TEST_BIN)
+	@valgrind -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --errors-for-leak-kinds=definite,indirect --error-exitcode=1 --suppressions=$(ROOT_DIR)/valgrind-test.supp ./$(TEST_BIN)
 
 filter: $(TEST_BIN)
 	@CMOCKA_TEST_FILTER="$(FILTER)" ./$(TEST_BIN)

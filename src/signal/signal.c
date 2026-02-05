@@ -84,3 +84,19 @@ int	setup_fork_signal(pid_t pid)
 	}
 	return (0);
 }
+
+void	print_signal_msg(int sig)
+{
+	if (sig == SIGSEGV)
+		write(STDERR_FILENO, "Segmentation fault (core dumped)\n", 33);
+	else if (sig == SIGBUS)
+		write(STDERR_FILENO, "Bus error\n", 10);
+	else if (sig == SIGQUIT)
+		write(STDERR_FILENO, "Quit (core dumped)\n", 19);
+	else if (sig == SIGABRT)
+		write(STDERR_FILENO, "Aborted\n", 8);
+	else if (sig == SIGFPE)
+		write(STDERR_FILENO, "Floating point exception\n", 25);
+	else if (sig == SIGINT)
+		write(STDERR_FILENO, "\n", 1);
+}

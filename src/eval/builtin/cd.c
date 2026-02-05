@@ -22,11 +22,6 @@
 
 static void	update_env_var(t_shell_env *env, const char *key, char *value)
 {
-	char	*old_value;
-
-	old_value = hashtable_get(env->vars, key);
-	if (old_value)
-		free(old_value);
 	hashtable_set(env->vars, key, value);
 }
 

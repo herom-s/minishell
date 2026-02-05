@@ -97,7 +97,8 @@ t_ast	*parse_simple_cmd(t_parser *parser)
 		return (parse_subshell(parser));
 	}
 	cmd_prefix = parse_cmd_prefix(parser);
-	if (cur_token_is(parser->cur_token, (1 << NEWLINE)))
+	if (cur_token_is(parser->cur_token, (1 << NEWLINE) | (1 << PIPE)
+			| (1 << AND_IF) | (1 << OR_IF) | (1 << RPAREN)))
 		return (parse_prefix_only_cmd(parser, cmd_prefix));
 	if (!cur_token_is(parser->cur_token, (1 << WORD)) && !parser->has_error)
 		return (parser_error(parser));

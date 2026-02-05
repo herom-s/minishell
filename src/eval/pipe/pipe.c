@@ -12,6 +12,7 @@
 
 #include "ast.h"
 #include "eval.h"
+#include "minishell_signal.h"
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -66,6 +67,7 @@ static void	handle_parent_process(t_ast *ast, t_shell_env *env,
 		child_exit(env, ast, EXIT_FAILURE);
 	}
 	close(ctx->writer[INPUT_END]);
+	setup_fork_signal(right_pid);
 	wait_and_exit(ast, env, ctx->left_pid, right_pid);
 }
 
@@ -90,6 +92,12 @@ void	eval_pipe_recursive(t_ast *ast, t_shell_env *env, int *pipe_fd,
 	(void)prev_pipe_read_fd;
 	if (ast->type == AST_SIMPLE_CMD)
 		func_exec_cmd_pipe(ast, env, pipe_fd, prev_pipe_read_fd);
+	if (ast->type == AST_SUBSHELL)
+	{
+		if (eval_io_file(ast->u_ast.s_subshell.io_file, env) == -1)
+			child_exit(env, ast, 1);
+		eval_subshell_in_pipe(ast, env);
+	}
 	if (ast->type != AST_PIPE_SEQ || pipe(new_fd) == -1)
 		child_exit(env, ast, EXIT_FAILURE);
 	left_pid = fork();
@@ -103,3 +111,4 @@ void	eval_pipe_recursive(t_ast *ast, t_shell_env *env, int *pipe_fd,
 	init_parent_ctx(&ctx, new_fd, pipe_fd, left_pid);
 	handle_parent_process(ast, env, &ctx);
 }
+	
