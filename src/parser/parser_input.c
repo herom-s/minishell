@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_input.c                                      :+:      :+:    :+:   */
+/*   parser_input.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: thaperei <thaperei@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 12:00:00 by hermarti          #+#    #+#             */
-/*   Updated: 2026/02/03 12:00:00 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/02/05 08:26:02 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,40 @@
 #include "parser.h"
 #include <stdlib.h>
 
+static int	has_unclosed_quotes(const char *str,
+		int is_dquotes_open, int is_squotes_open)
+{
+	while (*str != '\0')
+	{
+		if (is_dquotes_open)
+		{
+			if (*str == '"')
+				is_dquotes_open = 0;
+		}
+		else if (is_squotes_open)
+		{
+			if (*str == '\'')
+				is_squotes_open = 0;
+		}
+		else
+		{
+			if (*str == '"')
+				is_dquotes_open = 1;
+			else if (*str == '\'')
+				is_squotes_open = 1;
+		}
+		str++;
+	}
+	return (is_dquotes_open || is_squotes_open);
+}
+
 static int	create_lexer_parser(char *input, t_shell_env *env)
 {
+	if (has_unclosed_quotes(input, 0, 0))
+	{
+		ft_printf("syntax error: unclosed quotes\n");
+		return (-1);
+	}
 	env->lexer = create_lexer(input);
 	if (env->lexer == NULL)
 	{

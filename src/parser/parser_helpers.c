@@ -27,7 +27,7 @@ int	peek_token_is(t_token *token, t_token_type expected)
 void	*parser_error(t_parser *parser)
 {
 	parser->has_error = 1;
-	ft_dprintf(2, "Minishell: Syntax error near unexpected token '%s'\n",
+	ft_dprintf(2, "Minishell: syntax error near unexpected token '%s'\n",
 		parser->cur_token->literal);
 	return (NULL);
 }
