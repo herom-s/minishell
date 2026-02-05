@@ -111,4 +111,3 @@ void	eval_pipe_recursive(t_ast *ast, t_shell_env *env, int *pipe_fd,
 	init_parent_ctx(&ctx, new_fd, pipe_fd, left_pid);
 	handle_parent_process(ast, env, &ctx);
 }
-	

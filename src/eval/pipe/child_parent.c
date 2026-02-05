@@ -14,7 +14,9 @@
 #include "eval.h"
 #include "minishell_signal.h"
 #include <readline/readline.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -22,20 +24,6 @@ void	save_original_std_fds(t_shell_env *env)
 {
 	env->og_stdout_fd = dup(STDOUT_FILENO);
 	env->og_stdin_fd = dup(STDIN_FILENO);
-}
-
-void	close_saved_fds(t_shell_env *env)
-{
-	if (env->og_stdin_fd >= 0)
-	{
-		close(env->og_stdin_fd);
-		env->og_stdin_fd = -1;
-	}
-	if (env->og_stdout_fd >= 0)
-	{
-		close(env->og_stdout_fd);
-		env->og_stdout_fd = -1;
-	}
 }
 
 void	restore_original_std_fds(t_shell_env *env)
@@ -54,8 +42,25 @@ void	restore_original_std_fds(t_shell_env *env)
 	}
 }
 
+static void	close_saved_std_fds(t_shell_env *env)
+{
+	if (!env)
+		return ;
+	if (env->og_stdin_fd >= 0)
+	{
+		close(env->og_stdin_fd);
+		env->og_stdin_fd = -1;
+	}
+	if (env->og_stdout_fd >= 0)
+	{
+		close(env->og_stdout_fd);
+		env->og_stdout_fd = -1;
+	}
+}
+
 void	child_exit(t_shell_env *env, t_ast *local_ast, int code)
 {
+	close_saved_std_fds(env);
 	if (env && env->root_node)
 	{
 		destroy_shell_env(env);
