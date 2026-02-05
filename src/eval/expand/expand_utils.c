@@ -1,29 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   expand_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:10:16 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/17 15:10:57 by hermarti         ###   ########.fr       */
+/*   Created: 2026/02/05 16:10:00 by hermarti          #+#    #+#             */
+/*   Updated: 2026/02/05 16:10:00 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "expand.h"
+#include "hashtable.h"
+#include "libft.h"
 
-# include "eval.h"
-# include "ast.h"
-# include <signal.h>
-
-typedef struct s_minishell
+int	is_valid_var_char(char c, int is_first)
 {
-	char				*input;
-	int					sig_shell;
-	t_ast				*ast_shell;
-	t_shell_response	*shell_response;
-	struct sigaction	sigaction_shell;
-}						t_minishell;
-
-#endif
+	if (is_first)
+		return (ft_isalpha(c) || c == '_');
+	return (ft_isalnum(c) || c == '_');
+}

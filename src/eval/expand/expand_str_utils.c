@@ -1,29 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   expand_str_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:10:16 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/17 15:10:57 by hermarti         ###   ########.fr       */
+/*   Created: 2026/02/05 16:16:00 by hermarti          #+#    #+#             */
+/*   Updated: 2026/02/05 16:16:00 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "expand.h"
+#include "libft.h"
 
-# include "eval.h"
-# include "ast.h"
-# include <signal.h>
-
-typedef struct s_minishell
+char	*ft_strjoin_free(char *s1, char *s2)
 {
-	char				*input;
-	int					sig_shell;
-	t_ast				*ast_shell;
-	t_shell_response	*shell_response;
-	struct sigaction	sigaction_shell;
-}						t_minishell;
+	char	*result;
 
-#endif
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (s1);
+	result = ft_strjoin(s1, s2);
+	free(s1);
+	return (result);
+}
+
+char	*ft_charjoin(char *s, char c)
+{
+	char	tmp[2];
+
+	tmp[0] = c;
+	tmp[1] = '\0';
+	return (ft_strjoin_free(s, tmp));
+}

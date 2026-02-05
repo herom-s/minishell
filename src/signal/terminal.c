@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   terminal.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:10:16 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/17 15:10:57 by hermarti         ###   ########.fr       */
+/*   Created: 2026/02/05 16:30:00 by hermarti          #+#    #+#             */
+/*   Updated: 2026/02/05 16:30:00 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "minishell_signal.h"
+#include <termios.h>
+#include <unistd.h>
 
-# include "eval.h"
-# include "ast.h"
-# include <signal.h>
-
-typedef struct s_minishell
+int	save_terminal_settings(struct termios *saved)
 {
-	char				*input;
-	int					sig_shell;
-	t_ast				*ast_shell;
-	t_shell_response	*shell_response;
-	struct sigaction	sigaction_shell;
-}						t_minishell;
+	if (saved && isatty(STDIN_FILENO)
+		&& tcgetattr(STDIN_FILENO, saved) == 0)
+		return (1);
+	return (0);
+}
 
-#endif
+void	restore_terminal_settings(struct termios *saved, int was_saved)
+{
+	if (was_saved && saved && isatty(STDIN_FILENO))
+		tcsetattr(STDIN_FILENO, TCSANOW, saved);
+}

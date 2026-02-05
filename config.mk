@@ -1,0 +1,80 @@
+NAME = minishell
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+
+SRC_DIR = src
+INC_DIR = inc
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+INCLUDES = -I./$(INC_DIR) -I$(LIBFT_DIR)/inc
+
+LEX_DIR = lexer
+PARSER_DIR = parser
+AST_DIR = ast
+SIG_DIR = signal
+EVAL_DIR = eval
+HASHTABLE_DIR = hashtable
+SRC_FILES = main.c \
+			$(LEX_DIR)/lexer.c \
+			$(LEX_DIR)/lexer_helpers.c \
+			$(LEX_DIR)/token.c \
+			$(PARSER_DIR)/parser.c \
+			$(PARSER_DIR)/parser_input.c \
+			$(PARSER_DIR)/parser_helpers.c \
+			$(AST_DIR)/ast.c \
+			$(AST_DIR)/free_ast.c \
+			$(AST_DIR)/parse_ast_rules.c \
+			$(AST_DIR)/parse_cmd_rules.c \
+			$(EVAL_DIR)/eval.c \
+			$(EVAL_DIR)/eval_nodes.c \
+			$(EVAL_DIR)/eval_subshell.c \
+			$(EVAL_DIR)/eval_helpers.c \
+			$(EVAL_DIR)/eval_util.c \
+			$(EVAL_DIR)/cmd_res.c \
+			$(EVAL_DIR)/util.c \
+			$(EVAL_DIR)/redir/redir.c \
+			$(EVAL_DIR)/redir/redir_utils.c \
+			$(EVAL_DIR)/redir/here_doc.c \
+			$(EVAL_DIR)/redir/here_doc_utils.c \
+			$(EVAL_DIR)/redir/here_doc_cleanup.c \
+			$(EVAL_DIR)/redir/here_doc_write.c \
+			$(EVAL_DIR)/redir/here_doc_write_util.c \
+			$(EVAL_DIR)/pipe/child_parent.c \
+			$(EVAL_DIR)/pipe/pipe.c \
+			$(EVAL_DIR)/pipe/pipe_exec.c \
+			$(EVAL_DIR)/cmd/cmd.c \
+			$(EVAL_DIR)/cmd/cmd_str.c \
+			$(EVAL_DIR)/cmd/cmd_str_helpers.c \
+			$(EVAL_DIR)/shell_env/shell_env.c \
+			$(EVAL_DIR)/expand/expand.c \
+			$(EVAL_DIR)/expand/expand_variable.c \
+			$(EVAL_DIR)/expand/expand_quotes.c \
+			$(EVAL_DIR)/expand/expand_wildcard.c \
+			$(EVAL_DIR)/expand/expand_wildcard_utils.c \
+			$(EVAL_DIR)/expand/expand_wildcard_list.c \
+			$(EVAL_DIR)/expand/expand_ctx.c \
+			$(EVAL_DIR)/expand/expand_str_utils.c \
+			$(EVAL_DIR)/expand/expand_args_utils.c \
+			$(EVAL_DIR)/expand/expand_special_vars.c \
+			$(EVAL_DIR)/expand/expand_utils.c \
+			$(EVAL_DIR)/builtin/cd.c \
+			$(EVAL_DIR)/builtin/echo.c \
+			$(EVAL_DIR)/builtin/env.c \
+			$(EVAL_DIR)/builtin/env_util.c \
+			$(EVAL_DIR)/builtin/exit.c \
+			$(EVAL_DIR)/builtin/export.c \
+			$(EVAL_DIR)/builtin/export_helpers.c \
+			$(EVAL_DIR)/builtin/export_args_util.c \
+			$(EVAL_DIR)/builtin/export_no_args_util.c \
+			$(EVAL_DIR)/builtin/pwd.c \
+			$(EVAL_DIR)/builtin/unset.c \
+			$(HASHTABLE_DIR)/hashtable.c \
+			$(HASHTABLE_DIR)/hashtable_item.c \
+			$(HASHTABLE_DIR)/hashtable_iterator.c \
+			$(HASHTABLE_DIR)/hashtable_util.c \
+			$(SIG_DIR)/signal.c \
+			$(SIG_DIR)/terminal.c
+
+BONUS_DIR = bonus
+BONUS_OBJ_DIR = obj_bonus

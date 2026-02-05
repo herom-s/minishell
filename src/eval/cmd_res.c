@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   cmd_res.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:10:16 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/17 15:10:57 by hermarti         ###   ########.fr       */
+/*   Created: 2025/12/29 16:01:26 by hermarti          #+#    #+#             */
+/*   Updated: 2025/12/29 16:07:18 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "eval.h"
+#include "libft.h"
+#include <stdlib.h>
 
-# include "eval.h"
-# include "ast.h"
-# include <signal.h>
-
-typedef struct s_minishell
+t_cmd_response	*create_cmd_res(void)
 {
-	char				*input;
-	int					sig_shell;
-	t_ast				*ast_shell;
-	t_shell_response	*shell_response;
-	struct sigaction	sigaction_shell;
-}						t_minishell;
+	t_cmd_response	*res;
 
-#endif
+	res = ft_calloc(1, sizeof(t_cmd_response));
+	if (!res)
+		return (NULL);
+	return (res);
+}
+
+void	*destroy_cmd_res(t_cmd_response *cmd_res)
+{
+	free(cmd_res);
+	cmd_res = NULL;
+	return (cmd_res);
+}
