@@ -101,11 +101,14 @@ t_ast	*parse_simple_cmd(t_parser *parser)
 			| (1 << AND_IF) | (1 << OR_IF) | (1 << RPAREN)))
 		return (parse_prefix_only_cmd(parser, cmd_prefix));
 	if (!cur_token_is(parser->cur_token, (1 << WORD)) && !parser->has_error)
+	{
+		free_ast(cmd_prefix);
 		return (parser_error(parser));
+	}
 	cmd_name = parser->cur_token->literal;
 	next_token(parser);
 	cmd_suffix = parse_cmd_suffix(parser);
 	if (parser->has_error)
-		return (NULL);
+		return (free_ast(cmd_prefix));
 	return (build_simple_cmd(cmd_prefix, cmd_name, cmd_suffix));
 }
