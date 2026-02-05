@@ -63,13 +63,9 @@ t_token	*get_next_token(t_lexer *lexer)
 	skip_whitespace(lexer);
 	check_operators(lexer, &token);
 	if (token.literal == NULL)
-	{
 		read_word(lexer, &token);
-		new_token = create_token(token);
-		ft_lstadd_back(&(lexer->tokens), ft_lstnew(new_token));
-		return (new_token);
-	}
-	next_char(lexer);
+	else
+		next_char(lexer);
 	new_token = create_token(token);
 	ft_lstadd_back(&(lexer->tokens), ft_lstnew(new_token));
 	return (new_token);
