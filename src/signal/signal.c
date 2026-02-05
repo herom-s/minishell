@@ -97,6 +97,8 @@ void	print_signal_msg(int sig)
 		write(STDERR_FILENO, "Aborted\n", 8);
 	else if (sig == SIGFPE)
 		write(STDERR_FILENO, "Floating point exception\n", 25);
+	else if (sig == SIGPIPE)
+		write(STDERR_FILENO, "Broken pipe\n", 12);
 	else if (sig == SIGINT)
 		write(STDERR_FILENO, "\n", 1);
 }
