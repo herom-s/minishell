@@ -60,6 +60,10 @@ t_cmd_response	*func_exec_cmd(t_ast *shell_ast, char **cmd_str,
 	t_cmd_response	*res;
 
 	(void)shell_ast;
+	if (env->og_stdin_fd >= 0)
+		close(env->og_stdin_fd);
+	if (env->og_stdout_fd >= 0)
+		close(env->og_stdout_fd);
 	if (execve(cmd_str[0], cmd_str, env->envp) < 0)
 	{
 		res = ft_calloc(1, sizeof(t_cmd_response));

@@ -22,8 +22,10 @@
 
 void	save_original_std_fds(t_shell_env *env)
 {
-	env->og_stdout_fd = dup(STDOUT_FILENO);
-	env->og_stdin_fd = dup(STDIN_FILENO);
+	if (env->og_stdout_fd < 0)
+		env->og_stdout_fd = dup(STDOUT_FILENO);
+	if (env->og_stdin_fd < 0)
+		env->og_stdin_fd = dup(STDIN_FILENO);
 }
 
 void	restore_original_std_fds(t_shell_env *env)
