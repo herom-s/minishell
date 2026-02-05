@@ -39,6 +39,7 @@ t_cmd_response	*eval_pipe(t_ast *shell_ast, t_shell_env *env)
 	setup_fork_signal(root_pid);
 	res = handle_parent(root_pid);
 	setup_nonfork_signal();
+	restore_terminal_settings();
 	return (res);
 }
 

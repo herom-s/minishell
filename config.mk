@@ -73,7 +73,8 @@ SRC_FILES = main.c \
 			$(HASHTABLE_DIR)/hashtable_item.c \
 			$(HASHTABLE_DIR)/hashtable_iterator.c \
 			$(HASHTABLE_DIR)/hashtable_util.c \
-			$(SIG_DIR)/signal.c 
+			$(SIG_DIR)/signal.c \
+			$(SIG_DIR)/terminal.c
 
 BONUS_DIR = bonus
 BONUS_OBJ_DIR = obj_bonus
