@@ -374,6 +374,11 @@ This is a 42 School project and should be completed individually. However, after
 - GitHub: [@herom-s](https://github.com/herom-s)
 - 42 Intranet: `hermarti`
 
+**thawansilva** - *42 School Student*
+
+- Github: [thawansilva](https://github.com/thawansilva)
+- 42 Intranet: `thaperei`
+
 ## 📄 License
 
 This project is part of the 42 School curriculum. Feel free to use it as a reference, but please don't copy it directly for your own project.
