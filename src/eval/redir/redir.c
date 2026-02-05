@@ -6,12 +6,13 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 18:37:26 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/13 19:25:36 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/02/03 15:00:00 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "eval.h"
+#include "expand.h"
 #include "libft.h"
 #include "token.h"
 #include <errno.h>
@@ -21,31 +22,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-static int	get_fd_for_op(const char *filename, t_token_type op)
+static int	setup_redir_dup(int fd, t_token_type op)
 {
-	if (op == GREAT)
-		return (open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644));
+	int	target;
+
 	if (op == LESS)
-		return (open(filename, O_RDONLY));
-	if (op == DGREAT)
-		return (open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644));
-	return (-1);
-}
-
-static int	handle_file_redir(t_ast *io)
-{
-	int		fd;
-	int		target;
-	char	*file;
-
-	file = (char *)io->u_ast.s_io_file.filename;
-	fd = get_fd_for_op(file, io->u_ast.s_io_file.op->type);
-	if (fd < 0)
-	{
-		ft_dprintf(STDERR_FILENO, "%s: %s\n", file, strerror(errno));
-		return (-1);
-	}
-	if (io->u_ast.s_io_file.op->type == LESS)
 		target = STDIN_FILENO;
 	else
 		target = STDOUT_FILENO;
@@ -58,14 +39,26 @@ static int	handle_file_redir(t_ast *io)
 	return (0);
 }
 
-static int	process_io_file(t_ast *io_file)
+static int	handle_file_redir(t_ast *io, t_shell_env *env)
 {
-	if (!io_file)
+	int				fd;
+	char			*expanded;
+
+	expanded = expand_redir_target(io->u_ast.s_io_file.filename, env);
+	if (!expanded)
 		return (-1);
-	return (handle_file_redir(io_file));
+	fd = get_fd_for_op(expanded, io->u_ast.s_io_file.op->type);
+	if (fd < 0)
+	{
+		ft_dprintf(STDERR_FILENO, "%s: %s\n", expanded, strerror(errno));
+		free(expanded);
+		return (-1);
+	}
+	free(expanded);
+	return (setup_redir_dup(fd, io->u_ast.s_io_file.op->type));
 }
 
-static int	process_list(t_ast *node, int is_suffix)
+static int	process_list(t_ast *node, int is_suffix, t_shell_env *env)
 {
 	t_ast	*io;
 
@@ -77,7 +70,7 @@ static int	process_list(t_ast *node, int is_suffix)
 			io = node->u_ast.s_cmd_prefix.io_file;
 		if (io)
 		{
-			if (process_io_file(io) < 0)
+			if (handle_file_redir(io, env) < 0)
 				return (-1);
 		}
 		if (is_suffix)
@@ -88,7 +81,7 @@ static int	process_list(t_ast *node, int is_suffix)
 	return (0);
 }
 
-int	eval_redir(t_ast *shell_ast)
+int	eval_redir(t_ast *shell_ast, t_shell_env *env)
 {
 	int	saved_stdin;
 	int	ret;
@@ -96,14 +89,23 @@ int	eval_redir(t_ast *shell_ast)
 	saved_stdin = dup(STDIN_FILENO);
 	if (saved_stdin < 0)
 		return (-1);
-	ret = process_list(shell_ast->u_ast.s_simple_cmd.cmd_prefix, 0);
+	ret = process_list(shell_ast->u_ast.s_simple_cmd.cmd_prefix, 0, env);
 	if (ret != -1)
-		ret = process_list(shell_ast->u_ast.s_simple_cmd.cmd_suffix, 1);
+		ret = process_list(shell_ast->u_ast.s_simple_cmd.cmd_suffix, 1, env);
 	if (ret < 0)
 	{
 		close(saved_stdin);
 		return (-1);
 	}
 	close(saved_stdin);
+	return (1);
+}
+
+int	eval_io_file(t_ast *io_file, t_shell_env *env)
+{
+	if (!io_file)
+		return (1);
+	if (handle_file_redir(io_file, env) < 0)
+		return (-1);
 	return (1);
 }

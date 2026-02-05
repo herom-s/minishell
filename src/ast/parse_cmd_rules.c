@@ -18,6 +18,7 @@ t_ast	*parse_subshell(t_parser *parser)
 {
 	t_ast	node;
 	t_ast	*and_or;
+	t_ast	*io_file;
 
 	and_or = parse_and_or(parser);
 	if (!cur_token_is(parser->cur_token, (1 << RPAREN)))
@@ -26,7 +27,9 @@ t_ast	*parse_subshell(t_parser *parser)
 		return (free_ast(and_or));
 	}
 	next_token(parser);
-	node = (t_ast){.type = AST_SUBSHELL, .u_ast.s_subshell.and_or = and_or};
+	io_file = parse_io_redirect(parser);
+	node = (t_ast){.type = AST_SUBSHELL, .u_ast.s_subshell.and_or = and_or,
+		.u_ast.s_subshell.io_file = io_file};
 	return (create_ast(node));
 }
 
@@ -76,7 +79,7 @@ t_ast	*parse_cmd_suffix(t_parser *parser)
 		node.u_ast.s_cmd_suffix.word = NULL;
 		return (create_ast(node));
 	}
-	if (!cur_token_is(parser->cur_token, (1 << WORD)))
+	if (!cur_token_is(parser->cur_token, (1 << WORD) | (1 << EQUAL)))
 		return (NULL);
 	node.u_ast.s_cmd_suffix.word = parser->cur_token->literal;
 	next_token(parser);

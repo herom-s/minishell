@@ -47,8 +47,13 @@ void	hashtable_destroy_item(void *item)
 
 static const char	*update_existing(t_list *node, void *value)
 {
-	((t_hashtable_item *)node->content)->value = value;
-	return (((t_hashtable_item *)node->content)->value);
+	t_hashtable_item	*item;
+
+	item = (t_hashtable_item *)node->content;
+	if (item->value)
+		free(item->value);
+	item->value = value;
+	return (item->value);
 }
 
 const char	*hashtable_set_item(t_hashtable *table, const char *key,

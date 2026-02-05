@@ -38,6 +38,8 @@ t_shell_env	*create_shell_env(char *envp[])
 	env = ft_calloc(1, sizeof(t_shell_env));
 	if (!env)
 		return (NULL);
+	env->og_stdin_fd = -1;
+	env->og_stdout_fd = -1;
 	if (isatty(STDIN_FILENO))
 		env->interactive_owner = 1;
 	env->vars = hashtable_create();
@@ -55,10 +57,6 @@ t_shell_env	*create_shell_env(char *envp[])
 
 static void	destroy_env_resources(t_shell_env *env)
 {
-	if (env->og_stdin_fd > 2)
-		close(env->og_stdin_fd);
-	if (env->og_stdout_fd > 2)
-		close(env->og_stdout_fd);
 	if (env->current_input)
 	{
 		free(env->current_input);
@@ -77,6 +75,7 @@ static void	destroy_env_parser(t_shell_env *env)
 {
 	if (env->root_node)
 	{
+		free_heredoc_filenames(env->root_node);
 		free_ast(env->root_node);
 		env->root_node = NULL;
 	}
@@ -98,6 +97,10 @@ void	*destroy_shell_env(t_shell_env *env)
 {
 	if (!env)
 		return (NULL);
+	if (env->og_stdin_fd >= 0)
+		close(env->og_stdin_fd);
+	if (env->og_stdout_fd >= 0)
+		close(env->og_stdout_fd);
 	destroy_env_resources(env);
 	destroy_env_parser(env);
 	if (env->vars)

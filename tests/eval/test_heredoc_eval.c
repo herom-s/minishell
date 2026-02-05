@@ -12,6 +12,7 @@
 
 #include "ast.h"
 #include "eval.h"
+#include "hashtable.h"
 #include "test_eval.h"
 #include <fcntl.h>
 #include <linux/limits.h>
@@ -961,6 +962,8 @@ void test_eval_heredoc_special_chars_content(void **state)
     t_shell_env *env;
     extern char **environ;
     int original_stdin;
+    char expected[512];
+    char *home;
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
@@ -972,7 +975,10 @@ void test_eval_heredoc_special_chars_content(void **state)
 	restore_stdin(original_stdin);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	assert_string_equal(captured, "$HOME | & ; < > * ? [ ]\n!@#%^&*()\n");
+	// Heredoc with unquoted delimiter expands variables
+	home = hashtable_get(env->vars, "HOME");
+	snprintf(expected, sizeof(expected), "%s | & ; < > * ? [ ]\n!@#%%^&*()\n", home ? home : "");
+	assert_string_equal(captured, expected);
 	free(captured);
 	free(res);
 	destroy_shell_env(env);
@@ -1228,6 +1234,11 @@ void test_eval_heredoc_with_env_vars(void **state)
     t_shell_env *env;
     extern char **environ;
     int original_stdin;
+    char *expected;
+    char *user;
+    char *home;
+    char *path;
+    size_t len;
 
     ast = (t_ast *)(*state);
     assert_non_null(ast);
@@ -1239,8 +1250,16 @@ void test_eval_heredoc_with_env_vars(void **state)
 	restore_stdin(original_stdin);
 	assert_non_null(res);
 	assert_int_equal(res->exit_code, 0);
-	// Heredoc should output literally (no expansion)
-	assert_string_equal(captured, "$USER\n$HOME\n$PATH\n");
+	// Heredoc with unquoted delimiter expands variables (bash behavior)
+	user = hashtable_get(env->vars, "USER");
+	home = hashtable_get(env->vars, "HOME");
+	path = hashtable_get(env->vars, "PATH");
+	len = (user ? strlen(user) : 0) + (home ? strlen(home) : 0) + (path ? strlen(path) : 0) + 10;
+	expected = malloc(len);
+	assert_non_null(expected);
+	snprintf(expected, len, "%s\n%s\n%s\n", user ? user : "", home ? home : "", path ? path : "");
+	assert_string_equal(captured, expected);
+	free(expected);
 	free(captured);
 	free(res);
 	destroy_shell_env(env);

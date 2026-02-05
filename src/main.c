@@ -21,7 +21,7 @@
 
 void	parse_input(char *input, t_shell_env *env);
 
-static int	get_input(t_minishell *shell)
+static int	get_input(t_minishell *shell, t_shell_env *env)
 {
 	if (isatty(STDIN_FILENO))
 		rl_event_hook = check_signal;
@@ -30,6 +30,7 @@ static int	get_input(t_minishell *shell)
 		rl_event_hook = NULL;
 	if (g_sig == SIGINT)
 	{
+		env->last_exit_code = 130;
 		free(shell->input);
 		return (1);
 	}
@@ -65,11 +66,12 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	ft_memset(&shell, 0, sizeof(t_minishell));
 	setup_nonfork_signal();
+	save_terminal_settings();
 	env = create_shell_env(envp);
 	while (1)
 	{
 		g_sig = 0;
-		status = get_input(&shell);
+		status = get_input(&shell, env);
 		if (status == 1)
 			continue ;
 		if (status == -1)

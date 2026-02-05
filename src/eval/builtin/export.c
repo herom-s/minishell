@@ -16,22 +16,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-char	*export_no_args(t_shell_env *env)
-{
-	char	*res;
-	t_list	*node;
-
-	res = ft_strdup("");
-	node = env->order;
-	while (node)
-	{
-		if (ft_strncmp((char *)node->content, "_", 1) != 0)
-			append_env_line(&res, (char *)node->content, env);
-		node = node->next;
-	}
-	return (res);
-}
-
 int	export_args(char **cmd_str, t_shell_env *env, char **output, char **error)
 {
 	size_t	i;

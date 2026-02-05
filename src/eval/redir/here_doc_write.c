@@ -12,6 +12,7 @@
 
 #include "ast.h"
 #include "eval.h"
+#include "expand.h"
 #include "libft.h"
 #include "minishell_signal.h"
 #include <readline/readline.h>
@@ -19,7 +20,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int	write_heredoc_to_file(char *delimiter, char *filename)
+static char	*expand_heredoc_line(char *line, t_shell_env *env, int expand)
+{
+	t_expand_ctx	ctx;
+	char			*expanded;
+
+	if (!expand || !line)
+		return (line);
+	ctx.env = env;
+	ctx.quote_state = QUOTE_NONE;
+	expanded = expand_string(line, &ctx);
+	free(line);
+	return (expanded);
+}
+
+int	write_heredoc_to_file(char *delim, char *filename, t_shell_env *env,
+		int expand)
 {
 	int		fd;
 	char	*line;
@@ -33,11 +49,12 @@ int	write_heredoc_to_file(char *delimiter, char *filename)
 			line = read_line_interactive();
 		else
 			line = read_line_noninteractive();
-		if (should_stop_heredoc(line, delimiter))
+		if (should_stop_heredoc(line, delim))
 		{
 			free(line);
 			break ;
 		}
+		line = expand_heredoc_line(line, env, expand);
 		ft_putendl_fd(line, fd);
 		free(line);
 	}
@@ -47,19 +64,41 @@ int	write_heredoc_to_file(char *delimiter, char *filename)
 	return (0);
 }
 
-int	handle_heredoc_io(t_ast *io)
+static int	delimiter_is_quoted(const char *delim)
+{
+	if (!delim)
+		return (0);
+	while (*delim)
+	{
+		if (*delim == '\'' || *delim == '"')
+			return (1);
+		delim++;
+	}
+	return (0);
+}
+
+int	handle_heredoc_io(t_ast *io, t_shell_env *env)
 {
 	char	*temp_file;
+	char	*delim;
+	int		expand;
 
 	if (io && io->u_ast.s_io_file.op->type == DLESS)
 	{
+		delim = (char *)io->u_ast.s_io_file.filename;
+		expand = !delimiter_is_quoted(delim);
+		if (expand == 0)
+			delim = remove_quotes(delim);
 		temp_file = generate_heredoc_filename();
-		if (write_heredoc_to_file((char *)io->u_ast.s_io_file.filename,
-				temp_file) == -1)
+		if (write_heredoc_to_file(delim, temp_file, env, expand) == -1)
 		{
+			if (expand == 0)
+				free(delim);
 			free(temp_file);
 			return (-1);
 		}
+		if (expand == 0)
+			free(delim);
 		io->u_ast.s_io_file.op->type = LESS;
 		io->u_ast.s_io_file.filename = temp_file;
 	}
