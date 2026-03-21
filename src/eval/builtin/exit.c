@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:44:09 by hermarti          #+#    #+#             */
-/*   Updated: 2026/01/29 18:00:54 by hermarti         ###   ########.fr       */
+/*   Updated: 2026/03/21 12:22:51 by thaperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,6 @@ t_cmd_response	*func_built_in_exit(t_ast *shell_ast, char **cmd_str,
 		return (res);
 	}
 	destroy_cmd_res(res);
-	child_exit(env, shell_ast, (unsigned char)ft_atoll(cmd_str[1]));
+	child_exit(env, shell_ast, (unsigned char)ft_atol(cmd_str[1]));
 	return (NULL);
 }
